@@ -1,0 +1,65 @@
+<!-- Work page body. {{root}} is replaced with the relative path to the site root. -->
+<div class="wrap">
+  <section class="page-head">
+    <p class="eyebrow">Work</p>
+    <h1 class="page-h1" style="margin-top:10px;">Things I have built</h1>
+    <p class="desc">Platform and infrastructure work across eight years, most recently GPU CI for PyTorch at NVIDIA.</p>
+  </section>
+
+  <article class="tile reveal" style="padding:28px;" data-no-tilt>
+    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;">
+      <p class="meta">NVIDIA · Senior System Software Engineer · 2025 - 2026</p>
+      <span class="badge">CASE STUDY</span>
+    </div>
+    <h2 style="font-size:28px;font-weight:600;letter-spacing:-0.02em;line-height:1.2;margin-top:10px;">Windows CI with GPU support for PyTorch</h2>
+    <p class="desc" style="margin-top:10px;max-width:720px;">PyTorch had no CI that tested Windows with a GPU. I led the design of a harness that provisions a GPU-backed Windows VM inside Kubernetes on demand, triggered straight from GitHub Actions. The default runner model needs inbound access to the cluster, so I built a pull-based job service instead.</p>
+    <div class="flow" style="margin-top:28px;">
+      <div class="node"><p class="node-name">GitHub Actions</p><p class="node-sub">A workflow requests a Windows GPU run</p></div>
+      <div class="conn"></div>
+      <div class="node"><p class="node-name">Job service</p><p class="node-sub">Queues the job; a gateway screens it first</p></div>
+      <div class="conn pull"><span class="conn-label">PULL</span></div>
+      <div class="node"><p class="node-name">Runner pod</p><p class="node-sub">Asks for work over an outbound connection</p></div>
+      <div class="conn"></div>
+      <div class="node"><p class="node-name">Windows VM</p><p class="node-sub">KubeVirt with a VFIO GPU runs the tests</p></div>
+    </div>
+    <div class="three" style="margin-top:28px;">
+      <div class="hl"><p class="title" style="font-size:15px;">Pull-based job service</p><p class="desc" style="font-size:14px;margin-top:4px;">An alternative to GitHub's Actions Runner Controller with no inbound access.</p></div>
+      <div class="hl"><p class="title" style="font-size:15px;">Threat model</p><p class="desc" style="font-size:14px;margin-top:4px;">A STRIDE analysis that led to network policies and a pre-execution gateway.</p></div>
+      <div class="hl"><p class="title" style="font-size:15px;">Windows on ARM</p><p class="desc" style="font-size:14px;margin-top:4px;">PyTorch and ComfyUI builds on NVIDIA's unreleased WoA platform.</p></div>
+    </div>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:16px;">
+      <a class="text-link" href="{{root}}writing/push-or-pull/">Read: push or pull <span class="go">&rarr;</span></a>
+      <a class="text-link" href="{{root}}writing/gpu-passthrough/">Read: GPU passthrough <span class="go">&rarr;</span></a>
+      <a class="text-link" href="{{root}}writing/stride-threat-model/">Read: STRIDE threat model <span class="go">&rarr;</span></a>
+    </div>
+  </article>
+
+  <section class="section reveal">
+    <div class="sec-head"><h2 class="sec-title">More work</h2></div>
+    <div class="two">
+      <div class="tile pad"><p class="eyebrow">NVIDIA</p><p class="title" style="margin-top:8px;">Telemetry dashboards, 10 minutes to under a second</p><p class="desc" style="margin-top:6px;font-size:14.5px;">Found the bottleneck in a Grafana and Prometheus pipeline and moved query execution to run asynchronously.</p></div>
+      <div class="tile pad"><p class="eyebrow">Abzooba</p><p class="title" style="margin-top:8px;">Xpresso.ai MLOps platform</p><p class="desc" style="margin-top:6px;font-size:14.5px;">Core architect and lead for a platform covering the full ML lifecycle, including a Databricks-based deployment for an enterprise client. Mentored four engineers and owned three core services.</p></div>
+      <div class="tile pad"><p class="eyebrow">Abzooba</p><p class="title" style="margin-top:8px;">Data versioning, built from scratch</p><p class="desc" style="margin-top:6px;font-size:14.5px;">Dataset hashing, artifact tracking and metadata sync across cloud storage, for a platform with no off-the-shelf fit.</p></div>
+      <div class="tile pad"><p class="eyebrow">Abzooba</p><p class="title" style="margin-top:8px;">ONNX model conversion framework</p><p class="desc" style="margin-top:6px;font-size:14.5px;">Moved over 95% of user models to ONNX, cutting inference latency by up to 50% with ONNX Runtime.</p></div>
+    </div>
+  </section>
+
+  <section class="section reveal two" style="gap:40px;">
+    <div>
+      <div class="sec-head"><h2 class="sec-title">Experience</h2></div>
+      <div class="timeline">
+        <div class="tl first"><p class="tl-date">Jan 2025 - Jun 2026</p><p class="title" style="margin-top:2px;">Senior System Software Engineer</p><p class="desc" style="font-size:14px;">NVIDIA · Pune, India</p></div>
+        <div class="tl"><p class="tl-date">Aug 2022 - Dec 2024</p><p class="title" style="margin-top:2px;">Lead Product Engineer</p><p class="desc" style="font-size:14px;">Abzooba (UST) · Pune, India</p></div>
+        <div class="tl"><p class="tl-date">Dec 2020 - Jul 2022</p><p class="title" style="margin-top:2px;">Senior Software Engineer</p><p class="desc" style="font-size:14px;">Abzooba (UST) · Pune, India</p></div>
+        <div class="tl"><p class="tl-date">Jun 2017 - Nov 2020</p><p class="title" style="margin-top:2px;">Software Engineer, Associate Software Engineer</p><p class="desc" style="font-size:14px;">Abzooba (UST) · Pune, India</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="sec-head"><h2 class="sec-title">In progress</h2><span class="meta">Planned for Dec 2026</span></div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="tile" style="padding:20px;"><p class="title">Vision-language model course project</p><p class="desc" style="margin-top:6px;font-size:14.5px;">An applied project for a graduate VLM course at Stony Brook. Code and write-up after the semester.</p></div>
+        <div class="tile" style="padding:20px;"><p class="title">Open reference version of the CI design</p><p class="desc" style="margin-top:6px;font-size:14.5px;">A from-scratch, public version of the pull-based GPU CI, built with open tools and no proprietary code.</p></div>
+      </div>
+    </div>
+  </section>
+</div>

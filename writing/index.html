@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Writing | Gopi Krishna Kanugula</title>
+<meta name="description" content="Notes and explainers on CI/CD, GPU virtualization, security and vision-language models.">
+<meta property="og:title" content="Writing | Gopi Krishna Kanugula">
+<meta property="og:description" content="Notes and explainers on CI/CD, GPU virtualization, security and vision-language models.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0A0C0F">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../assets/css/site.css">
+<script>(function(){var t='dark';try{var s=localStorage.getItem('gkk-theme');if(s==='light'||s==='dark'){t=s;}}catch(e){}document.documentElement.setAttribute('data-theme',t);})();</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../" aria-label="Gopi Krishna Kanugula, home"><span class="mono-mark">GK</span><span class="brand-name">Gopi Krishna Kanugula</span></a>
+    <div class="header-right">
+      <nav class="nav" aria-label="Main"><a href="../work/">Work</a><a href="../writing/" aria-current="page">Writing</a><a href="../about/">About</a></nav>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch to light mode"><svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+    </div>
+  </div>
+</header>
+<main id="main" class="page">
+<div class="wrap">
+  <section class="page-head" style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;">
+    <div>
+      <p class="eyebrow">Writing</p>
+      <h1 class="page-h1" style="margin-top:10px;">Notes and explainers</h1>
+      <p class="desc">Concepts I have worked with, explained the way I wish someone had explained them to me.</p>
+    </div>
+    <div class="filters" role="group" aria-label="Filter posts by topic"><button class="chip" type="button" data-filter="All" aria-pressed="true">All</button><button class="chip" type="button" data-filter="CI/CD" aria-pressed="false">CI/CD</button><button class="chip" type="button" data-filter="Security" aria-pressed="false">Security</button><button class="chip" type="button" data-filter="Virtualization" aria-pressed="false">Virtualization</button><button class="chip" type="button" data-filter="GPUs" aria-pressed="false">GPUs</button><button class="chip" type="button" data-filter="VLMs" aria-pressed="false">VLMs</button><button class="chip" type="button" data-filter="Deep learning" aria-pressed="false">Deep learning</button></div>
+  </section>
+  <div class="two"><a class="tile post-card" href="push-or-pull/" data-tags="CI/CD|Security"><div style="display:flex;justify-content:space-between;gap:12px;"><span class="tag">CI/CD · Security</span><span class="meta">Draft · Oct 2026</span></div><p class="card-title">Push or pull: how a CI runner gets its work</p><p class="desc" style="margin-top:8px;">Why letting workers ask for jobs can be safer than having a controller send them.</p><p class="text-link" style="margin-top:14px;">Read <span class="go">&rarr;</span></p></a><a class="tile post-card" href="gpu-passthrough/" data-tags="Virtualization|GPUs"><div style="display:flex;justify-content:space-between;gap:12px;"><span class="tag">Virtualization · GPUs</span><span class="meta">Draft · Oct 2026</span></div><p class="card-title">GPU passthrough in plain terms: IOMMU, VFIO and handing a GPU to a VM</p><p class="desc" style="margin-top:8px;">What actually happens when a virtual machine gets exclusive access to a physical GPU.</p><p class="text-link" style="margin-top:14px;">Read <span class="go">&rarr;</span></p></a><a class="tile post-card" href="stride-threat-model/" data-tags="Security|CI/CD"><div style="display:flex;justify-content:space-between;gap:12px;"><span class="tag">Security · CI/CD</span><span class="meta">Draft · Oct 2026</span></div><p class="card-title">Threat modeling a CI cluster with STRIDE</p><p class="desc" style="margin-top:8px;">Six questions, applied to every component of a system that runs other people&#x27;s code.</p><p class="text-link" style="margin-top:14px;">Read <span class="go">&rarr;</span></p></a><a class="tile post-card" href="how-a-vlm-sees-an-image/" data-tags="VLMs|Deep learning"><div style="display:flex;justify-content:space-between;gap:12px;"><span class="tag">VLMs · Deep learning</span><span class="meta">Draft · Oct 2026</span></div><p class="card-title">How a vision-language model sees an image</p><p class="desc" style="margin-top:8px;">Patches, an encoder, and a small adapter: the three steps that turn pixels into something a language model can read.</p><p class="text-link" style="margin-top:14px;">Read <span class="go">&rarr;</span></p></a></div>
+  <div class="tile pad" data-empty hidden><p class="desc">First posts are on the way.</p></div>
+</div>
+</main>
+<footer class="site-footer wrap">
+  <div class="tile cta reveal">
+    <div>
+      <p class="cta-title">Let's build something.</p>
+      <p class="desc" style="margin-top:6px;">Open to systems, infrastructure and applied AI roles from June 2027.</p>
+    </div>
+    <a class="btn btn-primary" href="mailto:pi.kanugula@gmail.com">pi.kanugula@gmail.com</a>
+  </div>
+  <div class="foot-row">
+    <span class="meta">Stony Brook, NY</span>
+    <div class="foot-links">
+      <a class="plain-link" href="https://linkedin.com/in/gopi-krishna-kanugula-0099a711a/" target="_blank" rel="noopener">LinkedIn &#8599;</a>
+      <a class="plain-link" href="https://github.com/pipowpi" target="_blank" rel="noopener">GitHub &#8599;</a>
+    </div>
+  </div>
+</footer>
+<script src="../assets/js/site.js" defer></script>
+</body>
+</html>
