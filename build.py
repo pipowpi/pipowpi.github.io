@@ -163,7 +163,7 @@ def layout(title, description, root, active, body, extra=''):
 <meta property="og:title" content="{title}">
 <meta property="og:description" content="{desc}">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#0A0C0F">
+<meta name="theme-color" content="#100E0B">
 <link rel="icon" href="{r}assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

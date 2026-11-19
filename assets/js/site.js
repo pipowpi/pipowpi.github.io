@@ -118,7 +118,7 @@
     function readColors() {
       var cs = getComputedStyle(c);
       var g = function (n, d) { var v = cs.getPropertyValue(n).trim(); return v || d; };
-      return { accent: g('--accent', '#9AA8FF'), ink: g('--ink', '#ECEEF1'), faint: g('--faint', '#8A909B'), line: g('--line-strong', '#2F343C') };
+      return { accent: g('--accent', '#FFB224'), ink: g('--ink', '#F2ECDF'), faint: g('--faint', '#8D8575'), line: g('--line-strong', '#3B342B') };
     }
 
     function draw(now, moving) {
