@@ -74,22 +74,73 @@
     </div>
   </section>
 
-  <section class="section reveal two" style="gap:40px;">
-    <div>
-      <div class="sec-head"><h2 class="sec-title">Experience</h2></div>
-      <div class="timeline">
-        <div class="tl first"><p class="tl-date">Jan 2025 - Jun 2026</p><p class="title" style="margin-top:2px;">Senior System Software Engineer</p><p class="desc" style="font-size:14px;">NVIDIA · Pune, India</p></div>
-        <div class="tl"><p class="tl-date">Aug 2022 - Dec 2024</p><p class="title" style="margin-top:2px;">Lead Product Engineer</p><p class="desc" style="font-size:14px;">Abzooba (UST) · Pune, India</p></div>
-        <div class="tl"><p class="tl-date">Dec 2020 - Jul 2022</p><p class="title" style="margin-top:2px;">Senior Software Engineer</p><p class="desc" style="font-size:14px;">Abzooba (UST) · Pune, India</p></div>
-        <div class="tl"><p class="tl-date">Jun 2017 - Nov 2020</p><p class="title" style="margin-top:2px;">Software Engineer, Associate Software Engineer</p><p class="desc" style="font-size:14px;">Abzooba (UST) · Pune, India</p></div>
+  <section class="section reveal" id="current">
+    <div class="sec-head"><h2 class="sec-title">Current projects</h2><span class="meta">Stony Brook University · Fall 2026</span></div>
+
+    <article class="tile" style="padding:28px;" data-no-tilt>
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;">
+        <p class="meta">CSE 527 Computer Vision · course project</p>
+        <span class="badge badge-live"><span class="run-dot"></span>IN PROGRESS</span>
+      </div>
+      <h3 style="font-size:26px;font-weight:600;letter-spacing:-0.02em;line-height:1.2;margin-top:10px;">3D head reconstruction: swapping FLAME for GNM in SMIRK</h3>
+      <p class="desc" style="margin-top:10px;max-width:720px;">SMIRK estimates a 3D face from a single photo by predicting parameters for the FLAME head model. I am replacing FLAME with GNM, a newer head model whose 383 expression controls are grouped by face region and include teeth and tongue, then fine-tuning on the FEED dataset and comparing the result against the original SMIRK.</p>
+      <div class="flow" style="margin-top:28px;">
+        <div class="node"><p class="node-name">Face image</p><p class="node-sub">A single photograph</p></div>
+        <div class="conn"></div>
+        <div class="node"><p class="node-name">Encoders</p><p class="node-sub">Predict identity, expression and pose</p></div>
+        <div class="conn swap"><span class="conn-label">SWAP</span></div>
+        <div class="node node-swap"><p class="node-name">GNM <s>FLAME</s></p><p class="node-sub">Parameters become a 3D mesh</p></div>
+        <div class="conn"></div>
+        <div class="node"><p class="node-name">Render + rebuild</p><p class="node-sub">The rebuilt face is compared with the input</p></div>
+      </div>
+      <p class="meta" style="margin-top:12px;">Comparing the rebuilt face with the photo is the training signal, so no 3D labels are needed.</p>
+      <div class="two" style="margin-top:28px;gap:28px;">
+        <div>
+          <p class="eyebrow">Done</p>
+          <ul class="checklist">
+            <li class="ok">Ran the pretrained SMIRK baseline and inspected its parameters, mesh and reconstruction.</li>
+            <li class="ok">Unblocked FLAME loading by converting its Chumpy-dependent model file to NumPy data.</li>
+            <li class="ok">Traced the encoders, renderer, image translator and training losses.</li>
+            <li class="ok">Mapped GNM's interface: 253 identity and 383 expression coefficients, and 17,821 vertices against FLAME's 5,023.</li>
+          </ul>
+        </div>
+        <div>
+          <p class="eyebrow">Next</p>
+          <ul class="checklist">
+            <li>Connect GNM to the encoders and renderer, with new landmark and face-mask mappings.</li>
+            <li>Revise FLAME-specific losses and confirm training works on a small subset.</li>
+            <li>Fine-tune on FEED and evaluate against SMIRK on held-out images.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <div class="three" style="margin-top:14px;gap:14px;">
+      <div class="tile pad">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;"><p class="eyebrow">Computer Architecture</p><span class="badge">IN PROGRESS</span></div>
+        <p class="title" style="margin-top:10px;">RISC-V CPU</p>
+        <p class="desc" style="margin-top:6px;font-size:14.5px;">Designing and building a RISC-V processor for the graduate computer architecture course. Details and results to follow.</p>
+      </div>
+      <div class="tile pad">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;"><p class="eyebrow">Vision-language models</p><span class="badge">IN PROGRESS</span></div>
+        <p class="title" style="margin-top:10px;">VLM course project</p>
+        <p class="desc" style="margin-top:6px;font-size:14.5px;">An applied project for the graduate vision-language models course. Code and write-up after the semester.</p>
+      </div>
+      <div class="tile pad">
+        <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;"><p class="eyebrow">Personal</p><span class="badge">PLANNED</span></div>
+        <p class="title" style="margin-top:10px;">Open version of the CI design</p>
+        <p class="desc" style="margin-top:6px;font-size:14.5px;">A from-scratch, public version of the pull-based GPU CI, built with open tools and no proprietary code.</p>
       </div>
     </div>
-    <div>
-      <div class="sec-head"><h2 class="sec-title">In progress</h2><span class="meta">Planned for Dec 2026</span></div>
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        <div class="tile" style="padding:20px;"><p class="title">Vision-language model course project</p><p class="desc" style="margin-top:6px;font-size:14.5px;">An applied project for a graduate VLM course at Stony Brook. Code and write-up after the semester.</p></div>
-        <div class="tile" style="padding:20px;"><p class="title">Open reference version of the CI design</p><p class="desc" style="margin-top:6px;font-size:14.5px;">A from-scratch, public version of the pull-based GPU CI, built with open tools and no proprietary code.</p></div>
-      </div>
+  </section>
+
+  <section class="section reveal">
+    <div class="sec-head"><h2 class="sec-title">Experience</h2></div>
+    <div class="timeline">
+      <div class="tl first"><p class="tl-date">Jan 2025 - Jun 2026</p><p class="title" style="margin-top:2px;">Senior System Software Engineer</p><p class="desc" style="font-size:14px;">NVIDIA · Pune, India</p></div>
+      <div class="tl"><p class="tl-date">Aug 2022 - Dec 2024</p><p class="title" style="margin-top:2px;">Lead Product Engineer</p><p class="desc" style="font-size:14px;">Abzooba (UST) · Pune, India</p></div>
+      <div class="tl"><p class="tl-date">Dec 2020 - Jul 2022</p><p class="title" style="margin-top:2px;">Senior Software Engineer</p><p class="desc" style="font-size:14px;">Abzooba (UST) · Pune, India</p></div>
+      <div class="tl"><p class="tl-date">Jun 2017 - Nov 2020</p><p class="title" style="margin-top:2px;">Software Engineer, Associate Software Engineer</p><p class="desc" style="font-size:14px;">Abzooba (UST) · Pune, India</p></div>
     </div>
   </section>
 </div>
