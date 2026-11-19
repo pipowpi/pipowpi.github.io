@@ -33,6 +33,22 @@
 
 <div class="wrap" style="padding-top:16px;">
 
+  <!-- What I do, at a glance -->
+  <div class="three pillars" style="gap:14px;margin-bottom:14px;">
+    <a class="tile pillar" href="{{root}}work/">
+      <span class="ic">{{icon:gpu}}</span>
+      <span><span class="pillar-title">GPU and virtualization</span><span class="pillar-sub">Windows VMs on Kubernetes with GPU passthrough</span></span>
+    </a>
+    <a class="tile pillar" href="{{root}}work/">
+      <span class="ic">{{icon:shield}}</span>
+      <span><span class="pillar-title">CI/CD and security</span><span class="pillar-sub">Pull-based runners, STRIDE threat modeling</span></span>
+    </a>
+    <a class="tile pillar" href="{{root}}projects/">
+      <span class="ic">{{icon:layers}}</span>
+      <span><span class="pillar-title">ML platforms and vision</span><span class="pillar-sub">MLOps at scale, now 3D faces and VLMs</span></span>
+    </a>
+  </div>
+
   <!-- Career status, shown as a CI run -->
   <section class="tile career" aria-label="Current status" data-no-tilt>
     <div class="career-head">
@@ -114,13 +130,13 @@
     </a>
 
     <div class="tile pad">
-      <p class="eyebrow">Telemetry fix</p>
+      <div class="tile-top"><p class="eyebrow">Telemetry fix</p><span class="ic ic-sm">{{icon:gauge}}</span></div>
       <p style="margin-top:14px;"><span class="stat-num">10m</span><span class="stat-unit">&rarr; &lt;1s</span></p>
       <p class="desc" style="margin-top:10px;font-size:14px;">Grafana dashboards, after moving Prometheus queries to run asynchronously.</p>
     </div>
 
     <div class="tile pad">
-      <p class="eyebrow">Model migration</p>
+      <div class="tile-top"><p class="eyebrow">Model migration</p><span class="ic ic-sm">{{icon:convert}}</span></div>
       <p style="margin-top:14px;"><span class="stat-num" data-count="95">95</span><span class="stat-unit">%</span></p>
       <p class="desc" style="margin-top:10px;font-size:14px;">of user models moved to ONNX, with up to 50% lower inference latency.</p>
     </div>
@@ -134,7 +150,7 @@
     </div>
 
     <div class="tile pad">
-      <p class="eyebrow">Experience</p>
+      <div class="tile-top"><p class="eyebrow">Experience</p><span class="ic ic-sm">{{icon:briefcase}}</span></div>
       <p style="margin-top:14px;"><span class="stat-num" data-count="8">8</span><span class="stat-unit">+ yrs</span></p>
       <p class="desc" style="margin-top:10px;font-size:14px;">Platform, CI/CD and MLOps engineering. Mentored 4 engineers and owned 3 core services.</p>
       <div style="margin-top:22px;display:flex;flex-direction:column;gap:12px;">
@@ -150,6 +166,18 @@
           <div style="display:flex;justify-content:space-between;"><span class="tag">Stony Brook MS</span><span class="tag">to May 2027</span></div>
           <div class="bar-track"><div class="bar bar-dash" style="left:90%;width:10%;"></div></div>
         </div>
+      </div>
+    </div>
+
+    <div class="tile span-3" style="padding:22px 24px;">
+      <div class="sec-head" style="margin-bottom:14px;">
+        <p class="eyebrow"><span class="run-dot" style="display:inline-block;margin-right:8px;vertical-align:1px;"></span>Projects in progress</p>
+        <a class="text-link" href="{{root}}projects/">All projects <span class="go">&rarr;</span></a>
+      </div>
+      <div class="three proj-mini">
+        <a href="{{root}}projects/#head-reconstruction"><span class="ic ic-sm">{{icon:face}}</span><span><span class="title" style="font-size:15.5px;">3D head reconstruction</span><span class="desc" style="font-size:13.5px;display:block;">Swapping FLAME for GNM in SMIRK</span></span></a>
+        <a href="{{root}}projects/#riscv"><span class="ic ic-sm">{{icon:cpu}}</span><span><span class="title" style="font-size:15.5px;">RISC-V CPU</span><span class="desc" style="font-size:13.5px;display:block;">Graduate computer architecture</span></span></a>
+        <a href="{{root}}projects/#vlm"><span class="ic ic-sm">{{icon:eye}}</span><span><span class="title" style="font-size:15.5px;">VLM project</span><span class="desc" style="font-size:13.5px;display:block;">Graduate vision-language models</span></span></a>
       </div>
     </div>
   </div>

@@ -44,6 +44,40 @@ TOOLS = ['Kubernetes', 'KubeVirt', 'VFIO', 'QEMU/KVM', 'GitHub Actions', 'Docker
 
 esc = html.escape
 
+# Simple stroke icons, drawn for this site. Use {{icon:name}} in page bodies.
+ICON_PATHS = {
+    'gpu': '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="9" cy="12" r="3"/><path d="M15 10h4M15 14h4M6 18v2M10 18v2M14 18v2"/>',
+    'shield': '<path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+    'layers': '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+    'gauge': '<path d="M4 18a8 8 0 1 1 16 0"/><path d="M12 18l4-6"/><circle cx="12" cy="18" r="1.2"/>',
+    'database': '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+    'convert': '<path d="M4 8h14l-3-3M20 16H6l3 3"/>',
+    'cpu': '<rect x="6" y="6" width="12" height="12" rx="1.5"/><rect x="9.5" y="9.5" width="5" height="5"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',
+    'face': '<path d="M12 3c-4 0-7 3-7 7.5 0 3 1.3 5.6 3.5 7.2V21h7v-3.3c2.2-1.6 3.5-4.2 3.5-7.2C19 6 16 3 12 3z"/><path d="M9.5 10.5h.01M14.5 10.5h.01"/><path d="M9.5 14.5c1.4 1 3.6 1 5 0"/>',
+    'eye': '<path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/>',
+    'branch': '<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="7" r="2"/><path d="M6 7v10"/><path d="M18 9c0 4-4 5-10 8"/>',
+    'server': '<rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><path d="M7 7.5h.01M7 16.5h.01"/>',
+    'code': '<path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/>',
+    'book': '<path d="M3 5h6a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H3z"/><path d="M21 5h-6a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h7z"/>',
+    'wrench': '<path d="M14.5 5.5a4 4 0 0 0-5 5L4 16l4 4 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-3-1-1-3z"/>',
+    'sparkle': '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z"/>',
+    'target': '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 12h.01"/>',
+    'briefcase': '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',
+    'pen': '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
+}
+TAG_ICONS = {'CI/CD': 'branch', 'Security': 'shield', 'Virtualization': 'gpu', 'GPUs': 'gpu',
+             'VLMs': 'eye', 'Deep learning': 'layers'}
+
+
+def icon(name):
+    return ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" '
+            'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON_PATHS[name] + '</svg>')
+
+
+def apply_icons(text):
+    return re.sub(r'\{\{icon:([a-z]+)\}\}', lambda m: icon(m.group(1)) if m.group(1) in ICON_PATHS else m.group(0), text)
+
+
 
 # ---------------------------------------------------------------- content
 def read(path):
@@ -151,7 +185,7 @@ def layout(title, description, root, active, body, extra=''):
         '<a href="{r}{href}"{cur}>{label}</a>'.format(
             r=root, href=href, label=label,
             cur=' aria-current="page"' if active == key else '')
-        for key, label, href in [('work', 'Work', 'work/'), ('writing', 'Writing', 'writing/'), ('about', 'About', 'about/')])
+        for key, label, href in [('work', 'Work', 'work/'), ('projects', 'Projects', 'projects/'), ('writing', 'Writing', 'writing/'), ('about', 'About', 'about/')])
     full_title = title if title == SITE['name'] else title + ' | ' + SITE['name']
     return '''<!doctype html>
 <html lang="en" data-theme="dark">
@@ -229,12 +263,13 @@ def build_home(posts):
     tools = ''.join('<span class="pill">{}</span>'.format(esc(t)) for t in TOOLS + TOOLS)
     body = (read('content/pages/home.html').replace('{{root}}', root)
             .replace('{{recent_posts}}', recent).replace('{{tools}}', tools))
+    body = apply_icons(body)
     write('index.html', layout(SITE['name'], SITE['description'], root, 'home', body))
 
 
 def build_simple(key, title, description):
     root = '../'
-    body = read('content/pages/{}.html'.format(key)).replace('{{root}}', root)
+    body = apply_icons(read('content/pages/{}.html'.format(key)).replace('{{root}}', root))
     write('{}/index.html'.format(key), layout(title, description, root, key, body))
 
 
@@ -249,10 +284,12 @@ def build_writing(posts):
         t=esc(t), on='true' if t == 'All' else 'false') for t in ['All'] + tags)
     cards = ''.join(
         '<a class="tile post-card" href="{slug}/" data-tags="{dt}">'
-        '<div style="display:flex;justify-content:space-between;gap:12px;"><span class="tag">{tags}</span><span class="meta">{m}</span></div>'
+        '<div class="card-head" style="justify-content:space-between;"><span class="ic">{ic}</span><span class="meta">{m}</span></div>'
         '<p class="card-title">{t}</p><p class="desc" style="margin-top:8px;">{s}</p>'
-        '<p class="text-link" style="margin-top:14px;">Read <span class="go">&rarr;</span></p></a>'.format(
+        '<div class="post-foot"><span class="tag">{tags}</span><span class="read-chip">{rd}</span></div></a>'.format(
             slug=p['slug'], dt=esc('|'.join(p['tags'])), tags=esc(' · '.join(p['tags'])),
+            ic=icon(TAG_ICONS.get(p['tags'][0] if p['tags'] else '', 'pen')),
+            rd=esc(p['read'] + ' read') if p['read'] else '',
             m=esc(short_meta(p)), t=esc(p['title']), s=esc(p['summary']))
         for p in posts)
     body = '''<div class="wrap">
@@ -318,12 +355,13 @@ def main():
     posts = load_posts()
     build_home(posts)
     build_simple('work', 'Work', 'CI/CD, GPU virtualization and MLOps work at NVIDIA and Abzooba.')
+    build_simple('projects', 'Projects', 'Course and personal projects: 3D head reconstruction with GNM, a RISC-V CPU, a VLM project and an open GPU CI design.')
     build_simple('about', 'About', 'About Gopi Krishna Kanugula: background, current focus, toolbox and education.')
     build_writing(posts)
     for i in range(len(posts)):
         build_post(posts, i)
     build_404()
-    print('Built {} pages ({} posts).'.format(5 + len(posts), len(posts)))
+    print('Built {} pages ({} posts).'.format(6 + len(posts), len(posts)))
 
 
 if __name__ == '__main__':

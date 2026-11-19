@@ -1,4 +1,4 @@
-<!-- About page body. {{root}} is replaced with the relative path to the site root. -->
+<!-- About page body. {{root}} is replaced with the relative path to the site root, {{icon:name}} with an icon. -->
 <div class="wrap">
   <div class="about-grid">
     <div>
@@ -7,23 +7,28 @@
       <p class="desc" style="font-size:17px;margin-top:16px;">I am based in Stony Brook, NY, finishing an MS in Computer Science at Stony Brook University with a focus on computer vision and vision-language models. Before that I spent eight years building platforms: a Windows GPU CI system for PyTorch at NVIDIA, and an MLOps platform for enterprise clients at Abzooba.</p>
       <p class="desc" style="font-size:17px;margin-top:14px;">I like problems where the requirement is clear but the architecture is not, and I write things down to make sure I actually understand them.</p>
 
-      <div class="tile reveal" style="padding:8px 22px;margin-top:28px;">
-        <div class="kv"><p class="kv-k">Studying</p><p class="desc">MS in Computer Science at Stony Brook University, expected May 2027.</p></div>
-        <div class="kv"><p class="kv-k">Building</p><p class="desc">3D head reconstruction with GNM in SMIRK, a RISC-V CPU, and a VLM course project, plus an open version of the GPU CI design. <a class="text-link" href="{{root}}work/#current">See current projects</a></p></div>
-        <div class="kv"><p class="kv-k">Learning</p><p class="desc">Agents and tool use, building small local agents against open models with Ollama.</p></div>
-        <div class="kv"><p class="kv-k">Looking for</p><p class="desc">Systems, infrastructure and applied AI roles starting June 2027.</p></div>
+      <div class="facts">
+        <div class="fact"><span class="fact-n">8+</span><span class="meta">years in industry</span></div>
+        <div class="fact"><span class="fact-n">2</span><span class="meta">companies</span></div>
+        <div class="fact"><span class="fact-n">4</span><span class="meta">engineers mentored</span></div>
+        <div class="fact"><span class="fact-n">'27</span><span class="meta">MS graduation</span></div>
+      </div>
+
+      <div class="tile reveal now-list" style="margin-top:20px;">
+        <div class="now-row"><span class="ic ic-sm">{{icon:book}}</span><div><p class="kv-k">Studying</p><p class="desc">MS in Computer Science at Stony Brook University, expected May 2027.</p></div></div>
+        <div class="now-row"><span class="ic ic-sm">{{icon:wrench}}</span><div><p class="kv-k">Building</p><p class="desc">3D head reconstruction with GNM, a RISC-V CPU and a VLM project. <a class="text-link" href="{{root}}projects/">See projects</a></p></div></div>
+        <div class="now-row"><span class="ic ic-sm">{{icon:sparkle}}</span><div><p class="kv-k">Learning</p><p class="desc">Agents and tool use, building small local agents against open models with Ollama.</p></div></div>
+        <div class="now-row"><span class="ic ic-sm">{{icon:target}}</span><div><p class="kv-k">Looking for</p><p class="desc">Systems, infrastructure and applied AI roles starting June 2027.</p></div></div>
       </div>
     </div>
     <div style="display:flex;flex-direction:column;gap:14px;">
       <div class="tile pad reveal">
         <p class="eyebrow">Toolbox</p>
-        <div style="margin-top:10px;">
-          <div class="kv"><p class="kv-k">Infra</p><p class="desc" style="font-size:14px;">Kubernetes, KubeVirt, VFIO, QEMU/KVM, Docker, Terraform, Ansible, AWS, GCP, Azure</p></div>
-          <div class="kv"><p class="kv-k">CI and obs</p><p class="desc" style="font-size:14px;">GitHub Actions, Jenkins, Bamboo, Azure DevOps, Prometheus, Grafana, ELK</p></div>
-          <div class="kv"><p class="kv-k">ML</p><p class="desc" style="font-size:14px;">PyTorch, ONNX Runtime, Databricks, Airflow, MLflow, DVC</p></div>
-          <div class="kv"><p class="kv-k">Languages</p><p class="desc" style="font-size:14px;">Python, C++, Bash, SQL, Node.js, FastAPI</p></div>
-          <div class="kv"><p class="kv-k">Security</p><p class="desc" style="font-size:14px;">STRIDE, Kubernetes network policies, RBAC, JWT</p></div>
-        </div>
+        <div class="tool-group"><p class="tool-k"><span class="ic ic-xs">{{icon:server}}</span>Infrastructure</p><div class="pills"><span class="pill pill-sm">Kubernetes</span><span class="pill pill-sm">KubeVirt</span><span class="pill pill-sm">VFIO</span><span class="pill pill-sm">QEMU/KVM</span><span class="pill pill-sm">Docker</span><span class="pill pill-sm">Terraform</span><span class="pill pill-sm">Ansible</span><span class="pill pill-sm">AWS</span><span class="pill pill-sm">GCP</span><span class="pill pill-sm">Azure</span></div></div>
+        <div class="tool-group"><p class="tool-k"><span class="ic ic-xs">{{icon:branch}}</span>CI/CD and observability</p><div class="pills"><span class="pill pill-sm">GitHub Actions</span><span class="pill pill-sm">Jenkins</span><span class="pill pill-sm">Bamboo</span><span class="pill pill-sm">Azure DevOps</span><span class="pill pill-sm">Prometheus</span><span class="pill pill-sm">Grafana</span><span class="pill pill-sm">ELK</span></div></div>
+        <div class="tool-group"><p class="tool-k"><span class="ic ic-xs">{{icon:layers}}</span>ML and vision</p><div class="pills"><span class="pill pill-sm">PyTorch</span><span class="pill pill-sm">ONNX Runtime</span><span class="pill pill-sm">Databricks</span><span class="pill pill-sm">Airflow</span><span class="pill pill-sm">MLflow</span><span class="pill pill-sm">DVC</span></div></div>
+        <div class="tool-group"><p class="tool-k"><span class="ic ic-xs">{{icon:code}}</span>Languages</p><div class="pills"><span class="pill pill-sm">Python</span><span class="pill pill-sm">C++</span><span class="pill pill-sm">Bash</span><span class="pill pill-sm">SQL</span><span class="pill pill-sm">Node.js</span><span class="pill pill-sm">FastAPI</span></div></div>
+        <div class="tool-group"><p class="tool-k"><span class="ic ic-xs">{{icon:shield}}</span>Security</p><div class="pills"><span class="pill pill-sm">STRIDE</span><span class="pill pill-sm">Network policies</span><span class="pill pill-sm">RBAC</span><span class="pill pill-sm">JWT</span></div></div>
       </div>
       <div class="tile pad reveal">
         <p class="eyebrow">Education</p>
