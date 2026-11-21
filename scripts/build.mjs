@@ -34,6 +34,23 @@ function write(p, text) {
   fs.writeFileSync(full, text);
 }
 
+// The built site goes to dist/ (or OUT_DIR). It is not committed: GitHub Actions builds it on every
+// push to main and deploys it to GitHub Pages (.github/workflows/deploy.yml).
+const OUT = path.resolve(ROOT, process.env.OUT_DIR || 'dist');
+function writeOut(p, text) {
+  const full = path.join(OUT, p);
+  fs.mkdirSync(path.dirname(full), { recursive: true });
+  fs.writeFileSync(full, text);
+}
+// Start from an empty dist/ with the static files (fonts, favicon) copied in.
+function resetOut() {
+  fs.rmSync(OUT, { recursive: true, force: true });
+  for (const dir of ['assets/fonts', 'assets/img']) {
+    fs.cpSync(path.join(ROOT, dir), path.join(OUT, dir), { recursive: true });
+  }
+  fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
+}
+
 // ------------------------------------------------------------------ posts
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -209,18 +226,19 @@ async function build() {
 
   const [css, js, server] = await Promise.all([buildCss(), buildClient(), loadServer()]);
   const hash = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 10);
-  write('assets/app.css', css);
-  write('assets/app.js', js);
+  resetOut();
+  writeOut('assets/app.css', css);
+  writeOut('assets/app.js', js);
   const cssHref = 'assets/app.css?v=' + hash(css);
   const jsHref = 'assets/app.js?v=' + hash(js);
 
   const routes = server.routes(posts);
   for (const r of routes) {
     const { html, head } = server.render(r);
-    write(r.file, page({ head, body: html, root: r.root, data: { page: r.page, root: r.root, slug: r.slug || null }, cssHref, jsHref }));
+    writeOut(r.file, page({ head, body: html, root: r.root, data: { page: r.page, root: r.root, slug: r.slug || null }, cssHref, jsHref }));
   }
   fs.rmSync(path.join(ROOT, '.build'), { recursive: true, force: true });
-  console.log(`Built ${routes.length} pages (${posts.length} posts) in ${Date.now() - t0} ms.`);
+  console.log(`Built ${routes.length} pages (${posts.length} posts) into ${path.relative(ROOT, OUT) || '.'}/ in ${Date.now() - t0} ms.`);
 }
 
 await build();

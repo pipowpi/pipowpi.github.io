@@ -8,7 +8,7 @@ This is my personal site. It has five pages:
 - **Writing**: posts
 - **About**
 
-It's built with React and Tailwind CSS. Every page is prerendered to plain HTML at build time and hydrated in the browser, so GitHub Pages serves static files and needs no server or build step on GitHub's side.
+It's built with React and Tailwind CSS. Every page is prerendered to plain HTML at build time and hydrated in the browser. GitHub Actions runs the build on every push to `main` and deploys the result to GitHub Pages, so the built files are never committed.
 
 ## Build and preview
 
@@ -16,11 +16,11 @@ You need Node.js 20 or newer.
 
 ```
 npm install
-npm run build              # writes index.html, work/, projects/, writing/, about/, 404.html and assets/
-npm run preview            # serves the folder at http://localhost:8000
+npm run build              # builds the site into dist/
+npm run preview            # serves dist/ at http://localhost:8000
 ```
 
-`npm run dev` rebuilds whenever something in `src/` or `content/` changes. Commit the generated HTML and `assets/` with your changes, because GitHub Pages serves them as they are.
+`npm run dev` rebuilds whenever something in `src/` or `content/` changes. `dist/` is ignored by git: you only commit source files, and GitHub Actions builds the site.
 
 ## Edit content
 
@@ -77,7 +77,7 @@ The test needs Python with Playwright (`pip install playwright && playwright ins
 
 ```
 npm run build
-python3 -m http.server 8000 &
+npm run preview &
 python3 tests/webapp_test.py --out .screens
 ```
 
@@ -91,13 +91,12 @@ It saves screenshots of every page at 390px and 1440px in light and dark. It fai
 
 ## Publish on GitHub Pages
 
-Recommended: a repository named exactly `pipowpi.github.io`, which serves the site at https://pipowpi.github.io.
+The site deploys itself. `.github/workflows/deploy.yml` runs on every push to `main` (and by hand from the Actions tab): it installs the packages, runs `npm run build` and publishes `dist/` to GitHub Pages.
 
-1. Create an empty public repository named `pipowpi.github.io` on GitHub (no README).
-2. Push this folder to its `main` branch.
-3. On GitHub, go to Settings > Pages > Build and deployment. Set Source to **Deploy from a branch**, Branch to **main**, folder **/ (root)**, then save.
-4. The site goes live at https://pipowpi.github.io after a minute or two.
+One-time setup on GitHub: go to Settings > Pages > Build and deployment, and set Source to **GitHub Actions**.
 
-A repository with any other name (for example `portfolio`) also works, served at https://pipowpi.github.io/portfolio/. Page links are relative, so they keep working. Only the 404 page assumes the site sits at the domain root.
+To update the site: edit the content, commit and push. You can watch the run in the repository's Actions tab, and the site updates a minute or two after it finishes.
 
-To update the site later: edit the content, run `npm run build`, then commit and push.
+The repository is `pipowpi.github.io`, which serves the site at https://pipowpi.github.io. A repository with any other name also works, served at https://pipowpi.github.io/<name>/. Page links are relative, so they keep working; only the 404 page assumes the site sits at the domain root.
+
+For exact, repeatable builds, run `npm install` once and commit the `package-lock.json` it creates. The workflow then uses `npm ci` with those exact versions.

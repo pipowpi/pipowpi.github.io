@@ -4,7 +4,7 @@ horizontal overflow, elements wider than the viewport, and basic interactions.
 
     python3 scripts/check.py [out_dir]
 
-Starts a static server on port 8123 from the repo root (the built site) and stops it at the end.
+Starts a static server on port 8123 from dist/ (the built site; run npm run build first) and stops it at the end.
 """
 import json
 import os
@@ -22,7 +22,7 @@ WIDTHS = {'mobile': 390, 'desktop': 1440}
 SUFFIX = '-dark' if os.environ.get('THEME') == 'dark' else ''
 
 os.makedirs(OUT, exist_ok=True)
-server = subprocess.Popen([sys.executable, '-m', 'http.server', str(PORT), '--bind', '127.0.0.1'], cwd=ROOT,
+server = subprocess.Popen([sys.executable, '-m', 'http.server', str(PORT), '--bind', '127.0.0.1'], cwd=os.path.join(ROOT, 'dist'),
                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 time.sleep(0.8)
 

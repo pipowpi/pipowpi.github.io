@@ -7,7 +7,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "dev": "node scripts/build.mjs --watch",
-    "preview": "python3 -m http.server 8000"
+    "preview": "python3 -m http.server 8000 -d dist"
   },
   "devDependencies": {
     "clsx": "^2.1.1",

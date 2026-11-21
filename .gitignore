@@ -5,3 +5,15 @@ node_modules/
 .screens/
 .skills/
 src/generated/
+
+# Built site: GitHub Actions builds and deploys it, so it is never committed.
+dist/
+# Output of the old setup, where the build wrote into the repo root.
+/index.html
+/404.html
+/work/
+/projects/
+/writing/
+/about/
+/assets/app.css
+/assets/app.js
