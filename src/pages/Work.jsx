@@ -1,16 +1,14 @@
 import { ERAS, YEAR_TICKS, PYTORCH_CI, XPRESSO } from '../data/work.js';
 import { Layout } from '../components/Layout.jsx';
 import { Flow } from '../components/Flow.jsx';
-import { Glance, Mark, PageHead, Section, Sheet, Tag, TextLink, Wrap, cn, enDash, useHref } from '../components/ui.jsx';
+import { HeroScene } from '../components/HeroScene.jsx';
+import { Glance, Icon, Mark, MotionToggle, PageHead, Section, Sheet, Tag, TextLink, Wrap, cn, enDash, useHref } from '../components/ui.jsx';
 
-// Past eras get deepening shades of blueprint blue; the current one is the running orange.
-const ERA_TONE = [
-  'bg-[color-mix(in_srgb,var(--accent)_25%,var(--rule))]',
-  'bg-[color-mix(in_srgb,var(--accent)_45%,var(--rule))]',
-  'bg-[color-mix(in_srgb,var(--accent)_70%,var(--rule))]',
-  'bg-accent',
-  'dash-run',
-];
+// Each era has its own stage color (the same as on the home page); the current one is dashed amber.
+// Inside a case study the accent becomes that era's color (NVIDIA lime, Abzooba coral).
+const tone = (t) => ({ '--accent': `var(--${t})`, '--wash': `color-mix(in srgb, var(--${t}) 16%, var(--sheet))` });
+const ERA_TONE = ['bg-pink', 'bg-teal', 'bg-coral', 'bg-lime', 'dash-run'];
+const ERA_TEXT = ['text-pink', 'text-teal', 'text-coral', 'text-lime', 'text-accent'];
 
 function Timeline() {
   return (
@@ -34,7 +32,9 @@ function Timeline() {
           <li key={e.id} id={e.id} className="row-span-7 grid grid-rows-subgrid content-start pb-10">
             <span className={cn('block h-1 w-full self-start rounded-sm', ERA_TONE[i])} aria-hidden="true" />
             <div className="mt-4">
-              <p className="t-meta text-lead">{enDash(e.years)}, {e.org}</p>
+              {e.switch && <p className="t-chip mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-ink px-2.5 py-0.5 text-ink"><Icon name="convert" className="size-3.5" /><span className="sr-only">Switch: </span>{e.switch}</p>}
+              {e.pivot && <p className="t-chip mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-accent px-2.5 py-0.5 text-accent"><Icon name="book" className="size-3.5" />{e.pivot}</p>}
+              <p className="t-meta text-lead"><span className={cn('font-semibold', ERA_TEXT[i])}>{enDash(e.years)}</span>, {e.org}</p>
               <h3 className="mt-1 font-display text-[20px] font-semibold leading-snug text-ink">{e.title}</h3>
             </div>
             <p className="text-[15px] leading-snug text-lead">{e.role}</p>
@@ -76,10 +76,22 @@ function PytorchCase() {
   const href = useHref();
   const c = PYTORCH_CI;
   return (
-    <Sheet as="article" id={c.id} className="p-5 md:p-8">
+    <Sheet as="article" id={c.id} style={tone('lime')} className="border-t-[3px] border-t-accent p-5 md:p-8">
       <CaseHead icon="gpu" c={c} />
       <Glance className="mt-6" items={c.glance} />
       <Flow className="mt-7" nodes={c.flow} label="How a Windows GPU test run flows" />
+      <figure className="relative mt-6 h-[260px] overflow-hidden rounded-md border border-rule bg-paper md:h-[320px]">
+        <div className="blueprint-grid absolute inset-0 opacity-60" aria-hidden="true" />
+        <HeroScene className="absolute inset-0 block size-full font-sans" />
+        <MotionToggle className="absolute top-3 right-3" />
+        <figcaption className="absolute inset-x-4 bottom-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-[14px] text-lead">
+          <span>The pull model: runners ask the queue for work</span>
+          <span className="flex gap-4">
+            <span className="inline-flex items-center gap-1.5"><i className="inline-block size-2 rounded-full bg-queue" />request</span>
+            <span className="inline-flex items-center gap-1.5"><i className="inline-block size-2 rounded-full bg-accent" />job</span>
+          </span>
+        </figcaption>
+      </figure>
       <h4 className="mt-9 font-display text-[19px] font-semibold">How it came together</h4>
       <ol className="mt-4 grid grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-3">
         {c.phases.map(([t, s], i) => (
@@ -110,7 +122,7 @@ function PytorchCase() {
 function XpressoCase() {
   const c = XPRESSO;
   return (
-    <Sheet as="article" id={c.id} className="p-5 md:p-8">
+    <Sheet as="article" style={tone('coral')} id={c.id} className="border-t-[3px] border-t-accent p-5 md:p-8">
       <CaseHead icon="layers" c={c} />
       <Glance className="mt-6" items={c.glance} />
       <Flow className="mt-7" nodes={c.flow} label="Xpresso.ai platform lifecycle" />

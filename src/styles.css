@@ -11,47 +11,56 @@
 @font-face { font-family: 'Fira Sans'; src: url('fonts/fira-sans-600.woff') format('woff'); font-weight: 600; font-display: swap; }
 @font-face { font-family: 'Anonymous Pro'; src: url('fonts/anonymous-pro-400.woff') format('woff'); font-weight: 400; font-display: swap; }
 
-/* "Phosphor" palette: warm graphite with one amber accent, like an old amber terminal.
-   Dark is the default; light is opt-in from the toggle. See design-system/gopi-portfolio/MASTER.md. */
+/* "Graphite" palette: cool charcoal with amber as the one action color, plus four stage colors
+   (pink, teal, coral, lime) that tell career stages and projects apart. Dark is the default;
+   light is opt-in from the toggle. See design-system/gopi-portfolio/MASTER.md. */
 :root,
 [data-theme="dark"] {
-  --paper: #100E0B;      /* Graphite */
-  --sheet: #181511;      /* Card */
-  --ink: #F2ECDF;        /* Bone */
-  --lead: #A89F8E;       /* Ash */
-  --rule: #28231D;       /* Rule */
-  --rule-strong: #3B342B;
-  --accent: #FFB224;     /* Phosphor amber */
+  --paper: #121316;      /* Graphite */
+  --sheet: #1A1C20;      /* Card */
+  --ink: #EEEDEA;
+  --lead: #A2A3A0;
+  --rule: #2A2D32;
+  --rule-strong: #3B3F46;
+  --accent: #FFB224;     /* Amber: actions, links, focus, "now" */
   --on-accent: #1A1203;
-  --wash: #2A2113;       /* Amber wash */
-  --pass: #9CCB6B;       /* Build passed */
-  --run: #FFB224;        /* Running (same amber: "live" is the accent) */
-  --queue: #8D8575;      /* Queued */
-  --term-bg: #0A0907;
-  --term-ink: #F2ECDF;
-  --term-dim: #A89F8E;
+  --wash: #2E2A22;
+  --pass: #8BD17C;       /* Build passed */
+  --run: #FFB224;
+  --queue: #8A8C91;
+  --pink: #FF8FB1;       /* Stage colors */
+  --teal: #38C9B0;
+  --coral: #FF6B57;
+  --lime: #C3E26B;
+  --term-bg: #0C0D0F;
+  --term-ink: #EEEDEA;
+  --term-dim: #A2A3A0;
   --term-run: #FFB224;
-  --header: rgba(16, 14, 11, 0.86);
+  --header: rgba(18, 19, 22, 0.86);
   color-scheme: dark;
 }
 [data-theme="light"] {
-  --paper: #F5F1E8;      /* Paper */
-  --sheet: #FFFCF6;
-  --ink: #1D1A15;
-  --lead: #5D564B;
-  --rule: #E1D9C9;
-  --rule-strong: #CDC2AF;
-  --accent: #A35200;     /* Burnt amber, readable on paper */
+  --paper: #F4F4F2;
+  --sheet: #FFFFFF;
+  --ink: #17181B;
+  --lead: #55575C;
+  --rule: #E2E3E5;
+  --rule-strong: #C8CACE;
+  --accent: #A35200;
   --on-accent: #FFFFFF;
-  --wash: #F6E7CF;
-  --pass: #3D7A2A;
+  --wash: #F7ECDC;
+  --pass: #2F7A2B;
   --run: #A35200;
-  --queue: #71695C;
-  --term-bg: #1D1A15;
-  --term-ink: #F2ECDF;
-  --term-dim: #A89F8E;
+  --queue: #76787D;
+  --pink: #B8285F;
+  --teal: #0B7A6A;
+  --coral: #BF3B27;
+  --lime: #5A7710;
+  --term-bg: #17181B;
+  --term-ink: #EEEDEA;
+  --term-dim: #A2A3A0;
   --term-run: #FFB224;
-  --header: rgba(245, 241, 232, 0.88);
+  --header: rgba(244, 244, 242, 0.88);
   color-scheme: light;
 }
 
@@ -68,6 +77,10 @@
   --color-pass: var(--pass);
   --color-run: var(--run);
   --color-queue: var(--queue);
+  --color-pink: var(--pink);
+  --color-teal: var(--teal);
+  --color-coral: var(--coral);
+  --color-lime: var(--lime);
   --color-term-bg: var(--term-bg);
   --color-term-ink: var(--term-ink);
   --color-term-dim: var(--term-dim);
@@ -138,6 +151,9 @@
      so they follow the theme without CSS gradients. */
   .dash-run { background: var(--run); mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='1'%3E%3Crect width='4' height='1'/%3E%3C/svg%3E") 0 0 / 7px 100% repeat-x; }
   .dash-run-y { background: var(--run); mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='8'%3E%3Crect width='1' height='4'/%3E%3C/svg%3E") 0 0 / 100% 8px repeat-y; }
+  /* Vertical dashes on phones, horizontal on wide screens (the wire into the deploy step). */
+  .dash-run-yx { background: var(--run); mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='8'%3E%3Crect width='1' height='4'/%3E%3C/svg%3E") 0 0 / 100% 8px repeat-y; }
+  @media (min-width: 1024px) { .dash-run-yx { mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='1'%3E%3Crect width='4' height='1'/%3E%3C/svg%3E") 0 0 / 7px 100% repeat-x; } }
   .blueprint-grid { background: var(--rule); mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M0 .5H28M.5 0V28' stroke='black'/%3E%3C/svg%3E") -1px -1px / 28px 28px repeat; }
 
   /* Article body */
@@ -149,6 +165,29 @@
 
   .read-progress { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; height: 3px; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); z-index: 40; }
   .step-in { animation: stepIn .5s ease-out both; }
+  /* Stage color helpers for SVG: set --sc on a group, then fill or stroke with it. */
+  .sc-fill { fill: var(--sc, var(--accent)); }
+  .sc-stroke { stroke: var(--sc, var(--accent)); }
+  .sc-wash { fill: color-mix(in srgb, var(--sc, var(--accent)) 20%, var(--sheet)); }
+  /* Career walk (home page): a line-art character walks the career run. Transforms only. */
+  .walk-pos { transition-property: transform; transition-timing-function: cubic-bezier(.45, 0, .3, 1); }
+  .walk-fill { transform-box: fill-box; transform-origin: 0 50%; transition: transform .75s cubic-bezier(.45, 0, .3, 1); }
+  .prop-pop { transform-box: fill-box; transform-origin: 50% 100%; animation: pop .45s cubic-bezier(.3, 1.6, .5, 1) both; }
+  .prop-pop.float { animation: pop .45s cubic-bezier(.3, 1.6, .5, 1) both, float 3.2s ease-in-out .6s infinite alternate; }
+  .walker .leg { transform-origin: 0px -18px; }
+  .walker .arm { transform-origin: 0px -34px; }
+  .walking .leg-a, .walking .arm-b { animation: swing .19s ease-in-out infinite alternate; }
+  .walking .leg-b, .walking .arm-a { animation: swing .19s ease-in-out infinite alternate-reverse; }
+  .walking .bob { animation: bob .19s ease-in-out infinite alternate; }
+  .tassel { transform-origin: 0px -2px; animation: sway 2.8s ease-in-out infinite alternate; }
+  .door-glow { animation: glow 1.6s ease-in-out infinite alternate; }
+  .hop { animation: hop .5s cubic-bezier(.3, 0, .5, 1) both; }
+  .sign-flip { transform-box: fill-box; transform-origin: 50% 50%; animation: flip .6s ease-in-out both; }
+  /* On phones the scene is drawn small, so the character, props and door are scaled up in place. */
+  .walker, .stop-ico, .door, .sign { transform-origin: 0px 0px; }
+  @media (max-width: 640px) { .walker { transform: scale(1.5); } .door { transform: scale(1.3); } .stop-ico { transform: scale(1.4); } .sign { transform: scale(1.3); } }
+  /* A step marker that just passed. */
+  .pop { animation: pop .45s cubic-bezier(.3,1.6,.5,1) both; }
 
   /* Looping animations stop while their element is off screen (set from entry-client.jsx). */
   [data-paused], [data-paused]::before, [data-paused]::after, [data-paused] * { animation-play-state: paused !important; }
@@ -158,6 +197,14 @@
 @keyframes ping { 0% { transform: scale(.5); opacity: .9; } 100% { transform: scale(1.8); opacity: 0; } }
 @keyframes blink { 50% { opacity: .25; } }
 @keyframes qpulse { 50% { border-color: var(--run); } }
+@keyframes swing { from { transform: rotate(-24deg); } to { transform: rotate(24deg); } }
+@keyframes bob { from { transform: translateY(0); } to { transform: translateY(-3px); } }
+@keyframes float { from { transform: translateY(0); } to { transform: translateY(-4px); } }
+@keyframes sway { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+@keyframes glow { from { opacity: .35; } to { opacity: 1; } }
+@keyframes hop { 0%, 100% { transform: translateY(0); } 45% { transform: translateY(-14px); } }
+@keyframes flip { 0% { transform: scaleX(1); } 50% { transform: scaleX(-1); } 100% { transform: scaleX(1); } }
+@keyframes pop { from { transform: scale(.4); opacity: .3; } to { transform: scale(1); opacity: 1; } }
 @keyframes stepIn { from { opacity: 0; transform: translateX(-10px); } }
 @keyframes typing { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 @keyframes busy { 0% { transform: translateX(-100%); } 100% { transform: translateX(286%); } }

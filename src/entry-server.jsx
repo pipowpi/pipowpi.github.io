@@ -27,7 +27,7 @@ export function render(route) {
     `<meta property="og:description" content="${esc(meta.description)}">`,
     `<meta property="og:type" content="${route.page === 'post' ? 'article' : 'website'}">`,
     '<meta name="color-scheme" content="light dark">',
-    '<meta name="theme-color" content="#100E0B">',
+    '<meta name="theme-color" content="#121316">',
     `<link rel="preload" href="${route.root}assets/fonts/fira-sans-400.woff" as="font" type="font/woff" crossorigin>`,
     `<link rel="preload" href="${route.root}assets/fonts/bitter-var.woff" as="font" type="font/woff" crossorigin>`,
   ].join('\n');

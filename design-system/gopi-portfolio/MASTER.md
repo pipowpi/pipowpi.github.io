@@ -16,11 +16,11 @@ The tool's matches for this site agree with the direction that was already in pl
 | Query | Tool's answer | What we kept or changed |
 |---|---|---|
 | Product: Portfolio / Personal | Minimalism & Swiss Style | Kept. The site is a ruled, grid-based spec sheet. |
-| Color: Resume / CV, professional navy | Navy primary, blue accent, success green, near-white background | Rejected later: navy and blue read as a generic AI default. Replaced with the "Phosphor" amber palette (section 3). |
+| Color: Resume / CV, professional navy | Navy primary, blue accent, success green, near-white background | Rejected later: navy and blue read as a generic AI default. Replaced first with an amber "Phosphor" palette, now the "Graphite" palette (section 3). |
 | Typography: data and dashboards | Fira Sans for UI and data, from the Fira family | Kept, and widened: Fira Sans now sets every number, stat and small label. |
 | Default output: Inter + Inter, shadows md to xl, 12px card radius, lift-on-hover cards | Rejected | Inter is the generic default. Shadows and lift-on-hover fight the flat, drawn-on-paper concept. |
 
-So the system keeps the ruled spec-sheet layout and tightens it: more consistent number styling, a floor on small text and fixed text roles. Color follows the site's original "Phosphor" amber palette, dark by default.
+So the system keeps the ruled spec-sheet layout and tightens it: more consistent number styling, a floor on small text and fixed text roles. Color is the "Graphite" palette: amber for actions plus four stage colors, dark by default.
 
 ---
 
@@ -43,48 +43,58 @@ So the system keeps the ruled spec-sheet layout and tightens it: more consistent
 
 All component code uses tokens (`bg-sheet`, `text-lead`), never raw hex.
 
-**Palette: "Phosphor".** Warm graphite with a single amber accent, like an amber-phosphor terminal. It replaces the earlier blueprint navy and cyan palette, which read as a generic default. **Dark is the default theme**; light is opt-in from the header toggle and remembered in `localStorage` (`gkk-theme`).
+**Palette: "Graphite".** Cool charcoal with amber as the one action color, plus four stage colors. It replaced the warm near-black "Phosphor" palette, which used only amber and green and read as flat. **Dark is the default theme**; light is opt-in from the header toggle and remembered in `localStorage` (`gkk-theme`).
+
+### Roles
+
+- **Amber (`--accent`)** is for actions and "now": buttons, links, focus, the running MS stage, the deploy step.
+- **Stage colors** tell career stages and projects apart. They never mean pass or fail.
+  - Career: Learn the craft = pink, Make it scale = teal, Own the platform = coral, Bring Windows GPUs to CI = lime, MS = amber. The switch is drawn in ink.
+  - Projects: 3D head reconstruction = pink, RISC-V CPU = teal, VLM project = coral, open GPU CI design = lime, this site = amber.
+  - Inside a project card or a Work case study, `--accent` is set to that item's color, so its icon, numbers, links and diagram highlight follow.
+- **Green (`--pass`)** stays for done checklist items.
 
 ### Dark (default)
 
-| Token | Name | Hex | Role |
-|---|---|---|---|
-| `--paper` | Graphite | `#100E0B` | Page background |
-| `--sheet` | Card | `#181511` | Card surface |
-| `--ink` | Bone | `#F2ECDF` | Headings, body text |
-| `--lead` | Ash | `#A89F8E` | Secondary text, captions, meta |
-| `--rule` | Rule | `#28231D` | Hairlines, chart tracks |
-| `--rule-strong` | Hard rule | `#3B342B` | Borders on controls and diagram nodes |
-| `--accent` | Phosphor amber | `#FFB224` | Links, primary button, focus, data series 1 |
-| `--on-accent` | | `#1A1203` | Text on the primary button |
-| `--wash` | Amber wash | `#2A2113` | Selected chip, highlighted node, inline code |
-| `--pass` | Build passed | `#9CCB6B` | Done, success |
-| `--run` | Running | `#FFB224` | In progress, drafts, availability (the accent: "live" is amber) |
-| `--queue` | Queued | `#8D8575` | Planned (borders and dots only, never text) |
-| `--term-bg` | Terminal | `#0A0907` | Terminal and code block background |
-| `--term-ink` | | `#F2ECDF` | Terminal text |
-| `--term-dim` | | `#A89F8E` | Terminal keys and prompts |
-| `--term-run` | | `#FFB224` | Running state inside the terminal |
+| Token | Hex | | Token | Hex |
+|---|---|---|---|---|
+| `--paper` | `#121316` | | `--accent` | `#FFB224` |
+| `--sheet` | `#1A1C20` | | `--on-accent` | `#1A1203` |
+| `--ink` | `#EEEDEA` | | `--pink` | `#FF8FB1` |
+| `--lead` | `#A2A3A0` | | `--teal` | `#38C9B0` |
+| `--rule` | `#2A2D32` | | `--coral` | `#FF6B57` |
+| `--rule-strong` | `#3B3F46` | | `--lime` | `#C3E26B` |
+| `--wash` | `#2E2A22` | | `--pass` | `#8BD17C` |
+| `--queue` | `#8A8C91` | | `--term-bg` | `#0C0D0F` |
 
 ### Light
 
 | Token | Hex | | Token | Hex |
 |---|---|---|---|---|
-| `--paper` | `#F5F1E8` | | `--wash` | `#F6E7CF` |
-| `--sheet` | `#FFFCF6` | | `--pass` | `#3D7A2A` |
-| `--ink` | `#1D1A15` | | `--run` | `#A35200` |
-| `--lead` | `#5D564B` | | `--queue` | `#71695C` |
-| `--rule` | `#E1D9C9` | | `--term-bg` | `#1D1A15` |
-| `--rule-strong` | `#CDC2AF` | | `--term-dim` | `#A89F8E` |
-| `--accent` | `#A35200` | | `--term-run` | `#FFB224` |
-| `--on-accent` | `#FFFFFF` | | | |
+| `--paper` | `#F4F4F2` | | `--accent` | `#A35200` |
+| `--sheet` | `#FFFFFF` | | `--on-accent` | `#FFFFFF` |
+| `--ink` | `#17181B` | | `--pink` | `#B8285F` |
+| `--lead` | `#55575C` | | `--teal` | `#0B7A6A` |
+| `--rule` | `#E2E3E5` | | `--coral` | `#BF3B27` |
+| `--rule-strong` | `#C8CACE` | | `--lime` | `#5A7710` |
+| `--wash` | `#F7ECDC` | | `--pass` | `#2F7A2B` |
+| `--queue` | `#76787D` | | `--term-bg` | `#17181B` |
 
-Light mode uses a burnt amber so links stay readable on paper. It is not an inversion.
+### Contrast (WCAG 2.x, on the card surface, checked with a script)
 
-### Contrast (WCAG 2.x, checked with a script)
-
-| Pair | Light | Dark | Needed |
+| Color | Dark | Light | Needed |
 |---|---|---|---|
+| ink | 14.6 | 17.8 | 4.5 |
+| lead | 6.7 | 7.2 | 4.5 |
+| accent | 9.5 | 5.6 | 4.5 |
+| pink | 8.0 | 6.0 | 4.5 |
+| teal | 8.3 | 5.2 | 4.5 |
+| coral | 6.1 | 5.4 | 4.5 |
+| lime | 11.7 | 5.2 | 4.5 |
+| pass | 9.4 | 5.3 | 4.5 |
+| on-accent on accent | 10.3 | 5.6 | 4.5 |
+
+---|---|---|---|
 | ink on paper | 15.4 | 16.4 | 4.5 |
 | lead on paper | 6.4 | 7.4 | 4.5 |
 | lead on sheet | 7.1 | 6.9 | 4.5 |
@@ -240,6 +250,7 @@ A 14px label with a dot. The dot's shape and motion also carry the state, so col
 - ❌ Inter, Roboto or system-ui as the display font: they are the generic defaults.
 - ❌ Dark terminal-green "hacker" themes, neon glows, or gradient text.
 - ❌ Navy, indigo, violet or cyan accents, and blue-to-purple gradients: the generic AI-generated look.
+- ❌ Using a stage color to mean success or failure, or more than one stage color inside one card.
 - ❌ En and em dashes in copy, including date ranges. Write "2017 - 2020".
 - ❌ Drop shadows and hover lift (`translateY`) on cards.
 - ❌ All-caps eyebrows, letter-spaced labels, and middle-dot (·) separators.

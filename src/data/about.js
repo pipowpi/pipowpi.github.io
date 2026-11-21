@@ -1,5 +1,5 @@
 export const BIO = [
-  "I am based in Stony Brook, NY, finishing an MS in Computer Science at Stony Brook University with a focus on computer vision and vision-language models. Before that I spent 8 years in software. I started on product work, then spent the last 6 years on platforms: an MLOps platform at Abzooba, and a Windows GPU CI system for PyTorch at NVIDIA.",
+  "I am based in Stony Brook, NY, finishing an MS in Computer Science at Stony Brook University with a focus on computer vision and vision-language models. Before that I spent 8 years in software. I started on product work, then spent the last 6 years on platforms: an MLOps platform at Abzooba, and a Windows GPU CI system for PyTorch at NVIDIA. I went back to school to stop treating models and LLMs as a black box, and to understand them well enough to build better infrastructure for them.",
   'I like problems where the requirement is clear but the architecture is not, and I write things down to make sure I actually understand them.',
 ];
 

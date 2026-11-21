@@ -2,6 +2,7 @@
 export const HEAD = {
   id: 'head-reconstruction',
   icon: 'face',
+  tone: 'pink',
   context: 'CSE 527 Computer Vision, course project',
   status: 'live',
   title: '3D head reconstruction: swapping FLAME for GNM in SMIRK',
@@ -45,6 +46,7 @@ export const COURSE = [
   {
     id: 'riscv',
     icon: 'cpu',
+  tone: 'teal',
     context: 'Computer Architecture',
     status: 'live',
     title: 'RISC-V CPU',
@@ -61,6 +63,7 @@ export const COURSE = [
   {
     id: 'vlm',
     icon: 'eye',
+  tone: 'coral',
     context: 'Vision-language models',
     status: 'live',
     title: 'VLM course project',
@@ -80,6 +83,7 @@ export const PERSONAL = [
   {
     id: 'open-ci',
     icon: 'server',
+  tone: 'lime',
     context: 'CI/CD and Kubernetes',
     status: 'planned',
     title: 'Open version of the GPU CI design',

@@ -1,49 +1,242 @@
+import { useEffect, useRef, useState } from 'react';
 import { SITE } from '../data/site.js';
-import { HERO, PILLARS, CAREER_STEPS, STATUS_LINES } from '../data/home.js';
+import { HERO, FACTS, PHASE, NOW, CAREER_STEPS, PILLARS } from '../data/home.js';
 import { PYTORCH_CI, XPRESSO } from '../data/work.js';
 import { HEAD, COURSE } from '../data/projects.js';
 import posts from '../generated/posts.json';
 import { Layout } from '../components/Layout.jsx';
-import { Flow } from '../components/Flow.jsx';
 import { PostList } from '../components/PostList.jsx';
-import { HeroScene } from '../components/HeroScene.jsx';
-import { Button, Icon, Mark, MotionToggle, Section, Sheet, StatusPill, TextLink, Wrap, cn, enDash, useHref } from '../components/ui.jsx';
+import { CareerWalk } from '../components/CareerWalk.jsx';
+import { Button, Icon, Mark, Section, Sheet, StatusPill, Tag, TextLink, Wrap, cn, useHref } from '../components/ui.jsx';
+
+// Step markers shared by the "Now" stepper and the career run.
+function StepIcon({ state, className = '' }) {
+  if (state === 'done') {
+    return <span className={cn('relative z-10 inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-[var(--sc,var(--pass))] text-sheet', className)}><Icon name="check" className="size-3.5" strokeWidth={3} /></span>;
+  }
+  if (state === 'running') {
+    return <span className={cn('relative z-10 inline-block size-6 shrink-0 animate-spin rounded-full border-[2.5px] border-[color-mix(in_srgb,var(--run)_25%,transparent)] border-t-run bg-sheet [animation-duration:1.2s]', className)} />;
+  }
+  return <span className={cn('relative z-10 inline-block size-6 shrink-0 rounded-full border-2 border-dashed border-queue bg-sheet', className)} />;
+}
+
+const STATE_TEXT = { done: 'passed', running: 'in progress', queued: 'queued' };
+
+// Where this academic year stands: a four-stop track, the first stop running.
+function PhaseTrack() {
+  return (
+    <ol className="grid grid-cols-4" aria-label="This academic year">
+      {PHASE.map((p, i) => (
+        <li key={p.when} className="relative min-w-0 pr-2">
+          {i < PHASE.length - 1 && (
+            <span aria-hidden="true" className={cn('absolute top-[11px] left-6 right-0 h-0.5',
+              p.state === 'running' ? 'dash-run opacity-70' : 'bg-rule-strong')} />
+          )}
+          <StepIcon state={p.state} />
+          <p className={cn('t-label mt-2.5', p.state === 'running' ? 'text-run' : 'text-ink')}>{p.when}</p>
+          <p className="text-[14px] leading-snug text-lead"><span className="sr-only">{STATE_TEXT[p.state]}: </span>{p.what}</p>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function NowCard() {
+  const href = useHref();
+  return (
+    <Sheet as="aside" aria-labelledby="now-title" className="p-5 md:p-7">
+      <h2 id="now-title" className="font-display text-[22px] font-semibold leading-tight">Right now</h2>
+      <div className="mt-6"><PhaseTrack /></div>
+      <dl className="mt-7 border-t border-rule">
+        {NOW.map((r) => (
+          <div key={r.k} className="flex gap-3.5 border-b border-rule py-3.5 last:border-b-0 last:pb-0">
+            <Mark name={r.icon} size="sm" />
+            <div className="min-w-0">
+              <dt className="t-label text-ink">{r.k}</dt>
+              <dd className="mt-0.5 text-[15px] leading-snug text-lead">
+                {r.v}{r.href && <> <TextLink href={href(r.href)} className="text-[15px]">See projects</TextLink></>}
+              </dd>
+            </div>
+          </div>
+        ))}
+      </dl>
+    </Sheet>
+  );
+}
 
 function Hero() {
   const href = useHref();
   return (
-    <Wrap className="grid grid-cols-1 items-center gap-10 pt-12 pb-14 md:pt-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+    <Wrap className="grid grid-cols-1 items-center gap-10 pt-12 pb-14 md:pt-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-14">
       <div>
-        <h1 className="font-display text-[38px] font-semibold leading-[1.05] md:text-[56px] lg:text-[60px]">
-          {HERO.lead}{' '}
-          <span className="rot" aria-hidden="true">
-            {HERO.rotating.map((w) => <span key={w}>{w}</span>)}
-          </span>
-          <span className="sr-only">CI pipelines, GPU clusters and ML platforms.</span>
-        </h1>
+        <p className="text-[19px] font-medium text-lead">{HERO.hello}</p>
+        <h1 className="mt-3 font-display text-[34px] font-semibold leading-[1.08] md:text-[44px] lg:text-[48px]">{HERO.title}</h1>
         <p className="mt-6 max-w-[56ch] text-[18px] leading-relaxed text-lead">{HERO.lede}</p>
         <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-          <Button primary href={href('work/')}>See the work</Button>
-          <TextLink href={href('writing/')}>Read the writing</TextLink>
+          <Button primary href={href('work/')}>See my work</Button>
+          <Button href={`mailto:${SITE.email}`}><Icon name="mail" className="size-[18px]" />Email me</Button>
         </div>
-        <p className="mt-8 inline-flex items-center gap-2.5 text-[15px] font-medium text-run">
+        <p className="mt-7 inline-flex items-center gap-2.5 text-[15px] font-medium text-run">
           <span className="ping relative inline-block size-2 rounded-full bg-run" aria-hidden="true" />
           {SITE.availability}
         </p>
+        <dl className="mt-9 grid max-w-[560px] grid-cols-2 gap-x-6 gap-y-5 border-t border-rule pt-6 sm:grid-cols-4">
+          {FACTS.map((f) => (
+            <div key={f.label} className="flex flex-col">
+              <dd className="t-metric order-1 text-ink">{f.n}</dd>
+              <dt className="order-2 mt-1.5 text-[14px] leading-snug text-lead">{f.label}</dt>
+            </div>
+          ))}
+        </dl>
       </div>
-      <figure className="relative h-[300px] overflow-hidden rounded-md border border-rule bg-sheet md:h-[420px]">
-        <div className="blueprint-grid absolute inset-0 opacity-60" aria-hidden="true" />
-        <HeroScene className="absolute inset-0 block size-full font-sans" />
-        <MotionToggle className="absolute top-3 right-3" />
-        <figcaption className="absolute inset-x-4 bottom-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-[14px] text-lead">
-          <span>Runners pulling jobs from a queue</span>
-          <span className="flex gap-4">
-            <span className="inline-flex items-center gap-1.5"><i className="inline-block size-2 rounded-full bg-queue" />request</span>
-            <span className="inline-flex items-center gap-1.5"><i className="inline-block size-2 rounded-full bg-run" />job</span>
-          </span>
-        </figcaption>
-      </figure>
+      <NowCard />
     </Wrap>
+  );
+}
+
+// Eight years as a CI run. Vertical on phones, a left-to-right pipeline on wide screens.
+// When the card scrolls into view the run replays: each stage runs and passes, the switch to NVIDIA
+// flips, and the run ends on the MS, which keeps running. The deploy job (a full-time role) waits
+// for review. The server render (and reduced motion) shows that final state directly.
+const RUN_END = CAREER_STEPS.findIndex((s) => s.kind === 'deploy') - 1; // the MS
+const DUR = CAREER_STEPS.map((s) => (s.kind === 'switch' ? 1100 : s.kind === 'pivot' ? 1500 : 1400));
+
+function stepState(i, at) {
+  if (CAREER_STEPS[i].kind === 'deploy') return 'waiting';
+  if (i < at) return 'done';
+  if (i === at) return 'running';
+  return 'queued';
+}
+
+function SwitchIcon({ state, className = '' }) {
+  return (
+    <span className={cn('relative z-10 inline-flex size-6 shrink-0 items-center justify-center rounded-md border-2',
+      state === 'queued' ? 'border-dashed border-queue bg-sheet text-lead' : 'border-ink bg-sheet text-ink', className)}>
+      <Icon name="convert" className="size-3.5" strokeWidth={2.4} />
+    </span>
+  );
+}
+
+function PivotIcon({ state, className = '' }) {
+  return (
+    <span className={cn('relative z-10 inline-flex size-6 shrink-0 items-center justify-center rounded-md border-2',
+      state === 'queued' ? 'border-dashed border-queue bg-sheet text-lead' : 'border-accent bg-accent text-on-accent', className)}>
+      <Icon name="book" className="size-3.5" strokeWidth={2.2} />
+    </span>
+  );
+}
+
+function DeployIcon({ className = '' }) {
+  return (
+    <span className={cn('relative z-10 inline-flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-accent bg-sheet text-accent', className)}>
+      <Icon name="briefcase" className="size-3" strokeWidth={2.2} />
+    </span>
+  );
+}
+
+function CareerRun() {
+  const href = useHref();
+  const ref = useRef(null);
+  const timers = useRef([]);
+  const [at, setAt] = useState(RUN_END); // index of the running step
+  const [played, setPlayed] = useState(true);
+
+  const play = () => {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+    setPlayed(false);
+    setAt(0);
+    let t = 0;
+    for (let i = 1; i <= RUN_END; i++) {
+      t += DUR[i - 1];
+      timers.current.push(setTimeout(() => setAt(i), t));
+    }
+    timers.current.push(setTimeout(() => setPlayed(true), t + 300));
+  };
+
+  useEffect(() => {
+    const el = ref.current;
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      || document.documentElement.getAttribute('data-motion') === 'off';
+    if (!el || still || !('IntersectionObserver' in window)) return undefined;
+    setAt(-1); // waiting to start: everything queued until the card is on screen
+    setPlayed(false);
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) { io.disconnect(); setTimeout(play, 250); }
+    }, { threshold: 0.35 });
+    io.observe(el);
+    return () => { io.disconnect(); timers.current.forEach(clearTimeout); };
+  }, []);
+
+  const cur = CAREER_STEPS[Math.max(at, 0)];
+  const status = at < 0
+    ? 'queued: career.yml'
+    : cur.kind === 'switch'
+      ? 'switch: new company, new role, new team'
+      : cur.kind === 'pivot'
+        ? 'pivot: stop treating models as a black box, learn them to build better infra for them'
+      : at < RUN_END
+        ? `running: ${cur.name} (${cur.time})`
+        : `running: ${cur.name}. next: deploy, waiting for review`;
+
+  return (
+    <Sheet className="overflow-hidden">
+      <div ref={ref} className="flex flex-wrap items-center justify-between gap-3 border-b border-rule px-5 py-3 md:px-6">
+        <p className="flex flex-wrap items-center gap-3 text-[15px]">
+          <StatusPill status="running">Running</StatusPill>
+          <span translate="no" className="font-mono text-[16px] text-ink">career.yml</span>
+        </p>
+        <div className="flex items-center gap-5">
+          <button type="button" onClick={play} disabled={!played}
+            className={cn('t-label inline-flex min-h-10 cursor-pointer items-center gap-1.5 text-lead transition-opacity duration-200 hover:text-accent disabled:cursor-default disabled:opacity-0')}>
+            <Icon name="play" className="size-3.5" />Replay
+          </button>
+          <TextLink href={href('work/#timeline')} className="text-[15px]">See the full timeline</TextLink>
+        </div>
+      </div>
+      <div className="border-b border-rule bg-paper px-2 pt-3 md:px-6 md:pt-4">
+        <CareerWalk at={at} className="mx-auto block h-auto w-full max-w-[780px]" />
+      </div>
+      <ol className="grid grid-cols-1 p-5 md:p-6 lg:grid-cols-[repeat(3,minmax(0,1fr))_92px_minmax(0,1fr)_92px_repeat(2,minmax(0,1fr))]" aria-label="Career so far, as a build run">
+        {CAREER_STEPS.map((s, i) => {
+          const st = stepState(i, at);
+          const next = CAREER_STEPS[i + 1];
+          const iconCls = cn('absolute top-0.5 left-0 lg:static lg:flex', st === 'done' && 'pop');
+          return (
+            <li key={s.name} style={{ '--sc': `var(--${s.tone})` }} className={cn('relative pb-6 pl-10 transition-opacity duration-500 last:pb-0 lg:pb-0 lg:pl-0 lg:pr-4', st === 'queued' && 'opacity-45')}>
+              {next && (
+                <span aria-hidden="true" className={cn('absolute top-7 bottom-1 left-[11px] w-0.5 lg:top-[11px] lg:bottom-auto lg:left-7 lg:right-1 lg:h-0.5 lg:w-auto',
+                  next.kind === 'deploy' ? 'dash-run-yx opacity-60' : 'bg-rule-strong')}>
+                  {next.kind !== 'deploy' && (
+                    <span className={cn('absolute inset-0 origin-top bg-[var(--sc)] transition-transform duration-500 ease-out lg:origin-left',
+                      i < at ? 'scale-100' : 'scale-y-0 lg:scale-x-0 lg:scale-y-100')} />
+                  )}
+                </span>
+              )}
+              {s.kind === 'switch' ? <SwitchIcon key={st} state={st} className={iconCls} />
+                : s.kind === 'pivot' ? <PivotIcon key={st} state={st} className={iconCls} />
+                : s.kind === 'deploy' ? <DeployIcon className={iconCls} />
+                : <StepIcon key={st} state={st} className={iconCls} />}
+              <p className={cn('t-chip transition-colors duration-300 lg:mt-3',
+                s.kind === 'switch' ? 'text-ink' : s.kind === 'pivot' || s.kind === 'deploy' ? 'text-accent' : st === 'running' ? 'text-run' : st === 'done' ? 'text-[var(--sc)]' : 'text-lead')}>
+                {s.time}<span className="sr-only">, {s.kind === 'deploy' ? 'waiting for review' : s.kind === 'switch' || s.kind === 'pivot' ? s.kind : STATE_TEXT[st]}</span>
+              </p>
+              <p className="mt-0.5 text-[17px] font-semibold leading-snug text-ink">{s.name}</p>
+              {s.kind === 'deploy'
+                ? <p className="mt-1"><span className="t-chip inline-block rounded-full border border-dashed border-accent px-2 py-px text-accent">{s.org}</span></p>
+                : <p className="text-[15px] font-medium text-ink/80">{s.org}</p>}
+              {s.role && <p className="text-[14px] leading-snug text-lead">{s.role}</p>}
+              {s.why && <p className="mt-1.5 hidden text-[14px] leading-snug text-accent lg:block">{s.why}</p>}
+              <p className="mt-1 text-[15px] leading-snug text-lead lg:hidden">{s.sub}</p>
+              {st === 'running' && i < RUN_END && s.kind === 'stage' && <div className="relative mt-3 h-1 max-w-[160px] overflow-hidden rounded-sm bg-rule"><div className="busy-fill" /></div>}
+            </li>
+          );
+        })}
+      </ol>
+      <p translate="no" className="border-t border-rule bg-paper px-5 py-2.5 font-mono text-[15px] text-lead md:px-6">
+        <span className="text-run">&gt;</span> {status}
+      </p>
+    </Sheet>
   );
 }
 
@@ -66,131 +259,44 @@ function Focus() {
   );
 }
 
-const STEP_STATE = {
-  done: { label: 'passed', cls: 'text-pass' },
-  running: { label: 'running', cls: 'text-run' },
-  queued: { label: 'queued', cls: 'text-lead' },
-};
-
-function StepIcon({ state }) {
-  if (state === 'done') {
-    return <span className="relative z-10 mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-pass text-sheet"><Icon name="check" className="size-3.5" strokeWidth={3} /></span>;
-  }
-  if (state === 'running') {
-    return <span className="relative z-10 mt-0.5 inline-block size-6 shrink-0 animate-spin rounded-full border-[2.5px] border-[color-mix(in_srgb,var(--run)_25%,transparent)] border-t-run bg-sheet [animation-duration:1.2s]" />;
-  }
-  return <span className="relative z-10 mt-0.5 inline-block size-6 shrink-0 rounded-full border-2 border-dashed border-queue bg-sheet animate-[qpulse_2.4s_ease-in-out_infinite]" />;
-}
-
-function CareerRun() {
-  const href = useHref();
-  // Typing timings for the terminal lines, so each line starts when the previous one ends.
-  let delay = 1.7;
-  const lines = STATUS_LINES.map(([k, v]) => {
-    const n = 12 + v.length;
-    const d = +(n * 0.022).toFixed(2);
-    const line = { k, v, n, d, delay };
-    delay = +(delay + d + 0.12).toFixed(2);
-    return line;
-  });
-  return (
-    <Sheet className="overflow-hidden">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule px-5 py-3 md:px-6">
-        <p className="flex flex-wrap items-center gap-3 text-[15px]">
-          <StatusPill status="running">Running</StatusPill>
-          <span translate="no" className="font-mono text-[16px] text-ink">career.yml</span>
-        </p>
-        <TextLink href={href('work/#timeline')} className="text-[15px]">See all 8 years</TextLink>
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2">
-        <ol className="p-5 md:p-6" aria-label="Career so far, as a build run">
-          {CAREER_STEPS.map((s, i) => (
-            <li key={s.name} className="step-in relative flex gap-3.5 pb-6 last:pb-0" style={{ animationDelay: `${0.2 + i * 0.4}s` }}>
-              {i < CAREER_STEPS.length - 1 && (
-                <span aria-hidden="true" className={cn('absolute top-7 bottom-1 left-[11px] w-0.5',
-                  s.state === 'done' ? 'bg-pass' : s.state === 'running' ? 'dash-run-y opacity-60' : 'bg-rule-strong')} />
-              )}
-              <StepIcon state={s.state} />
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-                  <p className="text-[17px] font-semibold text-ink">{s.name}</p>
-                  <span className={cn('t-chip', STEP_STATE[s.state].cls)}>
-                    {s.state === 'done' ? enDash(s.time) : STEP_STATE[s.state].label}
-                  </span>
-                </div>
-                <p className="mt-0.5 text-[15px] leading-snug text-lead"><span className="sr-only">{STEP_STATE[s.state].label}, {s.kind} step. </span>{s.sub}</p>
-                {s.state === 'running' && <div className="relative mt-3 h-1 max-w-[280px] overflow-hidden rounded-sm bg-rule"><div className="busy-fill" /></div>}
-              </div>
-            </li>
-          ))}
-        </ol>
-        <div translate="no" className="bg-term-bg p-5 font-mono text-[14px] leading-[1.9] text-term-ink md:p-6 md:text-[16px]">
-          <p className="mb-1 text-term-dim">$ career status --now</p>
-          {lines.map((l) => (
-            <p key={l.k} className="tline" style={{ '--n': l.n, '--s': l.n + 1, '--d': `${l.d}s`, '--delay': `${l.delay}s` }}>
-              <span className="text-term-dim">{l.k.padEnd(12, ' ')}</span><span>{l.v}</span>
-            </p>
-          ))}
-          <p className="step-in mt-2 text-term-run" style={{ animationDelay: `${delay}s` }}>
-            &gt; waiting for a runner to pull this job
-            <span className="ml-1.5 inline-block h-[15px] w-2 bg-term-run align-[-2px] animate-[blink_1s_steps(1)_infinite]" />
-          </p>
-          <div className="step-in mt-5 flex flex-wrap gap-3 font-sans" style={{ animationDelay: `${delay + 0.24}s` }}>
-            <a href={`mailto:${SITE.email}`} className="inline-flex min-h-11 items-center gap-2 rounded-md bg-term-ink px-5 py-2.5 text-[16px] font-medium text-term-bg hover:bg-[color-mix(in_srgb,var(--term-ink)_85%,var(--term-bg))]"><Icon name="mail" className="size-4" />Pull this job<span className="sr-only"> (email me)</span></a>
-            <a href={SITE.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-[color-mix(in_srgb,var(--term-ink)_35%,transparent)] px-5 py-2.5 text-[16px] font-medium text-term-ink hover:border-term-ink">LinkedIn<Icon name="external" className="size-4" /></a>
-          </div>
-        </div>
-      </div>
-    </Sheet>
-  );
-}
-
+// Two short cards. The diagrams and detail stay on the Work page.
 function SelectedWork() {
   const href = useHref();
+  const cards = [
+    {
+      to: 'work/#pytorch-ci', icon: 'gpu', tone: 'lime', title: PYTORCH_CI.title, org: PYTORCH_CI.org, dates: '2025 - 2026',
+      text: 'PyTorch had no CI that tested Windows with a GPU. I led the design of a harness that runs GPU-backed Windows VMs inside Kubernetes, with runners that pull their work.',
+      tags: ['KubeVirt', 'VFIO', 'GitHub Actions', 'STRIDE'],
+    },
+    {
+      to: 'work/#xpresso', icon: 'layers', tone: 'coral', title: XPRESSO.title, org: XPRESSO.org, dates: XPRESSO.dates,
+      text: 'An MLOps platform for data, training, serving and deployment. I grew from engineer to core architect and lead, and built its DataOps layer.',
+      tags: ['Pachyderm', 'MinIO', 'Kubernetes', 'FastAPI'],
+    },
+  ];
   return (
-    <div>
-      <Sheet as="a" interactive href={href('work/#pytorch-ci')} className="group p-5 md:p-7">
-        <h3 className="font-display text-[26px] font-semibold leading-tight md:text-[30px]">{PYTORCH_CI.title}</h3>
-        <p className="t-meta mt-2 text-lead"><span className="font-medium text-ink">{PYTORCH_CI.org}</span>, {enDash('2025 - 2026')}</p>
-        <p className="mt-3 max-w-[64ch] text-[17px] leading-relaxed text-lead">
-          PyTorch had no CI that tested Windows with a GPU. I led the design of a harness that provisions a GPU-backed Windows VM inside Kubernetes on demand, with runners that pull work so nothing outside the cluster needs a way in.
-        </p>
-        <Flow className="mt-7" label="How a Windows GPU test run flows" nodes={[
-          { name: 'GitHub Actions', sub: 'Requests a Windows GPU run' },
-          { name: 'Job service', sub: 'Queues it; a gateway screens it' },
-          { name: 'Runner pod', sub: 'Asks for work, outbound only', link: 'pull' },
-          { name: 'Windows VM', sub: 'KubeVirt + VFIO GPU' },
-        ]} />
-        <p className="mt-6 font-medium text-accent underline decoration-[color-mix(in_srgb,var(--accent)_40%,transparent)] underline-offset-4 group-hover:decoration-accent">Read the case study</p>
-      </Sheet>
-
-      <Sheet as="a" interactive href={href('work/#xpresso')} className="group mt-4 p-5 md:p-7">
-        <h3 className="font-display text-[24px] font-semibold leading-tight md:text-[26px]">{XPRESSO.title}</h3>
-        <p className="t-meta mt-2 text-lead"><span className="font-medium text-ink">{XPRESSO.org}</span>, {enDash(XPRESSO.dates)}</p>
-        <p className="mt-3 max-w-[64ch] text-[17px] leading-relaxed text-lead">
-          An MLOps platform for data, training, serving and deployment. I grew from engineer to core architect and lead, and designed and built its DataOps layer.
-        </p>
-        <dl className="mt-6 grid grid-cols-1 gap-x-8 sm:grid-cols-3">
-          {XPRESSO.stats.filter((st) => ['API throughput', 'less inference compute', 'faster container builds'].includes(st.label)).map((st) => (
-            <div key={st.label} className="flex items-baseline gap-2.5 border-t border-rule py-3 sm:flex-col sm:gap-1.5">
-              <dd className="t-metric order-1 text-ink">{st.value}{st.suffix}</dd>
-              <dt className="order-2 text-[15px] leading-snug text-lead">{st.label}</dt>
-            </div>
-          ))}
-        </dl>
-        <p className="mt-4 font-medium text-accent underline decoration-[color-mix(in_srgb,var(--accent)_40%,transparent)] underline-offset-4 group-hover:decoration-accent">Read the case study</p>
-      </Sheet>
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      {cards.map((c) => (
+        <Sheet key={c.to} as="a" interactive href={href(c.to)} style={{ '--tc': `var(--${c.tone})` }} className="group flex flex-col p-5 md:p-6">
+          <Mark name={c.icon} size="sm" className="text-[color:var(--tc)]" />
+          <h3 className="mt-4 font-display text-[22px] font-semibold leading-tight">{c.title}</h3>
+          <p className="t-meta mt-1.5 text-lead"><span className="font-medium text-ink">{c.org}</span>, {c.dates}</p>
+          <p className="mt-3 text-[16px] leading-relaxed text-lead">{c.text}</p>
+          <p className="mt-4 flex flex-wrap gap-2">{c.tags.map((t) => <Tag key={t}>{t}</Tag>)}</p>
+          <p className="mt-auto pt-5 font-medium text-accent underline decoration-[color-mix(in_srgb,var(--accent)_40%,transparent)] underline-offset-4 group-hover:decoration-accent">Read the case study</p>
+        </Sheet>
+      ))}
     </div>
   );
 }
 
 const BUILDING = [
-  { id: HEAD.id, title: '3D head reconstruction', sub: HEAD.short },
-  { id: 'riscv', title: COURSE[0].title, sub: 'Graduate computer architecture' },
-  { id: 'vlm', title: 'VLM project', sub: 'Graduate vision-language models' },
+  { id: HEAD.id, title: '3D head reconstruction', sub: HEAD.short, tone: 'pink' },
+  { id: 'riscv', title: COURSE[0].title, sub: 'Graduate computer architecture', tone: 'teal' },
+  { id: 'vlm', title: 'VLM project', sub: 'Graduate vision-language models', tone: 'coral' },
 ];
 
-// Recent writing and current course projects, side by side: the "what's happening now" of the page.
+// Recent writing and current course projects, side by side.
 function Lately() {
   const href = useHref();
   return (
@@ -209,7 +315,7 @@ function Lately() {
             <li key={p.id} className="border-t border-rule">
               <a href={href(`projects/#${p.id}`)} className="group flex items-start justify-between gap-4 py-4">
                 <span className="min-w-0">
-                  <span className="block font-display text-[20px] font-semibold leading-snug text-ink group-hover:text-accent">{p.title}</span>
+                  <span className="flex items-center gap-2.5 font-display text-[20px] font-semibold leading-snug text-ink group-hover:text-accent"><i aria-hidden="true" className="inline-block size-2.5 shrink-0 rounded-sm" style={{ background: `var(--${p.tone})` }} />{p.title}</span>
                   <span className="mt-1 block text-[16px] leading-snug text-lead">{p.sub}</span>
                 </span>
                 <span className="shrink-0 pt-1"><StatusPill status="running" /></span>
@@ -228,8 +334,8 @@ export default function Home() {
     <Layout active="home">
       <Hero />
       <Wrap>
-        <Section id="focus" label="Focus" tight><Focus /></Section>
-        <Section id="status" label="Status" note="My career, shown as a CI run"><CareerRun /></Section>
+        <Section id="so-far" wide label="The pipeline so far" note="Eight years, one stage at a time"><CareerRun /></Section>
+        <Section id="focus" label="What I work on" tight><Focus /></Section>
         <Section id="selected" label="Selected work" note="2 case studies"><SelectedWork /></Section>
         <Section id="lately" label="Lately" note="What I’m writing and building"><Lately /></Section>
       </Wrap>

@@ -3,6 +3,14 @@ import { Layout } from '../components/Layout.jsx';
 import { Flow, Stages } from '../components/Flow.jsx';
 import { Glance, Mark, PageHead, Section, Sheet, StatusPill, TextLink, Wrap, cn, useHref } from '../components/ui.jsx';
 
+// Each project has its own color: inside its card the accent is swapped for it, so the icon,
+// numbers, diagram highlight, links and progress all follow.
+function toneStyle(p) {
+  if (!p.tone) return undefined;
+  const c = `var(--${p.tone})`;
+  return { '--accent': c, '--wash': `color-mix(in srgb, ${c} 16%, var(--sheet))` };
+}
+
 const NUM = new Intl.NumberFormat('en-US');
 const toStatus = (s) => (s === 'live' ? 'running' : 'planned');
 
@@ -49,7 +57,7 @@ function HeadProject() {
   const p = HEAD;
   const pct = Math.round((p.milestones.done / p.milestones.total) * 100);
   return (
-    <Sheet as="article" id={p.id} className="p-5 md:p-8">
+    <Sheet as="article" id={p.id} style={toneStyle(p)} className="border-t-[3px] border-t-accent p-5 md:p-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         <div className="flex items-start justify-between gap-3 sm:contents">
           <Mark name={p.icon} size="lg" />
@@ -66,7 +74,7 @@ function HeadProject() {
       <Glance className="mt-6" items={p.glance} />
       <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
         <div className="h-2.5 w-full max-w-[360px] overflow-hidden rounded-sm bg-rule" role="progressbar" aria-valuemin={0} aria-valuemax={p.milestones.total} aria-valuenow={p.milestones.done} aria-label="Milestones done">
-          <div className="grow-x h-full rounded-sm bg-pass" style={{ width: `${pct}%` }} />
+          <div className="grow-x h-full rounded-sm bg-accent" style={{ width: `${pct}%` }} />
         </div>
         <span className="t-meta font-medium text-ink">{p.milestones.done} of {p.milestones.total} milestones done</span>
       </div>
@@ -104,7 +112,7 @@ function SmallProject({ p }) {
   const href = useHref();
   const hasDiagram = p.stages || p.loop;
   return (
-    <Sheet as="article" id={p.id} className={cn('grid grid-cols-1 gap-y-6 p-5 md:p-7', hasDiagram && 'md:gap-y-7')}>
+    <Sheet as="article" id={p.id} style={toneStyle(p)} className={cn('grid grid-cols-1 gap-y-6 border-t-[3px] border-t-accent p-5 md:p-7', hasDiagram && 'md:gap-y-7')}>
       <div className="flex flex-col">
         <div className="flex items-start justify-between gap-3">
           <Mark name={p.icon} />

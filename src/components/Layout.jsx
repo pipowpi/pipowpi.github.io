@@ -13,7 +13,7 @@ function ThemeToggle() {
     document.documentElement.setAttribute('data-theme', next);
     try { localStorage.setItem('gkk-theme', next); } catch (e) { /* storage unavailable */ }
     // Keep the browser chrome color in step with the page, not only with the system setting.
-    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', next === 'dark' ? '#100E0B' : '#F5F1E8'));
+    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', next === 'dark' ? '#121316' : '#F4F4F2'));
     setTheme(next);
     window.dispatchEvent(new CustomEvent('themechange', { detail: next }));
   };

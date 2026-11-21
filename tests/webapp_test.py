@@ -108,10 +108,12 @@ def interactions(browser, base):
     out['theme'] = {'flips': before != after, 'persists': pg.evaluate("document.documentElement.dataset.theme") == after,
                     'label': pg.locator('header button').get_attribute('aria-label')}
     pg.locator('header button').click()
-    # Motion toggle: pauses every animation, persists, resumes.
+    # Motion toggle (on the Work page, next to the runner scene): pauses every animation, persists, resumes.
+    pg.goto(base + 'work/')
+    pg.wait_for_load_state('networkidle')
     m = pg.locator('figure button')
     m.click()
-    paused = pg.evaluate("document.documentElement.dataset.motion === 'off' && getComputedStyle(document.querySelector('.rot > span')).animationName === 'none'")
+    paused = pg.evaluate("document.documentElement.dataset.motion === 'off' && [...document.querySelectorAll('*')].every((e) => getComputedStyle(e).animationName === 'none')")
     pg.reload()
     kept = pg.evaluate("document.documentElement.dataset.motion === 'off'")
     pg.locator('figure button').click()

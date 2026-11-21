@@ -191,7 +191,7 @@ function page({ head, body, root, data, cssHref, jsHref }) {
 ${head}
 <link rel="icon" href="${root}assets/img/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="${root}${cssHref}">
-<script>(function(){var d=document.documentElement,t='dark',s=null;try{s=localStorage.getItem('gkk-theme');if(s==='light'||s==='dark'){t=s;}if(localStorage.getItem('gkk-motion')==='off'){d.setAttribute('data-motion','off');}}catch(e){}d.setAttribute('data-theme',t);if(s==='light'||s==='dark'){var c=t==='dark'?'#100E0B':'#F5F1E8';document.querySelectorAll('meta[name=theme-color]').forEach(function(m){m.setAttribute('content',c);});}})();</script>
+<script>(function(){var d=document.documentElement,t='dark',s=null;try{s=localStorage.getItem('gkk-theme');if(s==='light'||s==='dark'){t=s;}if(localStorage.getItem('gkk-motion')==='off'){d.setAttribute('data-motion','off');}}catch(e){}d.setAttribute('data-theme',t);if(s==='light'||s==='dark'){var c=t==='dark'?'#121316':'#F4F4F2';document.querySelectorAll('meta[name=theme-color]').forEach(function(m){m.setAttribute('content',c);});}})();</script>
 </head>
 <body>
 <div id="root">${body}</div>
