@@ -1,0 +1,20 @@
+{
+  "name": "pipowpi-portfolio",
+  "private": true,
+  "version": "2.0.0",
+  "description": "Gopi Krishna Kanugula's portfolio: React + Tailwind, prerendered to static HTML for GitHub Pages.",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs --watch",
+    "preview": "python3 -m http.server 8000"
+  },
+  "devDependencies": {
+    "clsx": "^2.1.1",
+    "esbuild": "^0.25.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.3.0",
+    "tailwindcss": "^4.1.0"
+  }
+}
