@@ -7,6 +7,7 @@ import posts from '../generated/posts.json';
 import { Layout } from '../components/Layout.jsx';
 import { PostList } from '../components/PostList.jsx';
 import { CareerWalk } from '../components/CareerWalk.jsx';
+import { Motif } from '../components/Backdrop.jsx';
 import { Button, Icon, Mark, Section, Sheet, StatusPill, Tag, TextLink, Wrap, cn, tone, useHref } from '../components/ui.jsx';
 
 // Step markers shared by the "Now" stepper and the career run.
@@ -243,16 +244,19 @@ function CareerRun() {
 function Focus() {
   const href = useHref();
   return (
-    <ul className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 xl:grid-cols-4 xl:divide-x xl:divide-rule">
+    <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {PILLARS.map((p) => (
-        <li key={p.title} style={tone(p.tone)} className="sm:pr-5 xl:px-5 xl:first:pl-0 xl:last:pr-0">
-          <a href={href(p.href)} className="group flex items-start gap-3.5">
-            <Mark name={p.icon} />
-            <span className="min-w-0">
-              <span className="block text-[15px] font-semibold text-ink group-hover:text-accent">{p.title}</span>
-              <span className="mt-0.5 block text-[14px] leading-snug text-lead">{p.sub}</span>
-            </span>
-          </a>
+        <li key={p.title} style={tone(p.tone)}>
+          <Sheet as="a" interactive href={href(p.href)} className="group flex h-full flex-col overflow-hidden">
+            <div className="flex h-[150px] items-center justify-center border-b border-rule bg-paper px-5 py-4">
+              <Motif name={p.motif} tone={p.tone} className="h-full w-full" />
+            </div>
+            <div className="flex flex-1 flex-col p-4">
+              <span className="flex items-center gap-2 text-[15px] font-semibold text-ink group-hover:text-accent"><i aria-hidden="true" className="inline-block size-2.5 rounded-sm bg-accent" />{p.title}</span>
+              <span className="mt-1 block text-[14px] leading-snug text-lead">{p.sub}</span>
+              <span className="mt-auto flex flex-wrap gap-1.5 pt-3">{p.tools.map((t) => <Tag key={t}>{t}</Tag>)}</span>
+            </div>
+          </Sheet>
         </li>
       ))}
     </ul>

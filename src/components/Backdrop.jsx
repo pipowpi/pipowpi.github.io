@@ -1,11 +1,9 @@
-// Page backdrop: faint line drawings of the systems this site is about, fixed behind the content.
-// Each page gets its own set: CI/CD pipelines and clusters on Work, convolutions and meshes on
-// Projects, attention and transformer blocks on Writing, a mix on Home and About.
-// Drawn in the ink color at low opacity, with one highlight in a site color that moves slowly
-// (a job travelling a pipeline, a kernel sliding over an image, attention weights shifting).
-// The drawings sit in the side margins, outside the 1120px content column, so they never sit under text;
-// they scale down to fit the margin and are hidden when the window is too narrow to have one.
-// Decorative only: aria-hidden, no pointer events, and every animation stops under reduced motion.
+// Motifs: small animated line drawings of the systems this site is about (a CI pipeline, an API
+// with its database, a Kubernetes cluster, a loss curve, causal attention, a convolution, a
+// transformer block, a head mesh, the RISC-V pipeline). They are placed in the layout where there is
+// room for them (the page headers and the home page's "What I work on" cards), not behind text.
+// Lines use the ink color; one element per drawing uses the highlight color (--hi) and moves slowly.
+// Decorative only: aria-hidden, and every animation stops under reduced motion.
 
 const r = (i) => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); }; // fixed pseudo-random
 
@@ -160,29 +158,34 @@ function RiscV() {
   );
 }
 
-const MOTIFS = { pipeline: Pipeline, cluster: Cluster, loss: Loss, attention: Attention, conv: Convolution, transformer: Transformer, mesh: Mesh, riscv: RiscV };
-
-// Per page: which drawings, where (percent of the viewport), how wide, and the highlight color.
-const SETS = {
-  home: [['pipeline', 2, 12, 330, 'lime'], ['attention', 84, 16, 220, 'accent'], ['loss', 3, 66, 300, 'coral'], ['conv', 77, 68, 300, 'pink']],
-  work: [['pipeline', 2, 12, 340, 'lime'], ['cluster', 80, 14, 280, 'teal'], ['loss', 3, 66, 300, 'coral'], ['pipeline', 76, 72, 300, 'teal']],
-  projects: [['conv', 2, 12, 310, 'pink'], ['mesh', 83, 12, 200, 'pink'], ['riscv', 3, 66, 300, 'teal'], ['attention', 80, 66, 210, 'coral']],
-  writing: [['attention', 3, 12, 220, 'accent'], ['transformer', 84, 12, 190, 'teal'], ['pipeline', 2, 70, 310, 'teal'], ['loss', 76, 70, 290, 'lime']],
-  about: [['pipeline', 2, 12, 320, 'lime'], ['transformer', 85, 14, 180, 'accent'], ['conv', 3, 68, 290, 'pink'], ['loss', 77, 70, 290, 'coral']],
-};
-
-export function Backdrop({ page }) {
-  const set = SETS[page] || SETS.home;
+function Api() {
   return (
-    <div className="backdrop" aria-hidden="true">
-      {set.map(([m, x, y, w, t], i) => {
-        const M = MOTIFS[m];
-        return (
-          <div key={i} className={`bd-motif ${x > 50 ? 'bd-right' : 'bd-left'}`} style={{ top: `${y}%`, '--hi': `var(--${t})` }}>
-            <div style={{ maxWidth: `${w}px` }}><M /></div>
-          </div>
-        );
-      })}
-    </div>
+    <svg viewBox="0 0 360 150">
+      <g transform="translate(0 40)"><rect width="76" height="46" rx="6" /><text x="12" y="28" className="bd-text">client</text></g>
+      <g transform="translate(130 30)"><rect width="96" height="66" rx="6" /><text x="12" y="26" className="bd-text">api</text><text x="12" y="46" className="bd-text bd-text-sm">POST /files</text></g>
+      <g transform="translate(286 34)">
+        <path d="M0 8 a37 8 0 0 0 74 0 a37 8 0 0 0 -74 0 V50 a37 8 0 0 0 74 0 V8" />
+        <text x="22" y="36" className="bd-text">db</text>
+      </g>
+      <path d="M76 63 H130 M226 63 H286" />
+      <g transform="translate(150 112)"><rect width="56" height="30" rx="4" /><path d="M12 10 h20 M12 18 h30" /></g>
+      <path d="M178 96 V112" strokeDasharray="3 4" />
+      <circle cx="80" cy="63" r="4.5" className="bd-hi-fill bd-req" />
+      <circle cx="230" cy="63" r="4.5" className="bd-hi-fill bd-req bd-req-2" />
+      <text x="0" y="16" className="bd-text">GET  200  14 ms</text>
+    </svg>
   );
+}
+
+const MOTIFS = { api: Api,  pipeline: Pipeline, cluster: Cluster, loss: Loss, attention: Attention, conv: Convolution, transformer: Transformer, mesh: Mesh, riscv: RiscV };
+
+// A motif in the layout. `tone` sets the highlight color; `label` is an optional caption.
+export function Motif({ name, tone = 'accent', className = '' }) {
+  const M = MOTIFS[name];
+  return <div className={`motif ${className}`} style={{ '--hi': `var(--${tone})` }} aria-hidden="true"><M /></div>;
+}
+
+// The page background itself is only a faint dot grid that fades down the page.
+export function Backdrop() {
+  return <div className="backdrop" aria-hidden="true" />;
 }

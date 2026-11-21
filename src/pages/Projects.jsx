@@ -1,6 +1,7 @@
 import { HEAD, COURSE, PERSONAL } from '../data/projects.js';
 import { Layout } from '../components/Layout.jsx';
 import { Flow, Stages } from '../components/Flow.jsx';
+import { Motif } from '../components/Backdrop.jsx';
 import { Glance, Mark, PageHead, Section, Sheet, StatusPill, TextLink, Wrap, cn, useHref } from '../components/ui.jsx';
 
 // Each project has its own color: inside its card the accent is swapped for it, so the icon,
@@ -149,7 +150,7 @@ export default function Projects() {
   return (
     <Layout active="projects">
       <Wrap>
-        <PageHead title="Things I’m building"
+        <PageHead title="Things I’m building" art={<div className="flex items-center justify-end gap-6"><Motif name="conv" tone="pink" className="h-[150px] w-[260px]" /><Motif name="mesh" tone="pink" className="h-[190px] w-[170px]" /></div>}
           aside={(
             <ul className="flex gap-3" aria-label="Legend">
               <li><StatusPill status="running" /></li>

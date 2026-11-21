@@ -1,3 +1,4 @@
+import { Motif } from '../components/Backdrop.jsx';
 import { BIO, PRINCIPLES, NOW, TOOLBOX, EDUCATION, FACTS } from '../data/about.js';
 import { Layout } from '../components/Layout.jsx';
 import { Mark, PageHead, Section, Tag, TextLink, Wrap, cn, tone, useHref } from '../components/ui.jsx';
@@ -8,7 +9,7 @@ export default function About() {
   return (
     <Layout active="about">
       <Wrap>
-        <PageHead title="Hi, I’m Gopi.">
+        <PageHead title="Hi, I’m Gopi." art={<Motif name="loss" tone="coral" className="ml-auto h-[220px] w-[360px]" />}>
           {BIO.map((para, i) => <p key={i} className={cn(i > 0 && 'mt-4')}>{para}</p>)}
         </PageHead>
 

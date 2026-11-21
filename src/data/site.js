@@ -47,7 +47,7 @@ export const TOPIC_TONE = {
   MLOps: 'coral', 'ML and vision': 'coral', 'ML platforms': 'coral',
   Security: 'pink',
   VLMs: 'accent', 'Deep learning': 'accent', Vision: 'accent',
-  Languages: 'ink', 'Backend and APIs': 'ink',
+  Languages: 'ink', 'Backend and APIs': 'pink',
   'Infrastructure and DevOps': 'lime', 'CI/CD and monitoring': 'teal',
 };
 export const topicTone = (t) => TOPIC_TONE[t] || 'accent';

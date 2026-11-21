@@ -53,27 +53,29 @@ All component code uses tokens (`bg-sheet`, `text-lead`), never raw hex.
   - Projects: 3D head reconstruction = pink, RISC-V CPU = teal, VLM project = coral, open GPU CI design = lime, this site = amber.
   - Inside a project card or a Work case study, `--accent` is set to that item's color, so its icon, numbers, links and diagram highlight follow.
 - **Green (`--pass`)** stays for done checklist items.
-- **Topics** have one color each, everywhere (writing tags and filters, post pages, the About toolbox, the home focus areas): lime = infrastructure and GPUs, teal = CI/CD, coral = ML platforms and MLOps, pink = security, amber = vision and AI, ink = languages. The map lives in `src/data/site.js` (`TOPIC_TONE`).
+- **Topics** have one color each, everywhere (writing tags and filters, post pages, the About toolbox, the home focus areas): lime = infrastructure and GPUs, teal = CI/CD, coral = ML platforms and MLOps, pink = backend and security, amber = vision and AI, ink = languages. The map lives in `src/data/site.js` (`TOPIC_TONE`).
 - **Lists of four** (home facts, the "Right now" rows, About numbers, About habits) cycle through the colors so each item is easy to tell apart.
 - **How to apply a color:** wrap the item with `style={tone('teal')}` (from `ui.jsx`). That swaps `--accent` and `--wash` inside it, so icons, numbers, links and highlights follow without new classes.
 
-### Background
+### Background and drawings
 
-The page background is not flat, but it never competes with the content. A fixed layer behind everything (`Backdrop.jsx`, rendered by `Layout.jsx`) draws faint line drawings of the systems the site is about, in the side margins only:
+The page background is graphite with a faint dot grid that fades down from the top (`Backdrop` in `Backdrop.jsx`).
 
-| Page | Drawings |
+The drawings (`Motif` in `Backdrop.jsx`) are placed in the layout where there is room for them, never behind text, so they are seen in full:
+
+| Where | Drawing |
 |---|---|
-| Home | CI pipeline, causal attention matrix, training loss curve, convolution |
-| Work | CI pipeline, Kubernetes cluster with pods, loss curve, a second pipeline |
-| Projects | convolution, wireframe head mesh, five-stage RISC-V pipeline, attention matrix |
-| Writing | attention matrix, transformer block, CI pipeline, loss curve |
-| About | CI pipeline, transformer block, convolution, loss curve |
+| Home, "What I work on" cards | API with its database (Backend and APIs), Kubernetes cluster (Infrastructure and DevOps), CI pipeline (CI/CD and monitoring), causal attention (ML platforms and vision) |
+| Work header | Kubernetes cluster with pods |
+| Projects header | convolution and wireframe head mesh |
+| Writing header | attention matrix and transformer block |
+| About header | training loss curve |
 
-- Lines are ink at 15 to 17% opacity (`--bd-o`); one element per drawing uses a site color at about half strength (`--bd-hi-o`).
-- Each drawing has one slow motion with a meaning: a job moves along the pipeline, a pod pulses, the loss curve draws, attention weights shift, the 3x3 kernel steps over the image while its output cell lights up, the clock steps through the RISC-V stages, a scan line passes over the mesh.
-- Drawings live outside the 1120px content column and fade out where they reach it. They are hidden below 1280px wide, where there is no margin. A faint dot grid fades down from the top on every page.
+- Lines are ink at about 46% opacity; one element per drawing uses the item's color.
+- Each drawing has one slow motion with a meaning: requests travel from client to API to database, a pod pulses, a job moves along the pipeline, attention weights shift, the 3x3 kernel steps over the image while its output cell lights up, a scan line passes over the mesh, a highlight climbs the transformer, the loss curve draws.
+- Header drawings show on wide screens only (1024px and up); the home cards show them at every size.
 - Everything stops under reduced motion or the motion toggle.
-- Rejected: large blurred color glows. They read as decoration with no meaning and washed out the page.
+- Rejected: large blurred color glows (decoration with no meaning), and drawings fixed behind the content (mostly hidden by it).
 
 ### Dark (default)
 

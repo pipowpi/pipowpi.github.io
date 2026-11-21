@@ -2,6 +2,7 @@ import { ERAS, YEAR_TICKS, PYTORCH_CI, XPRESSO } from '../data/work.js';
 import { Layout } from '../components/Layout.jsx';
 import { Flow } from '../components/Flow.jsx';
 import { HeroScene } from '../components/HeroScene.jsx';
+import { Motif } from '../components/Backdrop.jsx';
 import { Glance, Icon, Mark, MotionToggle, PageHead, Section, Sheet, Tag, TextLink, Wrap, cn, enDash, useHref } from '../components/ui.jsx';
 
 // Each era has its own stage color (the same as on the home page); the current one is dashed amber.
@@ -169,7 +170,7 @@ export default function Work() {
   return (
     <Layout active="work">
       <Wrap>
-        <PageHead title="8 years in software">
+        <PageHead title="8 years in software" art={<Motif name="cluster" tone="teal" className="ml-auto h-[200px] w-[310px]" />}>
           I started out on product work and spent the next six years on platforms. At Abzooba that meant DataOps and reliability, and later leading an MLOps platform. At NVIDIA it meant bringing GPU CI to PyTorch on Windows.
           My course and personal projects are on the <TextLink href={href('projects/')}>Projects</TextLink> page.
         </PageHead>

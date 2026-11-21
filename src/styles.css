@@ -37,8 +37,6 @@
   --term-dim: #A2A3A0;
   --term-run: #FFB224;
   --header: rgba(18, 19, 22, 0.78);
-  --bd-o: 15%;
-  --bd-hi-o: 55%;
   color-scheme: dark;
 }
 [data-theme="light"] {
@@ -63,8 +61,6 @@
   --term-dim: #A2A3A0;
   --term-run: #FFB224;
   --header: rgba(244, 244, 242, 0.8);
-  --bd-o: 17%;
-  --bd-hi-o: 50%;
   color-scheme: light;
 }
 
@@ -169,23 +165,20 @@
 
   .read-progress { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; height: 3px; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); z-index: 40; }
   .step-in { animation: stepIn .5s ease-out both; }
-  /* Backdrop (Layout, Backdrop.jsx): faint line drawings of pipelines, clusters, attention and
-     convolutions, fixed behind the page. Ink at low opacity, one highlight color per drawing. */
-  .backdrop { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; color: color-mix(in srgb, var(--ink) var(--bd-o), transparent); }
-  .backdrop::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(color-mix(in srgb, var(--ink) 8%, transparent) 1px, transparent 1.4px); background-size: 22px 22px; mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 10%, transparent 75%); }
-  /* Each drawing fills its side margin and reaches 110px under the content edge, fading out before it gets there. */
-  .bd-motif { position: absolute; width: max(0px, calc(50vw - 560px + 110px)); }
-  .bd-left { left: 0; padding-left: 20px; mask-image: linear-gradient(to right, #000 calc(100% - 150px), transparent calc(100% - 40px)); }
-  .bd-right { right: 0; padding-right: 20px; mask-image: linear-gradient(to left, #000 calc(100% - 150px), transparent calc(100% - 40px)); }
-  .bd-left > div { margin-left: auto; }
-  .bd-right > div { margin-right: auto; }
-  .bd-motif svg { display: block; width: 100%; height: auto; overflow: visible; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  /* Page background: a faint dot grid that fades down from the top (Backdrop in Backdrop.jsx). */
+  .backdrop { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+  .backdrop::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(color-mix(in srgb, var(--ink) 9%, transparent) 1px, transparent 1.4px); background-size: 22px 22px; mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 10%, transparent 75%); }
+  /* Motifs (Backdrop.jsx): line drawings placed in the layout. Ink lines, one highlight in --hi. */
+  .motif { color: color-mix(in srgb, var(--ink) 46%, transparent); --bd-hi-o: 95%; }
+  .motif svg { display: block; width: 100%; height: 100%; overflow: visible; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
   .bd-text { fill: currentColor; stroke: none; font: 500 12px var(--font-mono); }
   .bd-text-sm { font-size: 10px; }
   .bd-hi { stroke: color-mix(in srgb, var(--hi) var(--bd-hi-o), transparent); }
   .bd-hi-fill { fill: color-mix(in srgb, var(--hi) var(--bd-hi-o), transparent); stroke: none; }
   .bd-hi-soft { fill: color-mix(in srgb, var(--hi) 16%, transparent); stroke: color-mix(in srgb, var(--hi) var(--bd-hi-o), transparent); }
   .bd-packet { animation: bdPacket 5s linear infinite; }
+  .bd-req { animation: bdReq 2.4s ease-in-out infinite; }
+  .bd-req-2 { animation-delay: 1.2s; }
   .bd-pulse { animation: bdPulse 2.6s ease-in-out infinite; }
   .bd-draw { stroke-dasharray: 1; animation: bdDraw 9s ease-out infinite; }
   .bd-weight { animation: bdWeight 6s ease-in-out infinite; }
@@ -193,7 +186,6 @@
   .bd-rise { animation: bdRise 5s steps(5) infinite; }
   .bd-scan { animation: bdScan 6s ease-in-out infinite alternate; }
   .bd-clock { animation: bdClock 8s steps(8) infinite; }
-  @media (max-width: 1279px) { .bd-motif { display: none; } }
   /* Stage color helpers for SVG: set --sc on a group, then fill or stroke with it. */
   .sc-fill { fill: var(--sc, var(--accent)); }
   .sc-stroke { stroke: var(--sc, var(--accent)); }
@@ -233,6 +225,7 @@
 @keyframes glow { from { opacity: .35; } to { opacity: 1; } }
 @keyframes hop { 0%, 100% { transform: translateY(0); } 45% { transform: translateY(-14px); } }
 @keyframes flip { 0% { transform: scaleX(1); } 50% { transform: scaleX(-1); } 100% { transform: scaleX(1); } }
+@keyframes bdReq { 0% { transform: translateX(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateX(48px); opacity: 0; } }
 @keyframes bdPacket { from { transform: translateX(0); } to { transform: translateX(350px); } }
 @keyframes bdPulse { 50% { fill-opacity: .9; } }
 @keyframes bdDraw { 0% { stroke-dashoffset: 1; } 55%, 100% { stroke-dashoffset: 0; } }

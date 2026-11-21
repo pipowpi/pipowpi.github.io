@@ -4,6 +4,7 @@ import { Layout } from '../components/Layout.jsx';
 import { PageHead, Section, Wrap, cn, tone } from '../components/ui.jsx';
 import { topicTone } from '../data/site.js';
 import { PostList } from '../components/PostList.jsx';
+import { Motif } from '../components/Backdrop.jsx';
 
 function WhyIWrite() {
   return (
@@ -42,7 +43,7 @@ export default function Writing() {
   return (
     <Layout active="writing">
       <Wrap>
-        <PageHead title="Notes and explainers">
+        <PageHead title="Notes and explainers" art={<div className="flex items-center justify-end gap-6"><Motif name="attention" tone="accent" className="h-[180px] w-[180px]" /><Motif name="transformer" tone="teal" className="h-[200px] w-[150px]" /></div>}>
           Notes on things I’ve worked with or studied, written in plain language.
         </PageHead>
         <Section id="why" label="Why this page" note="A way of learning"><WhyIWrite /></Section>
