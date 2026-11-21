@@ -59,23 +59,26 @@ All component code uses tokens (`bg-sheet`, `text-lead`), never raw hex.
 
 ### Background and drawings
 
-The page background is graphite with a faint dot grid that fades down from the top (`Backdrop` in `Backdrop.jsx`).
+**Background** (`Backdrop` in `Backdrop.jsx`): a blueprint grid (fine lines every 24px, heavier every 120px) with a soft wash of the page's two colors along the top edge. Both scroll with the page and fade out within the first screen, so text further down sits on plain graphite. Wash colors: Home amber and teal, Work lime and coral, Projects pink and teal, Writing teal and amber, About coral and amber. Wash strength is `--wash-o` (16% dark, 13% light).
 
-The drawings (`Motif` in `Backdrop.jsx`) are placed in the layout where there is room for them, never behind text, so they are seen in full:
+**Drawings** (`Motif` in `Backdrop.jsx`) are literal, labelled diagrams placed in the layout, never behind text:
 
-| Where | Drawing |
-|---|---|
-| Home, "What I work on" cards | API with its database (Backend and APIs), Kubernetes cluster (Infrastructure and DevOps), CI pipeline (CI/CD and monitoring), causal attention (ML platforms and vision) |
-| Work header | Kubernetes cluster with pods |
-| Projects header | convolution and wireframe head mesh |
-| Writing header | attention matrix and transformer block |
-| About header | training loss curve |
+| Where | Drawing | What moves |
+|---|---|---|
+| Home card: Backend and APIs | client, API service (routes, auth, rate limits), database, file storage | a request travels to the API, then to the database and storage, then "201 Created" |
+| Home card: Infrastructure and DevOps; Work header | Kubernetes control plane (API server, scheduler) over three GPU worker nodes with pods | the scheduler places a new pod on a node |
+| Home card: CI/CD and monitoring | push, build, Linux and Windows GPU test jobs, ship; build-time bars and a p95 latency line | jobs run and pass stage by stage |
+| Home card: ML platforms and vision | input image, 3x3 edge kernel with its weights, feature map | the kernel slides; the matching output cell lights up |
+| Projects header | a photo, SMIRK + GNM, a triangulated 3D head mesh with eyes, nose and mouth | a scan line passes over the mesh |
+| Writing header | causal attention: a query word, the words before it, line width = weight, later words masked | the query moves along the sentence |
+| About header | training and validation loss over epochs, best checkpoint marked | the training curve draws |
 
-- Lines are ink at about 46% opacity; one element per drawing uses the item's color.
-- Each drawing has one slow motion with a meaning: requests travel from client to API to database, a pod pulses, a job moves along the pipeline, attention weights shift, the 3x3 kernel steps over the image while its output cell lights up, a scan line passes over the mesh, a highlight climbs the transformer, the loss curve draws.
-- Header drawings show on wide screens only (1024px and up); the home cards show them at every size.
-- Everything stops under reduced motion or the motion toggle.
-- Rejected: large blurred color glows (decoration with no meaning), and drawings fixed behind the content (mostly hidden by it).
+A transformer block (embedding, attention, add & norm, feed-forward, × N, next-token probabilities) is also available as `transformer`.
+
+- Lines are ink at 50%, labels in the mono font, and one highlight in the item's color.
+- Animations run only while the drawing is on screen, and stop under reduced motion or the motion toggle.
+- Header drawings show on screens 1024px and wider; home cards show theirs at every size.
+- Rejected: blurred color glows, and drawings fixed behind the content.
 
 ### Dark (default)
 

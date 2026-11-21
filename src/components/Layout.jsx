@@ -81,8 +81,8 @@ export function Layout({ active, children }) {
   return (
     <>
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-on-accent">Skip to content</a>
-      {/* A faint dot grid behind the page. The drawings themselves live in the page headers and cards. */}
-      <Backdrop />
+      {/* Blueprint grid and a soft color wash at the top of the page. The drawings live in the page headers and cards. */}
+      <Backdrop page={active} />
       <Header active={active} />
       <main id="main">{children}</main>
       <Footer />

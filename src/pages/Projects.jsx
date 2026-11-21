@@ -150,7 +150,7 @@ export default function Projects() {
   return (
     <Layout active="projects">
       <Wrap>
-        <PageHead title="Things I’m building" art={<div className="flex items-center justify-end gap-6"><Motif name="conv" tone="pink" className="h-[150px] w-[260px]" /><Motif name="mesh" tone="pink" className="h-[190px] w-[170px]" /></div>}
+        <PageHead title="Things I’m building" art={<Motif name="mesh" tone="pink" className="ml-auto aspect-[400/200] w-full max-w-[420px]" />}
           aside={(
             <ul className="flex gap-3" aria-label="Legend">
               <li><StatusPill status="running" /></li>

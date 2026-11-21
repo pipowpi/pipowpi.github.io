@@ -9,7 +9,7 @@ export default function About() {
   return (
     <Layout active="about">
       <Wrap>
-        <PageHead title="Hi, I’m Gopi." art={<Motif name="loss" tone="coral" className="ml-auto h-[220px] w-[360px]" />}>
+        <PageHead title="Hi, I’m Gopi." art={<Motif name="loss" tone="coral" className="ml-auto aspect-[400/210] w-full max-w-[420px]" />}>
           {BIO.map((para, i) => <p key={i} className={cn(i > 0 && 'mt-4')}>{para}</p>)}
         </PageHead>
 

@@ -244,11 +244,11 @@ function CareerRun() {
 function Focus() {
   const href = useHref();
   return (
-    <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
       {PILLARS.map((p) => (
         <li key={p.title} style={tone(p.tone)}>
           <Sheet as="a" interactive href={href(p.href)} className="group flex h-full flex-col overflow-hidden">
-            <div className="flex h-[150px] items-center justify-center border-b border-rule bg-paper px-5 py-4">
+            <div className="flex h-[230px] items-center justify-center border-b border-rule bg-paper px-6 py-5">
               <Motif name={p.motif} tone={p.tone} className="h-full w-full" />
             </div>
             <div className="flex flex-1 flex-col p-4">
