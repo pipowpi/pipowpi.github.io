@@ -7,7 +7,7 @@ import posts from '../generated/posts.json';
 import { Layout } from '../components/Layout.jsx';
 import { PostList } from '../components/PostList.jsx';
 import { CareerWalk } from '../components/CareerWalk.jsx';
-import { Button, Icon, Mark, Section, Sheet, StatusPill, Tag, TextLink, Wrap, cn, useHref } from '../components/ui.jsx';
+import { Button, Icon, Mark, Section, Sheet, StatusPill, Tag, TextLink, Wrap, cn, tone, useHref } from '../components/ui.jsx';
 
 // Step markers shared by the "Now" stepper and the career run.
 function StepIcon({ state, className = '' }) {
@@ -34,7 +34,7 @@ function PhaseTrack() {
           )}
           <StepIcon state={p.state} />
           <p className={cn('t-label mt-2.5', p.state === 'running' ? 'text-run' : 'text-ink')}>{p.when}</p>
-          <p className="text-[14px] leading-snug text-lead"><span className="sr-only">{STATE_TEXT[p.state]}: </span>{p.what}</p>
+          <p className="text-[13px] leading-snug text-lead"><span className="sr-only">{STATE_TEXT[p.state]}: </span>{p.what}</p>
         </li>
       ))}
     </ol>
@@ -44,17 +44,17 @@ function PhaseTrack() {
 function NowCard() {
   const href = useHref();
   return (
-    <Sheet as="aside" aria-labelledby="now-title" className="p-5 md:p-7">
-      <h2 id="now-title" className="font-display text-[22px] font-semibold leading-tight">Right now</h2>
-      <div className="mt-6"><PhaseTrack /></div>
-      <dl className="mt-7 border-t border-rule">
+    <Sheet as="aside" aria-labelledby="now-title" className="p-5 md:p-6">
+      <h2 id="now-title" className="font-display text-[20px] font-semibold leading-tight">Right now</h2>
+      <div className="mt-5"><PhaseTrack /></div>
+      <dl className="mt-5 border-t border-rule">
         {NOW.map((r) => (
-          <div key={r.k} className="flex gap-3.5 border-b border-rule py-3.5 last:border-b-0 last:pb-0">
+          <div key={r.k} style={tone(r.tone)} className="flex gap-3.5 border-b border-rule py-2.5 last:border-b-0 last:pb-0">
             <Mark name={r.icon} size="sm" />
             <div className="min-w-0">
               <dt className="t-label text-ink">{r.k}</dt>
-              <dd className="mt-0.5 text-[15px] leading-snug text-lead">
-                {r.v}{r.href && <> <TextLink href={href(r.href)} className="text-[15px]">See projects</TextLink></>}
+              <dd className="mt-0.5 text-[14px] leading-snug text-lead">
+                {r.v}{r.href && <> <TextLink href={href(r.href)} className="whitespace-nowrap text-[14px]">See projects</TextLink></>}
               </dd>
             </div>
           </div>
@@ -67,24 +67,24 @@ function NowCard() {
 function Hero() {
   const href = useHref();
   return (
-    <Wrap className="grid grid-cols-1 items-center gap-10 pt-12 pb-14 md:pt-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-14">
+    <Wrap className="grid grid-cols-1 items-center gap-10 pt-10 pb-10 md:pt-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-14">
       <div>
-        <p className="text-[19px] font-medium text-lead">{HERO.hello}</p>
-        <h1 className="mt-3 font-display text-[34px] font-semibold leading-[1.08] md:text-[44px] lg:text-[48px]">{HERO.title}</h1>
-        <p className="mt-6 max-w-[56ch] text-[18px] leading-relaxed text-lead">{HERO.lede}</p>
+        <p className="text-[17px] font-medium text-lead">{HERO.hello}</p>
+        <h1 className="mt-3 font-display text-[30px] font-semibold leading-[1.1] md:text-[38px] lg:text-[40px]">{HERO.title}</h1>
+        {HERO.lede.map((para, i) => <p key={i} className={cn('max-w-[58ch] text-[16px] leading-relaxed text-lead', i ? 'mt-3' : 'mt-6')}>{para}</p>)}
         <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
           <Button primary href={href('work/')}>See my work</Button>
           <Button href={`mailto:${SITE.email}`}><Icon name="mail" className="size-[18px]" />Email me</Button>
         </div>
-        <p className="mt-7 inline-flex items-center gap-2.5 text-[15px] font-medium text-run">
+        <p className="mt-7 inline-flex items-center gap-2.5 text-[14px] font-medium text-run">
           <span className="ping relative inline-block size-2 rounded-full bg-run" aria-hidden="true" />
           {SITE.availability}
         </p>
-        <dl className="mt-9 grid max-w-[560px] grid-cols-2 gap-x-6 gap-y-5 border-t border-rule pt-6 sm:grid-cols-4">
+        <dl className="mt-8 grid max-w-[560px] grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
           {FACTS.map((f) => (
-            <div key={f.label} className="flex flex-col">
+            <div key={f.label} style={tone(f.tone)} className="flex flex-col border-t-2 border-accent pt-3">
               <dd className="t-metric order-1 text-ink">{f.n}</dd>
-              <dt className="order-2 mt-1.5 text-[14px] leading-snug text-lead">{f.label}</dt>
+              <dt className="order-2 mt-1.5 text-[13px] leading-snug text-lead">{f.label}</dt>
             </div>
           ))}
         </dl>
@@ -182,20 +182,20 @@ function CareerRun() {
   return (
     <Sheet className="overflow-hidden">
       <div ref={ref} className="flex flex-wrap items-center justify-between gap-3 border-b border-rule px-5 py-3 md:px-6">
-        <p className="flex flex-wrap items-center gap-3 text-[15px]">
+        <p className="flex flex-wrap items-center gap-3 text-[14px]">
           <StatusPill status="running">Running</StatusPill>
-          <span translate="no" className="font-mono text-[16px] text-ink">career.yml</span>
+          <span translate="no" className="font-mono text-[15px] text-ink">career.yml</span>
         </p>
         <div className="flex items-center gap-5">
           <button type="button" onClick={play} disabled={!played}
             className={cn('t-label inline-flex min-h-10 cursor-pointer items-center gap-1.5 text-lead transition-opacity duration-200 hover:text-accent disabled:cursor-default disabled:opacity-0')}>
             <Icon name="play" className="size-3.5" />Replay
           </button>
-          <TextLink href={href('work/#timeline')} className="text-[15px]">See the full timeline</TextLink>
+          <TextLink href={href('work/#timeline')} className="inline-flex min-h-10 items-center text-[14px]">See the full timeline</TextLink>
         </div>
       </div>
       <div className="border-b border-rule bg-paper px-2 pt-3 md:px-6 md:pt-4">
-        <CareerWalk at={at} className="mx-auto block h-auto w-full max-w-[780px]" />
+        <CareerWalk at={at} className="mx-auto block h-auto w-full max-w-[680px]" />
       </div>
       <ol className="grid grid-cols-1 p-5 md:p-6 lg:grid-cols-[repeat(3,minmax(0,1fr))_92px_minmax(0,1fr)_92px_repeat(2,minmax(0,1fr))]" aria-label="Career so far, as a build run">
         {CAREER_STEPS.map((s, i) => {
@@ -221,19 +221,19 @@ function CareerRun() {
                 s.kind === 'switch' ? 'text-ink' : s.kind === 'pivot' || s.kind === 'deploy' ? 'text-accent' : st === 'running' ? 'text-run' : st === 'done' ? 'text-[var(--sc)]' : 'text-lead')}>
                 {s.time}<span className="sr-only">, {s.kind === 'deploy' ? 'waiting for review' : s.kind === 'switch' || s.kind === 'pivot' ? s.kind : STATE_TEXT[st]}</span>
               </p>
-              <p className="mt-0.5 text-[17px] font-semibold leading-snug text-ink">{s.name}</p>
+              <p className="mt-0.5 text-[15px] font-semibold leading-snug text-ink">{s.name}</p>
               {s.kind === 'deploy'
-                ? <p className="mt-1"><span className="t-chip inline-block rounded-full border border-dashed border-accent px-2 py-px text-accent">{s.org}</span></p>
-                : <p className="text-[15px] font-medium text-ink/80">{s.org}</p>}
-              {s.role && <p className="text-[14px] leading-snug text-lead">{s.role}</p>}
-              {s.why && <p className="mt-1.5 hidden text-[14px] leading-snug text-accent lg:block">{s.why}</p>}
-              <p className="mt-1 text-[15px] leading-snug text-lead lg:hidden">{s.sub}</p>
+                ? <p className="mt-1"><span className="t-chip inline-block rounded-md border border-dashed border-accent px-2 py-px text-accent">{s.org}</span></p>
+                : <p className="text-[14px] font-medium text-ink/80">{s.org}</p>}
+              {s.role && <p className="text-[13px] leading-snug text-lead">{s.role}</p>}
+              {s.why && <p className="mt-1.5 hidden text-[13px] leading-snug text-accent lg:block">{s.why}</p>}
+              <p className="mt-1 text-[14px] leading-snug text-lead lg:hidden">{s.sub}</p>
               {st === 'running' && i < RUN_END && s.kind === 'stage' && <div className="relative mt-3 h-1 max-w-[160px] overflow-hidden rounded-sm bg-rule"><div className="busy-fill" /></div>}
             </li>
           );
         })}
       </ol>
-      <p translate="no" className="border-t border-rule bg-paper px-5 py-2.5 font-mono text-[15px] text-lead md:px-6">
+      <p translate="no" className="border-t border-rule bg-paper px-5 py-2.5 font-mono text-[14px] text-lead md:px-6">
         <span className="text-run">&gt;</span> {status}
       </p>
     </Sheet>
@@ -243,14 +243,14 @@ function CareerRun() {
 function Focus() {
   const href = useHref();
   return (
-    <ul className="grid grid-cols-1 gap-y-6 md:grid-cols-3 md:divide-x md:divide-rule">
+    <ul className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 xl:grid-cols-4 xl:divide-x xl:divide-rule">
       {PILLARS.map((p) => (
-        <li key={p.title} className="md:px-6 md:first:pl-0 md:last:pr-0">
+        <li key={p.title} style={tone(p.tone)} className="sm:pr-5 xl:px-5 xl:first:pl-0 xl:last:pr-0">
           <a href={href(p.href)} className="group flex items-start gap-3.5">
             <Mark name={p.icon} />
             <span className="min-w-0">
-              <span className="block text-[17px] font-semibold text-ink group-hover:text-accent">{p.title}</span>
-              <span className="mt-0.5 block text-[15px] leading-snug text-lead">{p.sub}</span>
+              <span className="block text-[15px] font-semibold text-ink group-hover:text-accent">{p.title}</span>
+              <span className="mt-0.5 block text-[14px] leading-snug text-lead">{p.sub}</span>
             </span>
           </a>
         </li>
@@ -265,7 +265,7 @@ function SelectedWork() {
   const cards = [
     {
       to: 'work/#pytorch-ci', icon: 'gpu', tone: 'lime', title: PYTORCH_CI.title, org: PYTORCH_CI.org, dates: '2025 - 2026',
-      text: 'PyTorch had no CI that tested Windows with a GPU. I led the design of a harness that runs GPU-backed Windows VMs inside Kubernetes, with runners that pull their work.',
+      text: 'PyTorch had no CI that tested Windows with a GPU. I designed and built a harness that runs GPU-backed Windows VMs inside Kubernetes. Runners pull their jobs from a job query service I built as an alternative to GitHub’s ARC.',
       tags: ['KubeVirt', 'VFIO', 'GitHub Actions', 'STRIDE'],
     },
     {
@@ -277,11 +277,11 @@ function SelectedWork() {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       {cards.map((c) => (
-        <Sheet key={c.to} as="a" interactive href={href(c.to)} style={{ '--tc': `var(--${c.tone})` }} className="group flex flex-col p-5 md:p-6">
-          <Mark name={c.icon} size="sm" className="text-[color:var(--tc)]" />
-          <h3 className="mt-4 font-display text-[22px] font-semibold leading-tight">{c.title}</h3>
+        <Sheet key={c.to} as="a" interactive href={href(c.to)} style={tone(c.tone)} className="group flex flex-col border-t-[3px] border-t-accent p-5 md:p-6">
+          <Mark name={c.icon} size="sm" />
+          <h3 className="mt-4 font-display text-[20px] font-semibold leading-tight">{c.title}</h3>
           <p className="t-meta mt-1.5 text-lead"><span className="font-medium text-ink">{c.org}</span>, {c.dates}</p>
-          <p className="mt-3 text-[16px] leading-relaxed text-lead">{c.text}</p>
+          <p className="mt-3 text-[15px] leading-relaxed text-lead">{c.text}</p>
           <p className="mt-4 flex flex-wrap gap-2">{c.tags.map((t) => <Tag key={t}>{t}</Tag>)}</p>
           <p className="mt-auto pt-5 font-medium text-accent underline decoration-[color-mix(in_srgb,var(--accent)_40%,transparent)] underline-offset-4 group-hover:decoration-accent">Read the case study</p>
         </Sheet>
@@ -302,21 +302,21 @@ function Lately() {
   return (
     <div className="grid grid-cols-1 gap-x-12 gap-y-10 xl:grid-cols-2">
       <div className="min-w-0">
-        <h3 className="font-display text-[19px] font-semibold">Writing</h3>
+        <h3 className="font-display text-[17px] font-semibold">Writing</h3>
         {posts.length > 0
           ? <PostList posts={posts.slice(0, 3)} compact className="mt-3" />
-          : <p className="mt-3 border-t border-rule pt-4 text-[16px] text-lead">The first posts are being written.</p>}
+          : <p className="mt-3 border-t border-rule pt-4 text-[15px] text-lead">The first posts are being written.</p>}
         <TextLink href={href('writing/')} className="mt-4 inline-block">All posts</TextLink>
       </div>
       <div className="min-w-0">
-        <h3 className="font-display text-[19px] font-semibold">Building</h3>
+        <h3 className="font-display text-[17px] font-semibold">Building</h3>
         <ul className="mt-3 border-b border-rule">
           {BUILDING.map((p) => (
             <li key={p.id} className="border-t border-rule">
               <a href={href(`projects/#${p.id}`)} className="group flex items-start justify-between gap-4 py-4">
                 <span className="min-w-0">
-                  <span className="flex items-center gap-2.5 font-display text-[20px] font-semibold leading-snug text-ink group-hover:text-accent"><i aria-hidden="true" className="inline-block size-2.5 shrink-0 rounded-sm" style={{ background: `var(--${p.tone})` }} />{p.title}</span>
-                  <span className="mt-1 block text-[16px] leading-snug text-lead">{p.sub}</span>
+                  <span className="flex items-center gap-2.5 font-display text-[18px] font-semibold leading-snug text-ink group-hover:text-accent"><i aria-hidden="true" className="inline-block size-2.5 shrink-0 rounded-sm" style={{ background: `var(--${p.tone})` }} />{p.title}</span>
+                  <span className="mt-1 block text-[15px] leading-snug text-lead">{p.sub}</span>
                 </span>
                 <span className="shrink-0 pt-1"><StatusPill status="running" /></span>
               </a>
@@ -335,7 +335,7 @@ export default function Home() {
       <Hero />
       <Wrap>
         <Section id="so-far" wide label="The pipeline so far" note="Eight years, one stage at a time"><CareerRun /></Section>
-        <Section id="focus" label="What I work on" tight><Focus /></Section>
+        <Section id="focus" wide label="What I work on" tight><Focus /></Section>
         <Section id="selected" label="Selected work" note="2 case studies"><SelectedWork /></Section>
         <Section id="lately" label="Lately" note="What I’m writing and building"><Lately /></Section>
       </Wrap>

@@ -5,7 +5,7 @@ export const SITE = {
   initials: 'GK',
   role: 'Systems and infrastructure engineer',
   description:
-    'Systems and infrastructure engineer. CI/CD, GPU virtualization and MLOps, now studying vision-language models at Stony Brook University.',
+    'Systems and infrastructure engineer working on CI/CD, GPU virtualization and MLOps, now studying vision-language models at Stony Brook University.',
   email: 'pi.kanugula@gmail.com',
   linkedin: 'https://linkedin.com/in/gopi-krishna-kanugula-0099a711a/',
   github: 'https://github.com/pipowpi',
@@ -37,3 +37,17 @@ export const PAGE_META = {
   404: { title: 'Not found', description: 'Page not found.' },
 };
 
+
+// One color per topic, used the same way everywhere (writing tags, toolbox, focus areas):
+// lime for infrastructure and GPUs, teal for CI/CD, coral for ML platforms, pink for security,
+// amber for vision and AI. Career stages and projects have their own colors in their data files.
+export const TOPIC_TONE = {
+  Infrastructure: 'lime', GPUs: 'lime', Virtualization: 'lime',
+  'CI/CD': 'teal', 'CI/CD and observability': 'teal', DevOps: 'teal',
+  MLOps: 'coral', 'ML and vision': 'coral', 'ML platforms': 'coral',
+  Security: 'pink',
+  VLMs: 'accent', 'Deep learning': 'accent', Vision: 'accent',
+  Languages: 'ink', 'Backend and APIs': 'ink',
+  'Infrastructure and DevOps': 'lime', 'CI/CD and monitoring': 'teal',
+};
+export const topicTone = (t) => TOPIC_TONE[t] || 'accent';

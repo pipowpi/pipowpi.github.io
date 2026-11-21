@@ -36,7 +36,9 @@
   --term-ink: #EEEDEA;
   --term-dim: #A2A3A0;
   --term-run: #FFB224;
-  --header: rgba(18, 19, 22, 0.86);
+  --header: rgba(18, 19, 22, 0.78);
+  --bd-o: 15%;
+  --bd-hi-o: 55%;
   color-scheme: dark;
 }
 [data-theme="light"] {
@@ -60,7 +62,9 @@
   --term-ink: #EEEDEA;
   --term-dim: #A2A3A0;
   --term-run: #FFB224;
-  --header: rgba(244, 244, 242, 0.88);
+  --header: rgba(244, 244, 242, 0.8);
+  --bd-o: 17%;
+  --bd-hi-o: 50%;
   color-scheme: light;
 }
 
@@ -91,20 +95,20 @@
 }
 
 /* Text roles from the design system. Numbers always use Fira Sans with tabular, lining figures. */
-@utility t-stat { font-family: var(--font-sans); font-size: 40px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums lining-nums; }
-@utility t-metric { font-family: var(--font-sans); font-size: 28px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums lining-nums; }
-@utility t-meta { font-family: var(--font-sans); font-size: 15px; line-height: 1.45; font-variant-numeric: tabular-nums lining-nums; }
-@utility t-label { font-family: var(--font-sans); font-size: 14px; font-weight: 500; line-height: 1.4; font-variant-numeric: tabular-nums lining-nums; }
-@utility t-chip { font-family: var(--font-sans); font-size: 14px; font-weight: 500; line-height: 1.5; font-variant-numeric: tabular-nums lining-nums; }
+@utility t-stat { font-family: var(--font-sans); font-size: 34px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums lining-nums; }
+@utility t-metric { font-family: var(--font-sans); font-size: 24px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums lining-nums; }
+@utility t-meta { font-family: var(--font-sans); font-size: 14px; line-height: 1.45; font-variant-numeric: tabular-nums lining-nums; }
+@utility t-label { font-family: var(--font-sans); font-size: 13px; font-weight: 500; line-height: 1.4; font-variant-numeric: tabular-nums lining-nums; }
+@utility t-chip { font-family: var(--font-sans); font-size: 13px; font-weight: 500; line-height: 1.5; font-variant-numeric: tabular-nums lining-nums; }
 
 @layer base {
   /* scroll-padding keeps anchors and keyboard focus clear of the sticky header. */
-  html { background: var(--paper); accent-color: var(--accent); scrollbar-color: var(--rule-strong) var(--paper); caret-color: var(--accent); scroll-padding-top: 88px; -webkit-tap-highlight-color: color-mix(in srgb, var(--accent) 18%, transparent); }
+  html { background: var(--paper); accent-color: var(--accent); scrollbar-color: var(--rule-strong) var(--paper); caret-color: var(--accent); scroll-padding-top: 80px; -webkit-tap-highlight-color: color-mix(in srgb, var(--accent) 18%, transparent); }
   @media (pointer: fine) { html { overscroll-behavior: none; } }
   a, button, summary { touch-action: manipulation; }
   body {
-    background: var(--paper); color: var(--ink);
-    font-family: var(--font-sans); font-size: 17px; line-height: 1.65;
+    background: transparent; color: var(--ink);
+    font-family: var(--font-sans); font-size: 16px; line-height: 1.6;
     -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
   }
   h1, h2, h3, h4 { text-wrap: balance; }
@@ -157,14 +161,39 @@
   .blueprint-grid { background: var(--rule); mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M0 .5H28M.5 0V28' stroke='black'/%3E%3C/svg%3E") -1px -1px / 28px 28px repeat; }
 
   /* Article body */
-  .prose-post h2 { font-family: var(--font-display); font-size: 24px; font-weight: 650; line-height: 1.25; margin-top: 44px; color: var(--ink); }
-  .prose-post p { font-size: 18px; line-height: 1.75; color: var(--ink); margin-top: 16px; }
+  .prose-post h2 { font-family: var(--font-display); font-size: 22px; font-weight: 650; line-height: 1.25; margin-top: 44px; color: var(--ink); }
+  .prose-post p { font-size: 17px; line-height: 1.7; color: var(--ink); margin-top: 16px; }
   .prose-post code { font-family: var(--font-mono); font-size: .95em; background: var(--wash); border-radius: 4px; padding: 1px 5px; }
   .prose-post pre { font-family: var(--font-mono); font-size: 15px; line-height: 1.6; background: var(--term-bg); color: var(--term-ink); border-radius: 6px; padding: 16px 18px; margin-top: 20px; overflow-x: auto; }
   .prose-post pre code { background: none; padding: 0; font-size: inherit; color: inherit; }
 
   .read-progress { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; height: 3px; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); z-index: 40; }
   .step-in { animation: stepIn .5s ease-out both; }
+  /* Backdrop (Layout, Backdrop.jsx): faint line drawings of pipelines, clusters, attention and
+     convolutions, fixed behind the page. Ink at low opacity, one highlight color per drawing. */
+  .backdrop { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; color: color-mix(in srgb, var(--ink) var(--bd-o), transparent); }
+  .backdrop::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(color-mix(in srgb, var(--ink) 8%, transparent) 1px, transparent 1.4px); background-size: 22px 22px; mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 10%, transparent 75%); }
+  /* Each drawing fills its side margin and reaches 110px under the content edge, fading out before it gets there. */
+  .bd-motif { position: absolute; width: max(0px, calc(50vw - 560px + 110px)); }
+  .bd-left { left: 0; padding-left: 20px; mask-image: linear-gradient(to right, #000 calc(100% - 150px), transparent calc(100% - 40px)); }
+  .bd-right { right: 0; padding-right: 20px; mask-image: linear-gradient(to left, #000 calc(100% - 150px), transparent calc(100% - 40px)); }
+  .bd-left > div { margin-left: auto; }
+  .bd-right > div { margin-right: auto; }
+  .bd-motif svg { display: block; width: 100%; height: auto; overflow: visible; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .bd-text { fill: currentColor; stroke: none; font: 500 12px var(--font-mono); }
+  .bd-text-sm { font-size: 10px; }
+  .bd-hi { stroke: color-mix(in srgb, var(--hi) var(--bd-hi-o), transparent); }
+  .bd-hi-fill { fill: color-mix(in srgb, var(--hi) var(--bd-hi-o), transparent); stroke: none; }
+  .bd-hi-soft { fill: color-mix(in srgb, var(--hi) 16%, transparent); stroke: color-mix(in srgb, var(--hi) var(--bd-hi-o), transparent); }
+  .bd-packet { animation: bdPacket 5s linear infinite; }
+  .bd-pulse { animation: bdPulse 2.6s ease-in-out infinite; }
+  .bd-draw { stroke-dasharray: 1; animation: bdDraw 9s ease-out infinite; }
+  .bd-weight { animation: bdWeight 6s ease-in-out infinite; }
+  .bd-slide { animation: bdSlide 9.6s steps(1, end) infinite; }
+  .bd-rise { animation: bdRise 5s steps(5) infinite; }
+  .bd-scan { animation: bdScan 6s ease-in-out infinite alternate; }
+  .bd-clock { animation: bdClock 8s steps(8) infinite; }
+  @media (max-width: 1279px) { .bd-motif { display: none; } }
   /* Stage color helpers for SVG: set --sc on a group, then fill or stroke with it. */
   .sc-fill { fill: var(--sc, var(--accent)); }
   .sc-stroke { stroke: var(--sc, var(--accent)); }
@@ -204,6 +233,14 @@
 @keyframes glow { from { opacity: .35; } to { opacity: 1; } }
 @keyframes hop { 0%, 100% { transform: translateY(0); } 45% { transform: translateY(-14px); } }
 @keyframes flip { 0% { transform: scaleX(1); } 50% { transform: scaleX(-1); } 100% { transform: scaleX(1); } }
+@keyframes bdPacket { from { transform: translateX(0); } to { transform: translateX(350px); } }
+@keyframes bdPulse { 50% { fill-opacity: .9; } }
+@keyframes bdDraw { 0% { stroke-dashoffset: 1; } 55%, 100% { stroke-dashoffset: 0; } }
+@keyframes bdWeight { 0%, 100% { fill-opacity: .35; } 50% { fill-opacity: 1; } }
+@keyframes bdSlide { 0.00% { transform: translate(0px, 0px); } 6.25% { transform: translate(24px, 0px); } 12.50% { transform: translate(48px, 0px); } 18.75% { transform: translate(72px, 0px); } 25.00% { transform: translate(0px, 24px); } 31.25% { transform: translate(24px, 24px); } 37.50% { transform: translate(48px, 24px); } 43.75% { transform: translate(72px, 24px); } 50.00% { transform: translate(0px, 48px); } 56.25% { transform: translate(24px, 48px); } 62.50% { transform: translate(48px, 48px); } 68.75% { transform: translate(72px, 48px); } 75.00% { transform: translate(0px, 72px); } 81.25% { transform: translate(24px, 72px); } 87.50% { transform: translate(48px, 72px); } 93.75% { transform: translate(72px, 72px); } 100% { transform: translate(72px, 72px); } }
+@keyframes bdRise { from { transform: translateY(216px); } to { transform: translateY(-54px); } }
+@keyframes bdScan { from { transform: translateY(10px); } to { transform: translateY(240px); } }
+@keyframes bdClock { from { transform: translateX(0); } to { transform: translateX(320px); } }
 @keyframes pop { from { transform: scale(.4); opacity: .3; } to { transform: scale(1); opacity: 1; } }
 @keyframes stepIn { from { opacity: 0; transform: translateX(-10px); } }
 @keyframes typing { from { transform: scaleX(1); } to { transform: scaleX(0); } }

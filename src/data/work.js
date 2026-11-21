@@ -50,7 +50,7 @@ export const ERAS = [
     role: 'Senior System Software Engineer',
     weight: 15,
     metric: { value: '0 → 1', label: 'Windows GPU CI' },
-    work: ['Windows GPU VMs on Kubernetes', 'Pull-based job service', 'Windows on ARM, STRIDE review'],
+    work: ['Windows GPU VMs on Kubernetes', 'Job query service, an alternative to ARC', 'Windows on ARM, STRIDE review'],
     skills: ['KubeVirt', 'VFIO', 'QEMU/KVM', 'GitHub Actions', 'Prometheus', 'STRIDE'],
   },
   {
@@ -78,13 +78,13 @@ export const PYTORCH_CI = {
   title: 'Windows CI with GPU support for PyTorch',
   glance: [
     ['Problem', 'PyTorch had no CI testing Windows with a GPU'],
-    ['My role', 'Led the design and development'],
-    ['Approach', 'Windows VMs in Kubernetes, jobs pulled by runners'],
+    ['My role', 'Designed and implemented it'],
+    ['Approach', 'Windows VMs in Kubernetes, with runners pulling jobs from my own job query service'],
     ['Stack', 'KubeVirt, VFIO, QEMU, GitHub Actions'],
   ],
   flow: [
     { name: 'GitHub Actions', sub: 'A workflow requests a Windows GPU run' },
-    { name: 'Job service', sub: 'Queues the job; a gateway screens it first' },
+    { name: 'Job query service', sub: 'My alternative to ARC. Queues the job, and a gateway screens it first' },
     { name: 'Runner pod', sub: 'Asks for work over an outbound connection', link: 'pull' },
     { name: 'Windows VM', sub: 'KubeVirt with a VFIO GPU runs the tests' },
   ],
@@ -93,12 +93,17 @@ export const PYTORCH_CI = {
     ['Sandboxed design', 'Windows VMs inside Kubernetes pods instead of bare-metal servers'],
     ['GPU passthrough', 'VFIO, KubeVirt and QEMU so each VM gets a real GPU'],
     ['On-demand VMs', 'A custom Windows image and a fresh VM for each job'],
+    ['Job query service', 'An organization-local alternative to ARC that runners pull jobs from'],
     ['Cluster operations', 'Monitoring, logging and Kubernetes network policies'],
     ['End to end', 'A GitHub workflow starts a VM and tests the PyTorch build on it'],
     ['Out-of-tree CI', "Redesigned the core service for PyTorch’s out-of-tree model"],
     ['Windows on ARM', "The same CI on NVIDIA’s unreleased WoA, with PyTorch core developers"],
     ['Security review', 'STRIDE threat model, network policies and a pre-execution gateway'],
   ],
+  keyPiece: {
+    title: 'The job query service',
+    text: 'The usual way to run self-hosted GitHub runners on Kubernetes is the Actions Runner Controller (ARC). Instead, I designed and built an organization-local job query service. Runners ask it for work over outbound connections, so the GPU machines never accept inbound traffic, and a gateway checks each job before it runs.',
+  },
   also: {
     title: 'Also: telemetry dashboards from 10 min to under 1 s',
     text: 'Found the bottleneck in a Grafana and Prometheus pipeline and moved query execution to run asynchronously.',

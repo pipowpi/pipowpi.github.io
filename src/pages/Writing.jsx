@@ -1,21 +1,22 @@
 import { useEffect, useState } from 'react';
 import posts from '../generated/posts.json';
 import { Layout } from '../components/Layout.jsx';
-import { PageHead, Section, Wrap, cn } from '../components/ui.jsx';
+import { PageHead, Section, Wrap, cn, tone } from '../components/ui.jsx';
+import { topicTone } from '../data/site.js';
 import { PostList } from '../components/PostList.jsx';
 
 function WhyIWrite() {
   return (
     <div className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-      <p className="max-w-[60ch] text-[18px] leading-relaxed text-ink">
-        I write to check that I understand something. If I cannot explain an idea simply, I go back to the source until I can. These posts are the results.
+      <p className="max-w-[60ch] text-[16px] leading-relaxed text-ink">
+        Writing is how I check that I understand something. If I can’t explain an idea simply, I go back to the source and try again. These posts are what came out of that.
       </p>
       <ol className="grid grid-cols-1 gap-x-6 sm:grid-cols-3" aria-label="How a post gets written">
-        {[['Learn', 'Work with it or study it'], ['Explain', 'Write it in plain words'], ['Find the gaps', 'Fix what I could not explain']].map(([t, s], i) => (
-          <li key={t} className="border-t-2 border-accent py-3">
+        {[['Learn', 'Work with it or study it', 'pink'], ['Explain', 'Write it in plain words', 'teal'], ['Find the gaps', 'Fix what I could not explain', 'lime']].map(([t, s, c], i) => (
+          <li key={t} style={tone(c)} className="border-t-2 border-accent py-3">
             <span className="t-chip font-semibold text-accent">{i + 1}</span>
-            <p className="text-[17px] font-semibold text-ink">{t}</p>
-            <p className="text-[15px] leading-snug text-lead">{s}</p>
+            <p className="text-[15px] font-semibold text-ink">{t}</p>
+            <p className="text-[14px] leading-snug text-lead">{s}</p>
           </li>
         ))}
       </ol>
@@ -42,16 +43,16 @@ export default function Writing() {
     <Layout active="writing">
       <Wrap>
         <PageHead title="Notes and explainers">
-          Concepts I have worked with, explained the way I wish someone had explained them to me.
+          Notes on things I’ve worked with or studied, written in plain language.
         </PageHead>
         <Section id="why" label="Why this page" note="A way of learning"><WhyIWrite /></Section>
         <Section id="posts" label="Posts" note={`${posts.length} so far`}>
           {posts.length > 0 && (
             <div className="mb-6 flex flex-wrap gap-2" role="group" aria-label="Filter posts by topic">
               {tags.map((t) => (
-                <button key={t} type="button" aria-pressed={filter === t} onClick={() => setFilter(t)}
-                  className={cn('min-h-10 cursor-pointer rounded-full border px-4 text-[15px] font-medium transition-colors duration-150',
-                    filter === t ? 'border-accent bg-wash text-accent' : 'border-rule-strong text-ink hover:border-accent hover:text-accent')}>
+                <button key={t} type="button" aria-pressed={filter === t} onClick={() => setFilter(t)} style={t === 'All' ? undefined : tone(topicTone(t))}
+                  className={cn('min-h-10 cursor-pointer rounded-full border px-4 text-[14px] font-medium transition-colors duration-150',
+                    filter === t ? 'border-accent bg-wash text-accent' : t === 'All' ? 'border-rule-strong text-ink hover:border-accent hover:text-accent' : 'border-[color-mix(in_srgb,var(--accent)_45%,transparent)] text-accent hover:border-accent')}>
                   {t}
                 </button>
               ))}
@@ -61,9 +62,9 @@ export default function Writing() {
           {shown.length > 0 ? (
             <PostList posts={shown} detail />
           ) : posts.length === 0 ? (
-            <p className="text-[17px] text-lead">The first posts are being written.</p>
+            <p className="text-[15px] text-lead">The first posts are being written.</p>
           ) : (
-            <p className="text-[17px] text-lead">No posts on this topic yet. <button type="button" className="cursor-pointer font-medium text-accent underline underline-offset-4" onClick={() => setFilter('All')}>Show all posts</button></p>
+            <p className="text-[15px] text-lead">No posts on this topic yet. <button type="button" className="cursor-pointer font-medium text-accent underline underline-offset-4" onClick={() => setFilter('All')}>Show all posts</button></p>
           )}
         </Section>
       </Wrap>

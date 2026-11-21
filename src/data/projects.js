@@ -87,7 +87,7 @@ export const PERSONAL = [
     context: 'CI/CD and Kubernetes',
     status: 'planned',
     title: 'Open version of the GPU CI design',
-    text: 'A from-scratch, public version of the pull-based GPU CI I designed at NVIDIA, built with open tools and no proprietary code, with a full write-up.',
+    text: 'A from-scratch, public version of the pull-based GPU CI I designed and built at NVIDIA, built with open tools and no proprietary code, with a full write-up.',
     loop: ['Runner asks for a job', 'Job service hands one out', 'Fresh VM runs it', 'Result reported, VM destroyed'],
     link: ['See the original case study', 'work/#pytorch-ci'],
   },

@@ -28,7 +28,7 @@ So the system keeps the ruled spec-sheet layout and tightens it: more consistent
 
 **Style:** Swiss minimalism, drawn as an engineering spec sheet.
 
-- Flat surfaces. Depth comes from 1px rules and borders, never from shadows.
+- Solid cards on an ambient background (dot grid plus soft color glows, section 3). Depth comes from 1px rules and borders, never from shadows.
 - One card surface (the "sheet"). Sections are separated by full-width rules, not by boxes.
 - Section names sit in a 200px left margin on desktop, like a drawing's title block.
 - The accent is functional: links, the active nav item, focus rings and the one important wire in a diagram.
@@ -53,6 +53,27 @@ All component code uses tokens (`bg-sheet`, `text-lead`), never raw hex.
   - Projects: 3D head reconstruction = pink, RISC-V CPU = teal, VLM project = coral, open GPU CI design = lime, this site = amber.
   - Inside a project card or a Work case study, `--accent` is set to that item's color, so its icon, numbers, links and diagram highlight follow.
 - **Green (`--pass`)** stays for done checklist items.
+- **Topics** have one color each, everywhere (writing tags and filters, post pages, the About toolbox, the home focus areas): lime = infrastructure and GPUs, teal = CI/CD, coral = ML platforms and MLOps, pink = security, amber = vision and AI, ink = languages. The map lives in `src/data/site.js` (`TOPIC_TONE`).
+- **Lists of four** (home facts, the "Right now" rows, About numbers, About habits) cycle through the colors so each item is easy to tell apart.
+- **How to apply a color:** wrap the item with `style={tone('teal')}` (from `ui.jsx`). That swaps `--accent` and `--wash` inside it, so icons, numbers, links and highlights follow without new classes.
+
+### Background
+
+The page background is not flat, but it never competes with the content. A fixed layer behind everything (`Backdrop.jsx`, rendered by `Layout.jsx`) draws faint line drawings of the systems the site is about, in the side margins only:
+
+| Page | Drawings |
+|---|---|
+| Home | CI pipeline, causal attention matrix, training loss curve, convolution |
+| Work | CI pipeline, Kubernetes cluster with pods, loss curve, a second pipeline |
+| Projects | convolution, wireframe head mesh, five-stage RISC-V pipeline, attention matrix |
+| Writing | attention matrix, transformer block, CI pipeline, loss curve |
+| About | CI pipeline, transformer block, convolution, loss curve |
+
+- Lines are ink at 15 to 17% opacity (`--bd-o`); one element per drawing uses a site color at about half strength (`--bd-hi-o`).
+- Each drawing has one slow motion with a meaning: a job moves along the pipeline, a pod pulses, the loss curve draws, attention weights shift, the 3x3 kernel steps over the image while its output cell lights up, the clock steps through the RISC-V stages, a scan line passes over the mesh.
+- Drawings live outside the 1120px content column and fade out where they reach it. They are hidden below 1280px wide, where there is no margin. A faint dot grid fades down from the top on every page.
+- Everything stops under reduced motion or the motion toggle.
+- Rejected: large blurred color glows. They read as decoration with no meaning and washed out the page.
 
 ### Dark (default)
 
@@ -133,12 +154,12 @@ All fonts are self-hosted as woff files (no Google Fonts request).
 | **Stat** | `t-stat` | Fira Sans 40px, 600, leading 1, tabular lining figures |
 | **Metric** | `t-metric` | Fira Sans 28px, 600, leading 1, tabular lining figures |
 | **Meta** (dates, counts, read time) | `t-meta` | Fira Sans 15px, `--lead`, tabular lining figures |
-| **Label** (field names, axis labels) | `t-label` | Fira Sans 14px, 500, `--lead`, tabular lining figures |
-| **Chip** (status pill, tag, filter) | `t-chip` | Fira Sans 14px, 500 |
+| **Label** (field names, axis labels) | `t-label` | Fira Sans 13px, 500, `--lead`, tabular lining figures |
+| **Chip** (status pill, tag, filter) | `t-chip` | Fira Sans 13px, 500 |
 
 **Rules:**
 
-- The smallest text is **14px**. Body text is never below 16px.
+- The smallest text is **13px** (labels and chips). Body copy is 15 to 16px. The scale was tightened in Nov 2026 so pages stay compact.
 - Every element that shows a number (stats, years, dates, counts, chart values, step numbers) uses `font-variant-numeric: tabular-nums lining-nums`. The `t-*` roles include it.
 - Sentence case everywhere. No eyebrows above headings, and no letter-spacing changes (baseline-ui).
 - Weights: 600 for headings and stats, 500 for labels and links, 400 for body.
@@ -258,7 +279,7 @@ A 14px label with a dot. The dot's shape and motion also carry the state, so col
 - ❌ Skill bars or percentage ratings ("Python 90%").
 - ❌ Logo walls, icon grids of technologies, or emoji used as icons.
 - ❌ Invented metrics: every number must come from the resume or the project data.
-- ❌ Text under 14px. Monospace for numbers or labels.
+- ❌ Text under 13px (labels and chips are 13px, body copy 15 to 16px). Monospace for numbers or labels.
 - ❌ Color as the only signal (status, chart series, selected chip).
 - ❌ Card grids of identical boxes for every section. Use ruled sections and one card type for objects.
 - ❌ Carousels, autoplaying media, or scroll-jacking.
@@ -269,7 +290,7 @@ A 14px label with a dot. The dot's shape and motion also carry the state, so col
 
 - [ ] Only tokens in components; no raw hex outside `styles.css` and the canvas color read-out.
 - [ ] Numbers use `t-stat`, `t-metric`, `t-meta`, `t-label` or `tabular-nums`.
-- [ ] No text under 14px. Body is 16px or more.
+- [ ] No text under 13px. Body copy is 15px or more.
 - [ ] Contrast table above still holds after any palette edit (`scratchpad/contrast.py` or similar).
 - [ ] Focus ring is visible on every link, button, chip and summary.
 - [ ] Tap targets are at least 40px high (44px for buttons).

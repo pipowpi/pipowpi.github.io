@@ -19,7 +19,7 @@ function FlowStep({ node, first }) {
       {!first && (
         <div className={cn('conn', hot && 'conn-hot', node.link === 'pull' && 'conn-rev')} aria-hidden="true">
           {hot && (
-            <span className="absolute top-1/2 left-3 -translate-y-1/2 rounded-sm bg-paper px-1 text-[14px] leading-none font-semibold text-accent md:top-[-22px] md:left-1/2 md:-translate-x-1/2 md:translate-y-0">
+            <span className="absolute top-1/2 left-3 -translate-y-1/2 rounded-sm bg-paper px-1 text-[13px] leading-none font-semibold text-accent md:top-[-22px] md:left-1/2 md:-translate-x-1/2 md:translate-y-0">
               {node.link === 'pull' ? 'pull' : 'swap'}
             </span>
           )}
@@ -27,11 +27,11 @@ function FlowStep({ node, first }) {
       )}
       <div role="listitem" className={cn('min-w-0 flex-1 rounded-md border px-3.5 py-3',
         node.highlight ? 'border-accent bg-wash' : 'border-rule-strong bg-sheet')}>
-        <p className="text-[15px] font-semibold leading-snug text-ink">
+        <p className="text-[14px] font-semibold leading-snug text-ink">
           {node.name}
           {node.strike && <s className="ml-1.5 font-normal text-lead decoration-[1.5px]">{node.strike}</s>}
         </p>
-        <p className="mt-1 text-[14px] leading-snug text-lead">{node.sub}</p>
+        <p className="mt-1 text-[13px] leading-snug text-lead">{node.sub}</p>
       </div>
     </>
   );
@@ -45,8 +45,8 @@ export function Stages({ stages, label }) {
       {stages.map(([name, sub], i) => (
         <li key={name} className="rounded-md border border-rule-strong bg-sheet px-3 py-2.5">
           <span className="t-chip text-accent">{i + 1}</span>
-          <p className="text-[15px] font-semibold leading-snug text-ink">{name}</p>
-          <p className="mt-0.5 text-[14px] leading-snug text-lead">{sub}</p>
+          <p className="text-[14px] font-semibold leading-snug text-ink">{name}</p>
+          <p className="mt-0.5 text-[13px] leading-snug text-lead">{sub}</p>
         </li>
       ))}
     </ol>

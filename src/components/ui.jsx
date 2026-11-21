@@ -11,6 +11,14 @@ export function useHref() {
 }
 
 // Class names: clsx for conditions, tailwind-merge so a later class wins over a conflicting earlier one.
+// Swap the accent inside an element for one of the site's colors (pink, teal, coral, lime, accent, ink).
+// Everything inside that uses the accent (icons, numbers, links, highlights) follows.
+export function tone(t) {
+  if (!t || t === 'accent') return undefined;
+  const c = `var(--${t})`;
+  return { '--accent': c, '--wash': `color-mix(in srgb, ${c} 16%, var(--sheet))` };
+}
+
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
@@ -101,7 +109,7 @@ export function TextLink({ href, className = '', children, ...rest }) {
 
 export function Button({ href, primary = false, className = '', children, ...rest }) {
   return (
-    <a href={href} className={cn('inline-flex min-h-11 items-center gap-2 rounded-md border px-5 py-2.5 text-[16px] font-medium transition-colors duration-150',
+    <a href={href} className={cn('inline-flex min-h-11 items-center gap-2 rounded-md border px-5 py-2.5 text-[15px] font-medium transition-colors duration-150',
       primary
         ? 'border-accent bg-accent text-on-accent hover:bg-[color-mix(in_srgb,var(--accent)_88%,var(--ink))]'
         : 'border-rule-strong bg-sheet text-ink hover:border-accent hover:text-accent', className)} {...rest}>
@@ -111,7 +119,7 @@ export function Button({ href, primary = false, className = '', children, ...res
 }
 
 export function Wrap({ className = '', children }) {
-  return <div className={cn('mx-auto max-w-[1200px] px-5 md:px-8', className)}>{children}</div>;
+  return <div className={cn('mx-auto max-w-[1120px] px-5 md:px-8', className)}>{children}</div>;
 }
 
 // A document section: its name sits in the left margin on wide screens and above the content on phones.
@@ -119,10 +127,10 @@ export function Wrap({ className = '', children }) {
 export function Section({ id, label, note, wide = false, tight = false, className = '', children }) {
   const titleId = id ? `${id}-title` : undefined;
   return (
-    <section id={id} aria-labelledby={titleId} className={cn('grid grid-cols-1 gap-x-10 gap-y-5 border-t border-rule', tight ? 'py-8' : 'py-10 lg:py-14', !wide && 'lg:grid-cols-[200px_minmax(0,1fr)]', className)}>
+    <section id={id} aria-labelledby={titleId} className={cn('grid grid-cols-1 gap-x-10 gap-y-5 border-t border-rule', tight ? 'py-6' : 'py-8 lg:py-10', !wide && 'lg:grid-cols-[180px_minmax(0,1fr)]', className)}>
       <div>
-        <h2 id={titleId} className="font-display text-[21px] font-semibold leading-tight text-ink">{label}</h2>
-        {note && <p className="mt-1.5 text-[14px] leading-snug text-lead">{note}</p>}
+        <h2 id={titleId} className="font-display text-[19px] font-semibold leading-tight text-ink">{label}</h2>
+        {note && <p className="mt-1.5 text-[13px] leading-snug text-lead">{note}</p>}
       </div>
       <div className="min-w-0">{children}</div>
     </section>
@@ -131,10 +139,10 @@ export function Section({ id, label, note, wide = false, tight = false, classNam
 
 export function PageHead({ title, children, aside }) {
   return (
-    <header className="grid grid-cols-1 gap-6 pt-12 pb-10 md:pt-16 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+    <header className="grid grid-cols-1 gap-6 pt-10 pb-8 md:pt-12 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
       <div>
-        <h1 className="font-display text-[36px] font-semibold leading-[1.08] md:text-[48px]">{title}</h1>
-        {children && <div className="mt-4 max-w-[66ch] text-[18px] leading-relaxed text-lead">{children}</div>}
+        <h1 className="font-display text-[32px] font-semibold leading-[1.08] md:text-[40px]">{title}</h1>
+        {children && <div className="mt-4 max-w-[66ch] text-[16px] leading-relaxed text-lead">{children}</div>}
       </div>
       {aside}
     </header>
@@ -148,7 +156,7 @@ export function Glance({ items, className = '' }) {
       {items.map(([k, v]) => (
         <div key={k} className="border-t border-rule py-3">
           <dt className="t-label font-normal text-lead">{k}</dt>
-          <dd className="mt-0.5 text-[16px] font-medium leading-snug tabular-nums lining-nums text-ink">{v}</dd>
+          <dd className="mt-0.5 text-[15px] font-medium leading-snug tabular-nums lining-nums text-ink">{v}</dd>
         </div>
       ))}
     </dl>
