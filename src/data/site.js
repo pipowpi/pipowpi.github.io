@@ -10,6 +10,8 @@ export const SITE = {
   linkedin: 'https://linkedin.com/in/gopi-krishna-kanugula-0099a711a/',
   github: 'https://github.com/pipowpi',
   location: 'Stony Brook, NY',
+  // Where the site is served. Used for canonical links, the sitemap, the RSS feed and link previews.
+  url: 'https://pipowpi.github.io/',
   availability: 'Open to roles from June 2027',
   seeking: 'Systems, infrastructure and applied AI roles',
 };
@@ -34,6 +36,7 @@ export const PAGE_META = {
     description: 'Notes and explainers on CI/CD, GPU virtualization, security and vision-language models.',
   },
   about: { title: 'About', description: 'About Gopi Krishna Kanugula: background, how I work, toolbox and education.' },
+  styleguide: { title: 'Style guide', description: 'Tokens and components used on this site.' },
   404: { title: 'Not found', description: 'Page not found.' },
 };
 

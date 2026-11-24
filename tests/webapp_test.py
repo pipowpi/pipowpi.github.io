@@ -5,7 +5,7 @@ Run it against a local static server, for example with the skill's helper:
     python with_server.py --server "python3 -m http.server 8000" --port 8000 -- \
         python3 tests/webapp_test.py --out .screens
 
-It saves a full-page screenshot of every page at 390px and 1440px, in light and dark, and checks:
+It saves a full-page screenshot of every page at 390, 768, 1024 and 1440px, in light and dark, and checks:
   - horizontal scroll (document wider than the viewport) and elements past the right edge;
   - text that spills out of its own box;
   - interactive elements that overlap each other or are covered (hit-tested at their center);
@@ -21,8 +21,9 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
-PAGES = ['', 'work/', 'projects/', 'writing/', 'writing/push-or-pull/', 'about/', '404.html']
-SIZES = {'390': {'width': 390, 'height': 844}, '1440': {'width': 1440, 'height': 900}}
+PAGES = ['', 'work/', 'projects/', 'writing/', 'writing/push-or-pull/', 'about/', 'styleguide/', '404.html']
+SIZES = {'390': {'width': 390, 'height': 844}, '768': {'width': 768, 'height': 1024},
+         '1024': {'width': 1024, 'height': 768}, '1440': {'width': 1440, 'height': 900}}
 
 LAYOUT_JS = r"""
 () => {
@@ -108,16 +109,24 @@ def interactions(browser, base):
     out['theme'] = {'flips': before != after, 'persists': pg.evaluate("document.documentElement.dataset.theme") == after,
                     'label': pg.locator('header button').get_attribute('aria-label')}
     pg.locator('header button').click()
-    # Motion toggle (on the Work page, next to the runner scene): pauses every animation, persists, resumes.
+    # Motion toggle (footer): pauses every animation, persists across reload, resumes.
     pg.goto(base + 'work/')
     pg.wait_for_load_state('networkidle')
-    m = pg.locator('figure button')
+    m = pg.locator('footer [data-motion-toggle]')
     m.click()
     paused = pg.evaluate("document.documentElement.dataset.motion === 'off' && [...document.querySelectorAll('*')].every((e) => getComputedStyle(e).animationName === 'none')")
+    label = m.inner_text().strip()
     pg.reload()
-    kept = pg.evaluate("document.documentElement.dataset.motion === 'off'")
-    pg.locator('figure button').click()
-    out['motion'] = {'pauses': paused, 'persists': kept, 'resumes': pg.evaluate("!document.documentElement.dataset.motion")}
+    kept = pg.evaluate("document.documentElement.dataset.motion === 'off'") and m.get_attribute('aria-pressed') == 'true'
+    m.click()
+    out['motion'] = {'pauses': paused, 'label': label == 'Play animations', 'persists': kept,
+                     'resumes': pg.evaluate("!document.documentElement.dataset.motion")}
+    # Phone panels: closed at first, open on tap, button text and aria-expanded follow.
+    b = pg.locator('#nvidia [data-clps]').first
+    closed = not pg.locator('#nvidia .clps-body').first.is_visible()
+    b.click()
+    out['collapsible'] = {'starts_closed': closed, 'opens': pg.locator('#nvidia .clps-body').first.is_visible(),
+                          'expanded': b.get_attribute('aria-expanded') == 'true', 'text': b.locator('.clps-text').inner_text().startswith('Hide')}
     # Nav links (mobile header) go to the right page and mark it current.
     nav = {}
     for name, path in [('Work', 'work/'), ('Projects', 'projects/'), ('Writing', 'writing/'), ('About', 'about/')]:
@@ -128,7 +137,8 @@ def interactions(browser, base):
     out['nav'] = nav
     # Writing filters: every chip filters, sets aria-pressed and the URL; "All" resets.
     pg.goto(base + 'writing/')
-    pg.wait_for_load_state('networkidle')
+    pg.wait_for_selector('[data-island="PostFilter"][data-hydrated]', state='attached')
+    pg.wait_for_timeout(200)
     chips = pg.get_by_role('group', name='Filter posts by topic').get_by_role('button')
     total = pg.locator('#posts li').count()
     res = {}
@@ -187,7 +197,9 @@ def main():
     if not (it['theme']['flips'] and it['theme']['persists']):
         failures.append('theme toggle')
     if not all(it['motion'].values()):
-        failures.append('motion toggle')
+        failures.append(f"motion toggle {it['motion']}")
+    if not all(it['collapsible'].values()):
+        failures.append(f"collapsible {it['collapsible']}")
     failures += [f'nav {k}' for k, v in it['nav'].items() if not v]
     for name, c in it['filters']['chips'].items():
         if not c['pressed'] or c['shown'] == 0:

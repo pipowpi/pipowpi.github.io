@@ -62,38 +62,36 @@ export function smart(text) {
     .replace(/\.\.\./g, '\u2026');
 }
 
-function inline(text) {
-  return text.split(/(`[^`]+`)/).map((part) =>
-    part.startsWith('`') && part.endsWith('`') && part.length > 1
-      ? '<code translate="no">' + esc(part.slice(1, -1)) + '</code>'
-      : esc(smart(part))
-  ).join('');
-}
-
-// The same small Markdown subset the old build.py supported: "## " headings, paragraphs,
-// fenced code blocks and `inline code`.
-function markdown(md) {
-  const out = [];
-  let para = [];
-  let code = [];
-  let inCode = false;
-  const flush = () => {
-    if (para.length) { out.push('<p>' + inline(para.join(' ')) + '</p>'); para = []; }
-  };
-  for (const line of md.split('\n')) {
-    if (line.trim().startsWith('```')) {
-      if (inCode) { out.push('<pre translate="no"><code>' + esc(code.join('\n')) + '</code></pre>'); code = []; inCode = false; }
-      else { flush(); inCode = true; }
-      continue;
-    }
-    if (inCode) code.push(line);
-    else if (line.startsWith('## ')) { flush(); out.push('<h2>' + inline(line.slice(3).trim()) + '</h2>'); }
-    else if (!line.trim()) flush();
-    else para.push(line.trim());
-  }
-  flush();
-  return out.join('\n');
-}
+// Posts are Markdown (GitHub flavour: headings, lists, links, images, tables, code). marked turns
+// them into HTML at build time; quotes in prose become typographer's quotes, code is left alone,
+// headings get ids for linking, and links to other sites open in a new tab.
+const markedMod = await import(pathToFileURL(resolvePkg('marked')).href);
+const Marked = markedMod.Marked || markedMod.default.Marked;
+const slugify = (t) => t.toLowerCase().replace(/<[^>]+>/g, '').replace(/&[a-z]+;/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const md = new Marked({ gfm: true });
+md.use({
+  walkTokens(token) {
+    if (token.type === 'text' && !token.tokens) token.text = smart(token.text);
+  },
+  renderer: {
+    heading({ tokens, depth }) {
+      const html = this.parser.parseInline(tokens);
+      return `<h${depth} id="${slugify(html)}">${html}</h${depth}>\n`;
+    },
+    code({ text, lang }) {
+      return `<pre translate="no"><code${lang ? ` class="language-${esc(lang)}"` : ''}>${esc(text)}</code></pre>\n`;
+    },
+    link({ href, title, tokens }) {
+      const html = this.parser.parseInline(tokens);
+      const external = /^https?:\/\//.test(href);
+      return `<a href="${esc(href)}"${title ? ` title="${esc(title)}"` : ''}${external ? ' target="_blank" rel="noopener noreferrer"' : ''}>${html}</a>`;
+    },
+    image({ href, title, text }) {
+      return `<img src="${esc(href)}" alt="${esc(text)}"${title ? ` title="${esc(title)}"` : ''} loading="lazy" decoding="async">`;
+    },
+  },
+});
+const markdown = (src) => md.parse(src);
 
 // Drafts are listed with a "Draft" label. Set SHOW_DRAFTS to false (or run with SHOW_DRAFTS=false)
 // to leave every post marked `draft: true` out of the site.
@@ -172,16 +170,23 @@ const common = {
   define: { 'process.env.NODE_ENV': '"production"' },
 };
 
+// The browser bundle is split: app-*.js is small plain JavaScript that runs on every page (theme and
+// motion toggles, phone panels, pausing animations off screen). React and the island components load
+// as separate chunks, and only on pages that have an island.
 async function buildClient() {
   const res = await esbuild.build({
     ...common,
-    entryPoints: [path.join(ROOT, 'src/entry-client.jsx')],
-    format: 'iife',
+    entryPoints: { app: path.join(ROOT, 'src/entry-client.jsx') },
+    format: 'esm',
+    splitting: true,
     minify: true,
-    target: ['es2019'],
+    target: ['es2020'],
+    outdir: path.join(OUT, 'assets/js'),
+    entryNames: '[name]-[hash]',
+    chunkNames: 'chunk-[hash]',
     write: false,
   });
-  return res.outputFiles[0].text;
+  return res.outputFiles.map((f) => ({ file: path.relative(OUT, f.path), text: f.text }));
 }
 
 async function loadServer() {
@@ -200,6 +205,8 @@ async function loadServer() {
 
 // ------------------------------------------------------------------ html
 function page({ head, body, root, data, cssHref, jsHref }) {
+  // The boot script runs before first paint: it applies the saved theme and motion choice, and adds
+  // the "js" class that lets phone panels start folded (without JavaScript they stay open).
   return `<!doctype html>
 <html lang="en" data-theme="dark">
 <head>
@@ -208,12 +215,12 @@ function page({ head, body, root, data, cssHref, jsHref }) {
 ${head}
 <link rel="icon" href="${root}assets/img/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="${root}${cssHref}">
-<script>(function(){var d=document.documentElement,t='dark',s=null;try{s=localStorage.getItem('gkk-theme');if(s==='light'||s==='dark'){t=s;}if(localStorage.getItem('gkk-motion')==='off'){d.setAttribute('data-motion','off');}}catch(e){}d.setAttribute('data-theme',t);if(s==='light'||s==='dark'){var c=t==='dark'?'#121316':'#F4F4F2';document.querySelectorAll('meta[name=theme-color]').forEach(function(m){m.setAttribute('content',c);});}})();</script>
+<script>(function(){var d=document.documentElement,t='dark',s=null;d.classList.add('js');try{s=localStorage.getItem('gkk-theme');if(s==='light'||s==='dark'){t=s;}if(localStorage.getItem('gkk-motion')==='off'){d.setAttribute('data-motion','off');}}catch(e){}d.setAttribute('data-theme',t);if(s==='light'||s==='dark'){var c=t==='dark'?'#121316':'#F4F4F2';document.querySelectorAll('meta[name=theme-color]').forEach(function(m){m.setAttribute('content',c);});}})();</script>
 </head>
 <body>
 <div id="root">${body}</div>
 <script type="application/json" id="page-data">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>
-<script src="${root}${jsHref}" defer></script>
+<script type="module" src="${root}${jsHref}"></script>
 </body>
 </html>
 `;
@@ -227,16 +234,18 @@ async function build() {
   const [css, js, server] = await Promise.all([buildCss(), buildClient(), loadServer()]);
   const hash = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 10);
   resetOut();
-  writeOut('assets/app.css', css);
-  writeOut('assets/app.js', js);
-  const cssHref = 'assets/app.css?v=' + hash(css);
-  const jsHref = 'assets/app.js?v=' + hash(js);
+  // File names carry a content hash, so browsers can cache them for as long as they like.
+  const cssHref = `assets/app-${hash(css)}.css`;
+  writeOut(cssHref, css);
+  for (const f of js) writeOut(f.file, f.text);
+  const jsHref = js.find((f) => /assets\/js\/app-[^/]+\.js$/.test(f.file)).file;
 
   const routes = server.routes(posts);
   for (const r of routes) {
     const { html, head } = server.render(r);
     writeOut(r.file, page({ head, body: html, root: r.root, data: { page: r.page, root: r.root, slug: r.slug || null }, cssHref, jsHref }));
   }
+  for (const [file, text] of Object.entries(server.extras(routes, posts))) writeOut(file, text);
   fs.rmSync(path.join(ROOT, '.build'), { recursive: true, force: true });
   console.log(`Built ${routes.length} pages (${posts.length} posts) into ${path.relative(ROOT, OUT) || '.'}/ in ${Date.now() - t0} ms.`);
 }

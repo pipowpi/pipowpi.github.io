@@ -145,20 +145,32 @@ A transformer block (embedding, attention, add & norm, feed-forward, × N, next-
 
 All fonts are self-hosted as woff files (no Google Fonts request).
 
+### Type scale tokens
+
+Font sizes come from tokens in `styles.css` (`@theme`), used as `text-caption` to `text-display`. Do not use raw `text-[17px]` sizes.
+
+| Token | px | Typical use |
+|---|---|---|
+| `text-caption` | 13 | Captions, labels, chips |
+| `text-small` | 14 | Secondary text, card descriptions |
+| `text-body` | 15 | Body copy |
+| `text-large` | 16 | Ledes, emphasised body |
+| `text-title` | 18 | Small headings (h4 inside cards) |
+| `text-h4` | 20 | Section names |
+| `text-h3` | 23 | Card titles |
+| `text-h2` | 28 | Case study titles on desktop |
+| `text-h1` | 34 | Page titles on phones |
+| `text-display` | 40 | Page titles on desktop |
+
+`tailwind-merge` is told about these names, so `cn('text-lead', 'text-small')` keeps both (one is a color, one a size).
+
 ### Text roles
 
 | Role | Utility | Spec |
 |---|---|---|
-| Display (home h1) | | Bitter 38 / 56 / 60px, 600, leading 1.05 |
-| Page title (h1) | | Bitter 36 / 48px, 600, leading 1.08 |
-| Section name (h2) | | Bitter 21px, 600 |
-| Card title (h3) | | Bitter 24 to 32px, 600 |
-| Lede | | Fira Sans 18px, leading 1.65, `--lead`, max 66ch |
-| Body | | Fira Sans 17px, leading 1.65, max 70ch |
-| Article body | | Fira Sans 18px, leading 1.75 |
-| **Stat** | `t-stat` | Fira Sans 40px, 600, leading 1, tabular lining figures |
-| **Metric** | `t-metric` | Fira Sans 28px, 600, leading 1, tabular lining figures |
-| **Meta** (dates, counts, read time) | `t-meta` | Fira Sans 15px, `--lead`, tabular lining figures |
+| **Stat** | `t-stat` | Fira Sans, 600, leading 1, tabular lining figures |
+| **Metric** | `t-metric` | Fira Sans, 600, leading 1, tabular lining figures |
+| **Meta** (dates, counts, read time) | `t-meta` | Fira Sans, `--lead`, tabular lining figures |
 | **Label** (field names, axis labels) | `t-label` | Fira Sans 13px, 500, `--lead`, tabular lining figures |
 | **Chip** (status pill, tag, filter) | `t-chip` | Fira Sans 13px, 500 |
 
@@ -169,7 +181,9 @@ All fonts are self-hosted as woff files (no Google Fonts request).
 - Sentence case everywhere. No eyebrows above headings, and no letter-spacing changes (baseline-ui).
 - Weights: 600 for headings and stats, 500 for labels and links, 400 for body.
 
-**Type scale (px):** 14, 15, 16, 17, 18, 21, 24, 28, 32, 40, 48, 60.
+**Type scale (px):** 13, 14, 15, 16, 18, 20, 23, 28, 34, 40.
+
+The woff files are subset to Latin, Latin-1, general punctuation and arrows (pyftsubset).
 
 ---
 
@@ -242,6 +256,31 @@ A 14px label with a dot. The dot's shape and motion also carry the state, so col
 - Toggle button with `aria-pressed`. Minimum height 40px.
 - When selected: accent border, wash background, accent text.
 
+### Shared components (`src/components/ui.jsx`)
+
+| Component | Use |
+|---|---|
+| `Chip` | Every small pill: `tag` (skills), `accent` (topics), `ink` (role switch), `dashed` (waiting or in progress). `Tag` and `StatusPill` are built on it. |
+| `Stat` | A number with a label and a 2px top rule in a stage color. `size="stat"` or `"metric"`. |
+| `Collapsible` | Long detail that folds on phones (below 768px) behind "Show ...". Always open from 768px up and without JavaScript. Use `className="clps-contents"` when the children must stay grid items (the Work timeline subgrid). |
+| `Island` | Marks a part that runs React in the browser. Props must be plain JSON. Register new islands in `src/hydrate.jsx`. |
+| `MotionToggle`, `ThemeToggle` | Static buttons; the handlers live in `src/entry-client.jsx`. |
+
+`/styleguide/` renders all of these, so check it after any change here.
+
+### Diagrams (`src/components/Diagrams.jsx`)
+
+- Labelled SVG drawings of the real thing: `api`, `cluster`, `pipeline`, `jobquery`, `conv`, `attention`, `mesh`, `loss`, `transformer`. Lines in ink, one highlight in the page or case study color.
+- `jobquery` (the Windows GPU CI flow) replaced the old 3D canvas on the Work page. It is wider than a phone, so below 520px it scrolls sideways with a "Swipe" hint rather than shrinking the labels.
+- Each one steps through its states with `useStep` only while it is on screen. The server renders the resting state, so the drawing is complete before any JavaScript runs.
+
+### Motion
+
+- Tokens: `--ease-out`, `--ease-in-out`, `--duration-fast` (150ms), `--duration-base`, `--duration-slow`.
+- Every looping animation pauses when it scrolls out of view (`data-paused`, set in `entry-client.jsx`) and resumes when it comes back.
+- The footer pause button sets `data-motion="off"` on `<html>` and is remembered. `prefers-reduced-motion` has the same effect.
+- Flow wires carry a moving packet while the diagram is on screen (no longer hover only).
+
 ### Diagram node (Flow)
 
 - 6px radius, `--rule-strong` border, `--sheet` background.
@@ -302,3 +341,7 @@ A 14px label with a dot. The dot's shape and motion also carry the state, so col
 - [ ] Both themes are checked; the theme toggle persists across reloads.
 - [ ] No horizontal scroll at 390px; the layout holds at 1440px.
 - [ ] `prefers-reduced-motion`: no packets, no typing, no blinking, no bar growth.
+- [ ] Animations pause when scrolled out of view, and the footer pause button stops all of them.
+- [ ] Long detail folds on phones with `Collapsible`, and reads fully at 768px and up.
+- [ ] `/styleguide/` still renders every token and component.
+- [ ] `tests/webapp_test.py` passes at 390, 768, 1024 and 1440px in both themes.

@@ -8,7 +8,18 @@ This is my personal site. It has five pages:
 - **Writing**: posts
 - **About**
 
-It's built with React and Tailwind CSS. Every page is prerendered to plain HTML at build time and hydrated in the browser. GitHub Actions runs the build on every push to `main` and deploys the result to GitHub Pages, so the built files are never committed.
+It's built with React and Tailwind CSS. Every page is prerendered to plain HTML at build time, so it reads fine with JavaScript off. GitHub Actions builds, tests and deploys it on every push to `main`, so the built files are never committed.
+
+There is also a `/styleguide/` page (not linked, not indexed) that shows every color, type size, control and diagram in one place.
+
+## How it works
+
+- **Prerendering.** `scripts/build.mjs` renders each page with React on the server (`src/entry-server.jsx`) and writes plain HTML into `dist/`. Posts are Markdown, converted with `marked`.
+- **Islands.** Most of the page is static HTML. Only three parts run React in the browser: the career run on Home, the animated diagrams, and the post filter on Writing. Each is wrapped in `<Island>` (`src/components/ui.jsx`). `src/entry-client.jsx` is about 1 KB of plain JavaScript: it handles the theme and motion toggles and the phone panels, and loads React (`src/hydrate.jsx`) only when an island comes near the screen.
+- **Motion.** Animations play while they are on screen and pause when you scroll past them. The footer has a pause button that stops all of them, and `prefers-reduced-motion` is respected.
+- **Phones.** Long detail (era work lists, case study phases) is folded behind a "Show ..." button below 768px. Without JavaScript it stays open.
+- **Assets.** CSS and JS file names carry a content hash, so browsers can cache them for a long time.
+- **SEO.** Each page gets a canonical URL, Open Graph and Twitter tags, and JSON-LD (Person on Home, BlogPosting on posts). The build also writes `sitemap.xml`, `robots.txt` and an RSS feed at `writing/feed.xml`. Drafts are left out of all three. The share image is `assets/img/og.png`; to change it, edit `scripts/og-card.html` and take a 1200x630 screenshot of it.
 
 ## Build and preview
 
@@ -33,7 +44,9 @@ npm run preview            # serves dist/ at http://localhost:8000
 | About (bio, principles, now, toolbox, education) | `src/data/about.js` |
 | Blog posts | `content/posts/<slug>.md` (one file per post) |
 | Page layouts | `src/pages/*.jsx` |
-| Shared pieces (sections, buttons, tags, diagrams) | `src/components/` |
+| Shared pieces (sections, buttons, chips, stats, panels) | `src/components/ui.jsx` |
+| Diagrams (SVG, one per topic) | `src/components/Diagrams.jsx` |
+| Interactive parts (islands) | `src/islands/`, registered in `src/hydrate.jsx` |
 | Colors, fonts, text roles | `src/styles.css`, as documented in `design-system/gopi-portfolio/MASTER.md` |
 
 ### Writing a post
@@ -81,17 +94,19 @@ npm run preview &
 python3 tests/webapp_test.py --out .screens
 ```
 
-It saves screenshots of every page at 390px and 1440px in light and dark. It fails on any of these:
+It saves screenshots of every page at 390, 768, 1024 and 1440px in light and dark. It fails on any of these:
 
 - horizontal scroll or overflow;
 - overlapping or covered controls;
 - small tap targets;
 - console errors;
-- a broken toggle, filter or link.
+- a broken toggle, phone panel, filter or link.
+
+The same test runs in GitHub Actions after every build. If it fails, the site is not deployed, and the screenshots are saved with the run (Actions tab, "screens").
 
 ## Publish on GitHub Pages
 
-The site deploys itself. `.github/workflows/deploy.yml` runs on every push to `main` (and by hand from the Actions tab): it installs the packages, runs `npm run build` and publishes `dist/` to GitHub Pages.
+The site deploys itself. `.github/workflows/deploy.yml` runs on every push to `main` (and by hand from the Actions tab): it installs the packages, runs `npm run build`, runs the test, and publishes `dist/` to GitHub Pages.
 
 One-time setup on GitHub: go to Settings > Pages > Build and deployment, and set Source to **GitHub Actions**.
 

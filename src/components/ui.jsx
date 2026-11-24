@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext } from 'react';
 import { clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { extendTailwindMerge } from 'tailwind-merge';
 
 // Relative path from the current page to the site root ('', '../' or '../../'),
 // so links work at https://user.github.io/ and at https://user.github.io/repo/.
@@ -19,6 +19,11 @@ export function tone(t) {
   return { '--accent': c, '--wash': `color-mix(in srgb, ${c} 16%, var(--sheet))` };
 }
 
+// tailwind-merge must know the custom type scale (text-caption ... text-display) is a font size,
+// or it would treat it as a color and drop text-lead or text-ink next to it.
+const twMerge = extendTailwindMerge({
+  extend: { theme: { text: ['caption', 'small', 'body', 'large', 'title', 'h4', 'h3', 'h2', 'h1', 'display'] } },
+});
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
@@ -74,10 +79,31 @@ export function Mark({ name, size = 'md', className = '' }) {
 export function Sheet({ as: Tag = 'div', interactive = false, className = '', children, ...rest }) {
   return (
     <Tag className={cn('relative rounded-md border border-rule bg-sheet',
-      interactive && 'block text-ink transition-colors duration-150 hover:border-accent focus-visible:border-accent', className)} {...rest}>
+      interactive && 'block text-ink transition-[border-color,transform] duration-(--duration-fast) ease-[var(--ease-out)] hover:border-accent focus-visible:border-accent active:translate-y-px', className)} {...rest}>
       {children}
     </Tag>
   );
+}
+
+// Chip: the one small label shape. Variants: tag (a tool or skill), accent (a topic, in the current
+// accent color), ink (a neutral marker such as "New role and team"), dashed (something pending).
+const CHIP = {
+  tag: 'border-rule font-normal text-lead',
+  accent: 'border-[color-mix(in_srgb,var(--accent)_45%,transparent)] bg-wash text-accent',
+  ink: 'border-ink text-ink',
+  dashed: 'rounded-md border-dashed border-accent text-accent',
+};
+export function Chip({ variant = 'tag', icon, className = '', children, ...rest }) {
+  return (
+    <span className={cn('t-chip inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-0.5', CHIP[variant], className)} {...rest}>
+      {icon && <Icon name={icon} className="size-3.5" />}
+      {children}
+    </span>
+  );
+}
+
+export function Tag({ children, className = '' }) {
+  return <Chip translate="no" className={className}>{children}</Chip>;
 }
 
 const STATUS = {
@@ -88,15 +114,42 @@ const STATUS = {
 export function StatusPill({ status, children }) {
   const s = STATUS[status];
   return (
-    <span className={cn('t-chip inline-flex items-center gap-2 rounded-full border border-rule px-2.5 py-0.5', s.text)}>
+    <Chip className={cn('gap-2 font-medium', s.text)}>
       <span aria-hidden="true" className={cn('inline-block size-2 rounded-full', s.dot)} />
       {children || s.label}
-    </span>
+    </Chip>
   );
 }
 
-export function Tag({ children, className = '' }) {
-  return <span translate="no" className={cn('t-chip whitespace-nowrap rounded-full border border-rule px-2.5 py-0.5 font-normal text-lead', className)}>{children}</span>;
+// A number with its label and a colored rule above it (home facts, About numbers).
+export function Stat({ value, label, tone: t, size = 'metric' }) {
+  return (
+    <div style={tone(t)} className="flex flex-col border-t-2 border-accent pt-3">
+      <dd className={cn('order-1 text-ink', size === 'stat' ? 't-stat' : 't-metric')}>{value}</dd>
+      <dt className="order-2 mt-1.5 text-caption leading-snug text-lead">{label}</dt>
+    </div>
+  );
+}
+
+// Details that are always open on tablets and desktops, and folded behind a button on phones.
+// The button is wired up in entry-client.jsx; without JavaScript everything stays open.
+export function Collapsible({ label = 'details', className = '', children }) {
+  return (
+    <div className={cn('clps', className)}>
+      <button type="button" data-clps data-label={label} aria-expanded="false"
+        className="clps-btn t-label inline-flex min-h-10 cursor-pointer items-center gap-1.5 text-accent md:hidden">
+        <span aria-hidden="true" className="clps-sign">+</span><span className="clps-text">{`Show ${label}`}</span>
+      </button>
+      <div className="clps-body">{children}</div>
+    </div>
+  );
+}
+
+// An island: a part of the page that becomes interactive in the browser. The server renders the
+// component as usual; entry-client.jsx loads its code only on pages that have one, and hydrates just
+// this element. Props must be plain data (they travel as JSON in data-props).
+export function Island({ name, component: C, props = {} }) {
+  return <div data-island={name} data-props={JSON.stringify(props)} className="contents"><C {...props} /></div>;
 }
 
 export function TextLink({ href, className = '', children, ...rest }) {
@@ -109,7 +162,8 @@ export function TextLink({ href, className = '', children, ...rest }) {
 
 export function Button({ href, primary = false, className = '', children, ...rest }) {
   return (
-    <a href={href} className={cn('inline-flex min-h-11 items-center gap-2 rounded-md border px-5 py-2.5 text-[15px] font-medium transition-colors duration-150',
+    <a href={href} className={cn('inline-flex min-h-11 items-center gap-2 rounded-md border px-5 py-2.5 text-body font-medium transition-colors duration-150',
+      'active:translate-y-px',
       primary
         ? 'border-accent bg-accent text-on-accent hover:bg-[color-mix(in_srgb,var(--accent)_88%,var(--ink))]'
         : 'border-rule-strong bg-sheet text-ink hover:border-accent hover:text-accent', className)} {...rest}>
@@ -129,8 +183,8 @@ export function Section({ id, label, note, wide = false, tight = false, classNam
   return (
     <section id={id} aria-labelledby={titleId} className={cn('grid grid-cols-1 gap-x-10 gap-y-5 border-t border-rule', tight ? 'py-6' : 'py-8 lg:py-10', !wide && 'lg:grid-cols-[180px_minmax(0,1fr)]', className)}>
       <div>
-        <h2 id={titleId} className="font-display text-[19px] font-semibold leading-tight text-ink">{label}</h2>
-        {note && <p className="mt-1.5 text-[13px] leading-snug text-lead">{note}</p>}
+        <h2 id={titleId} className="font-display text-h4 font-semibold leading-tight text-ink">{label}</h2>
+        {note && <p className="mt-1.5 text-caption leading-snug text-lead">{note}</p>}
       </div>
       <div className="min-w-0">{children}</div>
     </section>
@@ -143,8 +197,8 @@ export function PageHead({ title, children, aside, art }) {
   return (
     <header className={cn('grid grid-cols-1 gap-6 pt-10 pb-8 md:pt-12', art ? 'lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)] lg:items-center' : 'lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end')}>
       <div>
-        <h1 className="font-display text-[32px] font-semibold leading-[1.08] md:text-[40px]">{title}</h1>
-        {children && <div className="mt-4 max-w-[66ch] text-[16px] leading-relaxed text-lead">{children}</div>}
+        <h1 className="font-display text-h1 font-semibold leading-[1.08] md:text-display">{title}</h1>
+        {children && <div className="mt-4 max-w-[66ch] text-large leading-relaxed text-lead">{children}</div>}
         {art && aside && <div className="mt-5">{aside}</div>}
       </div>
       {art ? <div className="hidden lg:block">{art}</div> : aside}
@@ -159,7 +213,7 @@ export function Glance({ items, className = '' }) {
       {items.map(([k, v]) => (
         <div key={k} className="border-t border-rule py-3">
           <dt className="t-label font-normal text-lead">{k}</dt>
-          <dd className="mt-0.5 text-[15px] font-medium leading-snug tabular-nums lining-nums text-ink">{v}</dd>
+          <dd className="mt-0.5 text-body font-medium leading-snug tabular-nums lining-nums text-ink">{v}</dd>
         </div>
       ))}
     </dl>
@@ -171,24 +225,26 @@ export function enDash(s) {
   return String(s);
 }
 
-// Pauses every looping animation on the site (hero scene, rotating headline, status dots).
-// The choice is stored and applied before first paint by the boot script in build.mjs.
+// Pause or play every animation on the site. Plain markup: the click handler lives in
+// entry-client.jsx, and the saved choice is applied before first paint by the boot script.
 export function MotionToggle({ className = '' }) {
-  const [off, setOff] = useState(false);
-  useEffect(() => { setOff(document.documentElement.getAttribute('data-motion') === 'off'); }, []);
-  const flip = () => {
-    const next = !off;
-    document.documentElement.toggleAttribute('data-motion', next);
-    if (next) document.documentElement.setAttribute('data-motion', 'off');
-    try { localStorage.setItem('gkk-motion', next ? 'off' : 'on'); } catch (e) { /* storage unavailable */ }
-    setOff(next);
-    window.dispatchEvent(new CustomEvent('motionchange', { detail: next ? 'off' : 'on' }));
-  };
-  const label = off ? 'Play animations' : 'Pause animations';
   return (
-    <button type="button" onClick={flip} aria-label={label} title={label}
-      className={cn('inline-flex size-10 cursor-pointer items-center justify-center rounded-md border border-rule-strong bg-sheet text-ink transition-colors duration-150 hover:border-accent hover:text-accent', className)}>
-      <Icon name={off ? 'play' : 'pause'} className="size-4" />
+    <button type="button" data-motion-toggle aria-pressed="false"
+      className={cn('t-label inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-md border border-rule-strong px-3 text-ink transition-colors duration-(--duration-fast) hover:border-accent hover:text-accent', className)}>
+      <span className="motion-on inline-flex"><Icon name="pause" className="size-4" /></span>
+      <span className="motion-off inline-flex"><Icon name="play" className="size-4" /></span>
+      <span className="motion-label">Pause animations</span>
+    </button>
+  );
+}
+
+// Light and dark switch. Plain markup; the handler lives in entry-client.jsx.
+export function ThemeToggle() {
+  return (
+    <button type="button" data-theme-toggle aria-label="Switch to light mode" title="Switch to light mode"
+      className="inline-flex size-10 cursor-pointer items-center justify-center rounded-md border border-rule-strong text-ink transition-colors duration-(--duration-fast) hover:border-accent hover:text-accent active:translate-y-px">
+      <span className="hidden dark:block"><Icon name="sun" className="size-[18px]" /></span>
+      <span className="hidden light:block"><Icon name="moon" className="size-[18px]" /></span>
     </button>
   );
 }

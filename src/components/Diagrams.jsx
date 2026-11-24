@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-// Motifs: small labelled diagrams of the systems this site is about, drawn literally so each one
+// Diagrams: small labelled diagrams of the systems this site is about, drawn literally so each one
 // reads as the real thing: an API service with its database and file storage, a CI run graph with a
 // build-time chart, a Kubernetes cluster scheduling a pod, causal attention between words, a
 // convolution over an image, a photo turned into a 3D head mesh, a fine-tuning loss curve, and a
@@ -116,7 +116,7 @@ function Cluster() {
     <svg ref={ref} viewBox="0 0 430 260">
       <rect x="120" y="4" width="190" height="58" rx="8" className="mt-box" />
       <T x="215" y="27" anchor="middle">control plane</T>
-      <T x="215" y="47" anchor="middle" sm dim>API server · scheduler</T>
+      <T x="215" y="47" anchor="middle" sm dim>API server, scheduler</T>
       {nodes.map(([x, n], i) => (
         <g key={x}>
           <path d={`M215 62 L${x + 66} 100`} />
@@ -161,7 +161,7 @@ function Attention() {
           <T x={X(i) + 36} y="206" anchor="middle">{w}</T>
         </g>
       ))}
-      <T x="8" y="236" sm dim>line width = attention weight · later words are masked</T>
+      <T x="8" y="236" sm dim>line width = attention weight; later words are masked</T>
     </svg>
   );
 }
@@ -299,16 +299,56 @@ function Transformer() {
   );
 }
 
-const MOTIFS = { api: Api, pipeline: Pipeline, cluster: Cluster, attention: Attention, conv: Convolution, mesh: Mesh, loss: Loss, transformer: Transformer };
+// The NVIDIA CI: GitHub asks for a Windows GPU run; the job waits in my job query service; a runner
+// inside the cluster pulls it over an outbound connection (nothing outside can reach in); a fresh
+// Windows VM with a passed-through GPU runs it; the result goes back to GitHub.
+function JobQuery() {
+  const [ref, s] = useStep(5, 1300, 4); // 0 queued, 1 runner asks, 2 job handed out, 3 VM runs, 4 passed
+  return (
+    <svg ref={ref} viewBox="0 0 470 240">
+      <rect x="2" y="30" width="118" height="54" rx="7" />
+      <T x="14" y="52">GitHub</T>
+      <T x="14" y="70" sm dim>workflow run</T>
+      <g className={s === 4 ? '' : 'mt-gone'}><rect x="14" y="96" width="76" height="22" rx="11" className="mt-chip" /><T x="52" y="111" anchor="middle" sm hi>passed</T></g>
+      <rect x="160" y="16" width="140" height="132" rx="8" className="mt-box" />
+      <T x="172" y="38">job query</T>
+      <T x="172" y="54">service</T>
+      {[0, 1, 2].map((k) => (
+        <rect key={k} x="172" y={66 + k * 24} width="116" height="18" rx="4"
+          className={k === 0 && s <= 1 ? 'mt-box-hi' : k === 0 ? 'mt-faint mt-dash' : undefined} />
+      ))}
+      <T x="180" y="79" sm hi={s <= 1}>{s <= 1 ? 'job: win-gpu-test' : ''}</T>
+      <T x="180" y="103" sm dim>job: queued</T>
+      <T x="180" y="127" sm dim>job: queued</T>
+      <rect x="160" y="160" width="140" height="34" rx="6" />
+      <T x="230" y="181" anchor="middle" sm>pre-run gateway</T>
+      <path d="M120 57 H160" /><path d="M154 52 l6 5 l-6 5" />
+      <rect x="322" y="6" width="146" height="230" rx="10" className="mt-faint" strokeDasharray="5 5" />
+      <T x="334" y="26" sm dim>GPU cluster</T>
+      <T x="334" y="42" sm dim>no inbound access</T>
+      <rect x="336" y="56" width="118" height="44" rx="6" className={s === 1 || s === 2 ? 'mt-box-hi' : undefined} />
+      <T x="348" y="76">runner pod</T>
+      <T x="348" y="92" sm dim>polls for work</T>
+      <path d="M336 78 H300" className="mt-line-hi" />
+      <path d="M306 73 l-6 5 l6 5" className="mt-line-hi" />
+      <T x="304" y="70" sm hi anchor="end">pull</T>
+      <circle cx={s === 1 ? 312 : 326} cy="78" r="4.5" className={`mt-dot ${s === 1 ? '' : 'mt-gone'}`} />
+      <circle cx={s === 2 ? 326 : 312} cy="88" r="4.5" className={`mt-dot ${s === 2 ? '' : 'mt-gone'}`} />
+      <path d="M395 100 V128" />
+      <rect x="336" y="128" width="118" height="92" rx="6" className={s === 3 ? 'mt-box-hi' : undefined} />
+      <T x="348" y="150">Windows VM</T>
+      <T x="348" y="167" sm dim>fresh per job</T>
+      <rect x="348" y="180" width="40" height="18" rx="4" className="mt-chip" /><T x="368" y="193" anchor="middle" sm hi>GPU</T>
+      {s === 3 ? <Spin x={430} y={150} /> : s === 4 ? <Check x={430} y={150} /> : <Wait x={430} y={150} />}
+    </svg>
+  );
+}
 
-// A motif in the layout. `tone` sets its highlight color.
+const MOTIFS = { jobquery: JobQuery,  api: Api, pipeline: Pipeline, cluster: Cluster, attention: Attention, conv: Convolution, mesh: Mesh, loss: Loss, transformer: Transformer };
+
+// A diagram in the layout. `tone` sets its highlight color. On the page it is wrapped in an Island
+// (see Diagram below) so its animation runs in the browser.
 export function Motif({ name, tone = 'accent', className = '' }) {
   const M = MOTIFS[name];
   return <div className={`motif ${className}`} style={{ '--hi': `var(--${tone})` }} aria-hidden="true"><M /></div>;
-}
-
-// The page background: a blueprint grid with a soft wash of the page's colors along the top,
-// both fading out down the page.
-export function Backdrop({ page }) {
-  return <div className="backdrop" data-page={page} aria-hidden="true" />;
 }

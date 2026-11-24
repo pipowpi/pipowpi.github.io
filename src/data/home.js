@@ -14,7 +14,7 @@ export const FACTS = [
   { n: '8+', label: 'years in software', tone: 'pink' },
   { n: '2', label: 'companies', tone: 'teal' },
   { n: '4', label: 'engineers mentored', tone: 'coral' },
-  { n: 'May ’27', label: 'MS graduation', tone: 'lime' },
+  { n: '3', label: 'core services owned', tone: 'lime' },
 ];
 
 // This academic year, stop by stop. `state` drives the icon: running, queued.
@@ -25,11 +25,10 @@ export const PHASE = [
   { when: 'June 2027', what: 'Available full-time', state: 'queued' },
 ];
 
+// The "Right now" card: only what is not already said in the hero (the MS and the job search are).
 export const NOW = [
-  { icon: 'book', tone: 'accent', k: 'Studying', v: 'Computer vision and vision-language models, as part of my MS in Computer Science at Stony Brook.' },
   { icon: 'wrench', tone: 'pink', k: 'Building', v: 'A 3D head reconstruction model built on GNM, a RISC-V CPU, and a project for my vision-language models course.', href: 'projects/' },
   { icon: 'sparkle', tone: 'teal', k: 'Learning', v: 'How agents use tools. I’m building small agents that run locally on open models.' },
-  { icon: 'target', tone: 'lime', k: 'Looking for', v: 'A full-time role in systems, infrastructure or applied AI, starting June 2027.' },
 ];
 
 // Eight years as a CI run. Stages pass one by one; the switch marks the move to NVIDIA

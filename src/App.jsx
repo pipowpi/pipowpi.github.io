@@ -5,9 +5,10 @@ import Writing from './pages/Writing.jsx';
 import Post from './pages/Post.jsx';
 import About from './pages/About.jsx';
 import NotFound from './pages/NotFound.jsx';
+import Styleguide from './pages/Styleguide.jsx';
 import { RootContext } from './components/ui.jsx';
 
-const PAGES = { home: Home, work: Work, projects: Projects, writing: Writing, post: Post, about: About, 404: NotFound };
+const PAGES = { home: Home, work: Work, projects: Projects, writing: Writing, post: Post, about: About, styleguide: Styleguide, 404: NotFound };
 
 // Each route is its own static HTML file; `root` is the relative path back to the site root.
 export default function App({ page, root, slug }) {

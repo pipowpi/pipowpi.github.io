@@ -1,0 +1,28 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face { font-family: Bitter; src: url('../assets/fonts/bitter-var.woff'); font-weight: 100 900; }
+@font-face { font-family: Fira; src: url('../assets/fonts/fira-sans-400.woff'); font-weight: 400; }
+@font-face { font-family: Fira; src: url('../assets/fonts/fira-sans-600.woff'); font-weight: 600; }
+@font-face { font-family: Anon; src: url('../assets/fonts/anonymous-pro-400.woff'); }
+* { margin: 0; box-sizing: border-box; }
+body { width: 1200px; height: 630px; background: #121316; color: #EEEDEA; font-family: Fira; position: relative; overflow: hidden; }
+.grid { position: absolute; inset: 0; background-image: linear-gradient(rgb(238 237 234 / .07) 1px, transparent 1px), linear-gradient(90deg, rgb(238 237 234 / .07) 1px, transparent 1px), linear-gradient(rgb(238 237 234 / .035) 1px, transparent 1px), linear-gradient(90deg, rgb(238 237 234 / .035) 1px, transparent 1px); background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+  -webkit-mask-image: linear-gradient(to bottom, #000, rgb(0 0 0 / .25)); }
+.wash { position: absolute; inset: 0; background: radial-gradient(70% 70% at 15% -20%, rgb(255 178 36 / .16), transparent 60%), radial-gradient(50% 60% at 100% 0%, rgb(56 201 176 / .12), transparent 70%); }
+.in { position: absolute; inset: 72px 80px; display: flex; flex-direction: column; }
+.top { display: flex; align-items: center; gap: 18px; }
+.mark { width: 64px; height: 64px; border-radius: 10px; background: #FFB224; color: #121316; font: 700 26px Bitter; display: flex; align-items: center; justify-content: center; }
+.name { font: 600 30px Bitter; }
+.role { font: 400 20px Anon; color: #A2A3A0; margin-top: 4px; letter-spacing: .02em; }
+h1 { font: 600 58px/1.1 Bitter; margin-top: 64px; max-width: 980px; letter-spacing: -.01em; }
+.strip { display: flex; gap: 8px; margin-top: auto; }
+.strip span { height: 14px; border-radius: 3px; }
+.dash { background: repeating-linear-gradient(90deg, #FFB224 0 10px, transparent 10px 16px); }
+.foot { display: flex; justify-content: space-between; margin-top: 18px; font: 400 21px Anon; color: #A2A3A0; }
+.foot b { color: #FFB224; font-weight: 400; }
+</style></head><body><div class="grid"></div><div class="wash"></div>
+<div class="in">
+  <div class="top"><div class="mark">GK</div><div><p class="name">Gopi Krishna Kanugula</p><p class="role">Systems and infrastructure engineer</p></div></div>
+  <h1>I build the systems that help teams develop, test and ship software.</h1>
+  <div class="strip"><span style="flex:1;background:#FF8FB1"></span><span style="flex:2;background:#38C9B0"></span><span style="flex:3;background:#FF6B57"></span><span style="flex:1.5;background:#C3E26B"></span><span class="dash" style="flex:1"></span></div>
+  <div class="foot"><span>8 years at Abzooba and NVIDIA. <b>Now an MS in CS at Stony Brook.</b></span><span>pipowpi.github.io</span></div>
+</div></body></html>

@@ -28,13 +28,34 @@ jobs:
         with:
           node-version: 22
 
-      # Uses the lockfile when there is one (exact versions), otherwise installs from package.json.
+      # Uses the lockfile when it matches package.json (exact versions), otherwise installs from package.json.
       - name: Install dependencies
         run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
+          if [ -f package-lock.json ]; then npm ci || npm install --no-audit --no-fund; else npm install --no-audit --no-fund; fi
 
       - name: Build
         run: npm run build
+
+      # Layout and interaction checks on the built site (tests/webapp_test.py). A failure stops the
+      # deploy; the screenshots and report are kept as a run artifact either way.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Test
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+          python -m http.server 8000 -d dist >/dev/null 2>&1 &
+          sleep 1
+          python tests/webapp_test.py --base http://localhost:8000/ --out .screens
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screens
+          path: .screens
+          retention-days: 7
 
       - uses: actions/configure-pages@v5
 
