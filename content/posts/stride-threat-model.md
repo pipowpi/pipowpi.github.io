@@ -5,6 +5,8 @@ date: 2026-10-08
 read: 5 min
 tags: Security, CI/CD
 draft: true
+diagram: stride
+caption: Each STRIDE question placed on the part of a CI cluster it applies to most.
 ---
 STRIDE is a checklist of six ways something can go wrong, meant to be applied to each part of a system's data flow diagram. It is simple enough to use on a whiteboard, which is its main virtue. Here is how each letter looks for a CI cluster that runs other people's code.
 

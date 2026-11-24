@@ -15,7 +15,8 @@ export function hydrateIslands(elements) {
   const { root } = pageData;
   elements.forEach(async (node) => {
     const el = node.closest('[data-island]');
-    if (!el || 'hydrating' in el.dataset) return;
+    // Skip an island inside another island: the outer one already runs it.
+    if (!el || 'hydrating' in el.dataset || el.parentElement.closest('[data-island]')) return;
     el.dataset.hydrating = '';
     const load = ISLANDS[el.dataset.island];
     if (!load) return;

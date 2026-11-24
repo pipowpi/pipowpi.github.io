@@ -1,4 +1,3 @@
-import { Diagram } from '../components/Diagram.jsx';
 import { BIO, PRINCIPLES, NOW, TOOLBOX, EDUCATION, FACTS } from '../data/about.js';
 import { Layout } from '../components/Layout.jsx';
 import { Mark, PageHead, Section, Stat, Tag, TextLink, Wrap, cn, tone, useHref } from '../components/ui.jsx';
@@ -9,7 +8,7 @@ export default function About() {
   return (
     <Layout active="about">
       <Wrap>
-        <PageHead title="Hi, I’m Gopi." art={<Diagram name="loss" tone="coral" className="ml-auto block aspect-[400/210] w-full max-w-[420px]" />}>
+        <PageHead title="Hi, I’m Gopi.">
           {BIO.map((para, i) => <p key={i} className={cn(i > 0 && 'mt-4')}>{para}</p>)}
         </PageHead>
 

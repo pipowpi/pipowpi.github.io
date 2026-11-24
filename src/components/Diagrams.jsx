@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 
-// Diagrams: small labelled diagrams of the systems this site is about, drawn literally so each one
-// reads as the real thing: an API service with its database and file storage, a CI run graph with a
-// build-time chart, a Kubernetes cluster scheduling a pod, causal attention between words, a
-// convolution over an image, a photo turned into a 3D head mesh, a fine-tuning loss curve, and a
-// transformer block. Each has one slow animation that shows how it works. They sit in the layout
-// (page headers, home cards), never behind text. Decorative: aria-hidden; motion stops under
-// reduced motion, with the motion toggle, and while the drawing is off screen.
+// Diagrams: small labelled drawings of the systems this site is about, drawn literally so each one
+// reads as the real thing. Every one shows work Gopi did or exactly what its section covers:
+// an API service, a CI pipeline with a Windows GPU lane, a VM with a passed-through GPU on Kubernetes,
+// the Xpresso MLOps lifecycle and its DataOps layer, the job query service, a photo turned into a 3D
+// head mesh, a RISC-V instruction moving through a core, a VLM reading an image, the pull loop, push
+// versus pull, and STRIDE on a CI cluster. Each has one slow animation that shows how it works.
+// Decorative: aria-hidden, with the meaning in a caption next to it. Motion stops under reduced
+// motion, with the motion toggle, and while the drawing is off screen.
 
 // Steps through 0..n-1 every `ms` while the drawing is visible and motion is allowed.
 // The server render and the still state show `rest`.
@@ -44,6 +45,21 @@ const Spin = ({ x, y }) => (
 );
 const Wait = ({ x, y }) => <circle cx={x} cy={y} r="6.5" className="mt-wait" />;
 
+// Arrowheads: r, l, u, d point right, left, up and down, with the tip at (x, y).
+const Head = ({ x, y, dir = 'r', hi }) => {
+  const d = { r: `M${x - 6} ${y - 5} L${x} ${y} L${x - 6} ${y + 5}`, l: `M${x + 6} ${y - 5} L${x} ${y} L${x + 6} ${y + 5}`,
+    u: `M${x - 5} ${y + 6} L${x} ${y} L${x + 5} ${y + 6}`, d: `M${x - 5} ${y - 6} L${x} ${y} L${x + 5} ${y - 6}` }[dir];
+  return <path d={d} className={hi ? 'mt-line-hi' : undefined} />;
+};
+// A box with a title and an optional second line. `hi` highlights it.
+const Box = ({ x, y, w, h, title, sub, hi, center, box }) => (
+  <g>
+    <rect x={x} y={y} width={w} height={h} rx="7" className={hi ? 'mt-box-hi' : box ? 'mt-box' : undefined} />
+    {title && <T x={center ? x + w / 2 : x + 12} y={sub ? y + h / 2 - 3 : y + h / 2 + 5} anchor={center ? 'middle' : undefined} hi={hi}>{title}</T>}
+    {sub && <T x={center ? x + w / 2 : x + 12} y={y + h / 2 + 14} anchor={center ? 'middle' : undefined} sm dim>{sub}</T>}
+  </g>
+);
+
 // Backend: a client calls an API service, which writes to a database and to file storage.
 function Api() {
   const [ref, s] = useStep(4, 900, 3);
@@ -70,132 +86,268 @@ function Api() {
   );
 }
 
-// CI/CD: a push triggers build, two test jobs (one on a Windows GPU runner) and deploy; below, a
-// chart of build times. Jobs run and pass one stage at a time.
+// CI/CD: a push triggers build, two test jobs (one on a Windows GPU runner) and ship. Below, the
+// monitoring side: Prometheus scrapes metrics from the runners and Grafana shows them.
 function Pipeline() {
-  const [ref, s] = useStep(5, 1100, 4); // 0 build running, 1 tests running, 2 deploy running, 3-4 all passed
+  const [ref, s] = useStep(5, 1100, 4); // 0 build running, 1 tests running, 2 ship running, 3-4 all passed
   const st = (stage) => (s > stage ? 'pass' : s === stage ? 'run' : 'wait');
-  const Job = ({ x, y, w = 112, name, time, stage }) => {
+  const Job = ({ x, y, w = 112, name, stage }) => {
     const k = st(stage);
     return (
       <g>
         <rect x={x} y={y} width={w} height="34" rx="6" className={k === 'run' ? 'mt-box-hi' : undefined} />
         {k === 'pass' ? <Check x={x + 16} y={y + 17} /> : k === 'run' ? <Spin x={x + 16} y={y + 17} /> : <Wait x={x + 16} y={y + 17} />}
         <T x={x + 30} y={y + 21} sm>{name}</T>
-        <T x={x + w - 8} y={y + 21} sm dim anchor="end">{k === 'pass' ? time : ''}</T>
       </g>
     );
   };
-  const bars = [34, 30, 36, 29, 31, 27, 33, 26, 25, 28, 24, 23, 25, 22, 21, 22, 20, 19];
   return (
     <svg ref={ref} viewBox="0 0 430 190">
       <rect x="2" y="44" width="70" height="30" rx="15" /><T x="37" y="63" anchor="middle" sm>push</T>
-      <Job x={88} y={42} w={104} name="build" time="2m" stage={0} />
-      <Job x={212} y={6} w={146} name="linux tests" time="4m" stage={1} />
-      <Job x={212} y={78} w={146} name="windows gpu" time="9m" stage={1} />
-      <Job x={374} y={42} w={56} name="ship" time="" stage={2} />
+      <Job x={88} y={42} w={104} name="build" stage={0} />
+      <Job x={212} y={6} w={146} name="linux tests" stage={1} />
+      <Job x={212} y={78} w={146} name="windows gpu" stage={1} />
+      <Job x={374} y={42} w={56} name="ship" stage={2} />
       <path d="M72 59 H88 M192 59 H202 V23 H212 M202 59 V95 H212 M358 23 H366 V59 H374 M358 95 H366 V59" />
-      <T x="2" y="140" sm dim>build time, last 18 runs</T>
-      {bars.map((b, i) => <rect key={i} x={2 + i * 14} y={186 - b} width="9" height={b} rx="1.5" className={i === bars.length - 1 ? 'mt-fill-hi' : 'mt-fill'} />)}
-      <path d="M262 150 H428" className="mt-faint" />
-      <T x="262" y="166" sm dim>p95 latency</T>
-      <path d="M262 186 L290 180 L318 183 L346 172 L374 176 L402 168 L428 170" className="mt-line-hi" />
+      <path d="M285 112 V124 H77 V132" className="mt-faint mt-dash" />
+      <T x="92" y="118" sm dim>metrics</T>
+      <Box x={2} y={132} w={150} h={50} title="Prometheus" sub="scrapes metrics" />
+      <path d="M152 157 H180" /><Head x={180} y={157} />
+      <Box x={180} y={132} w={248} h={50} title="Grafana" sub="dashboards, alerts" />
+      <path d="M330 170 L346 162 L360 166 L374 152 L390 158 L404 146 L418 150" className="mt-line-hi" />
     </svg>
   );
 }
 
-// Kubernetes: a control plane (API server, scheduler) over three GPU worker nodes running pods.
-// The scheduler places a new pod on the node with room.
-function Cluster() {
-  const [ref, s] = useStep(3, 1200, 2); // 0 pending at scheduler, 1 placing, 2 running on worker 3
-  const Pod = ({ x, y, hi }) => (
-    <g><rect x={x} y={y} width="44" height="30" rx="5" className={hi ? 'mt-box-hi' : undefined} /><T x={x + 22} y={y + 19} anchor="middle" sm dim={!hi} hi={hi}>pod</T></g>
-  );
-  const nodes = [[6, 4], [146, 3], [286, 1]];
+// GPU passthrough on Kubernetes (KubeVirt + VFIO): the GPU is taken from the host driver and bound
+// to vfio-pci, with the IOMMU keeping its memory access in bounds; the device plugin advertises it;
+// the VM's pod asks for it; and the Windows VM gets the real GPU.
+function GpuVm() {
+  const [ref, s] = useStep(4, 1500, 3); // 0 host driver owns it, 1 bound to vfio-pci, 2 pod asks for gpu1, 3 passed into the VM
   return (
-    <svg ref={ref} viewBox="0 0 430 260">
-      <rect x="120" y="4" width="190" height="58" rx="8" className="mt-box" />
-      <T x="215" y="27" anchor="middle">control plane</T>
-      <T x="215" y="47" anchor="middle" sm dim>API server, scheduler</T>
-      {nodes.map(([x, n], i) => (
-        <g key={x}>
-          <path d={`M215 62 L${x + 66} 100`} />
-          <rect x={x} y="100" width="132" height="156" rx="8" />
-          <T x={x + 12} y="120" sm dim>{`worker ${i + 1}`}</T>
-          <rect x={x + 88} y="109" width="34" height="16" rx="3" className="mt-chip" /><T x={x + 105} y="121" anchor="middle" sm hi>GPU</T>
-          {Array.from({ length: n }, (_, k) => <Pod key={k} x={x + 12 + (k % 2) * 56} y={136 + Math.floor(k / 2) * 40} />)}
-        </g>
-      ))}
-      <g className="mt-move" style={{ transform: s === 0 ? 'translate(193px, 36px) scale(.8)' : s === 1 ? 'translate(330px, 66px)' : 'translate(354px, 136px)' }}>
-        <rect width="44" height="30" rx="5" className={s === 2 ? 'mt-box-hi' : 'mt-box-hi mt-dash'} />
-        <T x="22" y="19" anchor="middle" sm hi>{s === 2 ? 'pod' : 'new'}</T>
-      </g>
+    <svg ref={ref} viewBox="0 0 440 220">
+      <rect x="2" y="2" width="436" height="216" rx="10" className="mt-faint" strokeDasharray="5 5" />
+      <T x="14" y="22" sm dim>Kubernetes node</T>
+      <rect x="14" y="32" width="252" height="124" rx="8" className={s === 2 ? 'mt-box-hi' : 'mt-box'} />
+      <T x="26" y="52" sm dim>VM pod (KubeVirt)</T>
+      <rect x="26" y="62" width="228" height="82" rx="6" className={s === 3 ? 'mt-box-hi' : undefined} />
+      <T x="38" y="84" hi={s === 3}>Windows VM</T>
+      <T x="38" y="102" sm dim>{s === 3 ? 'its own driver sees the GPU' : 'asks for gpus: gpu1'}</T>
+      <g className={s === 3 ? '' : 'mt-gone'}><rect x="38" y="114" width="44" height="20" rx="4" className="mt-chip" /><T x="60" y="128" anchor="middle" sm hi>GPU</T></g>
+      <Box x={290} y={32} w={136} h={46} title="device plugin" sub="advertises gpu1" hi={s === 2} />
+      <path d="M290 55 H266" className={s === 2 ? 'mt-line-hi' : 'mt-faint'} />
+      <rect x="290" y="96" width="136" height="60" rx="7" className={s === 3 ? 'mt-box-hi' : undefined} />
+      <T x="302" y="118">physical GPU</T>
+      <T x="302" y="138" sm hi={s >= 1} dim={s < 1}>{s === 0 ? 'driver: nvidia' : 'driver: vfio-pci'}</T>
+      <path d="M290 126 H254" className={s === 3 ? 'mt-line-hi' : 'mt-faint'} /><Head x={254} y={126} dir="l" hi={s === 3} />
+      <g className={s === 3 ? '' : 'mt-gone'}><T x="272" y="118" anchor="middle" sm hi>VFIO</T></g>
+      <path d="M358 156 V172" className="mt-faint" />
+      <rect x="14" y="172" width="412" height="36" rx="6" className="mt-box" />
+      <T x="26" y="195">host kernel</T>
+      <rect x="290" y="180" width="128" height="20" rx="4" className={s >= 1 ? 'mt-chip' : 'mt-faint'} />
+      <T x="354" y="194" anchor="middle" sm hi={s >= 1} dim={s < 1}>IOMMU group</T>
     </svg>
   );
 }
 
-// Causal attention: one word (the query) looks back at itself and every earlier word. Line width
-// is the attention weight. The query moves along the sentence.
-const WORDS = ['The', 'model', 'reads', 'every', 'token'];
-const WEIGHTS = [[1], [0.45, 0.55], [0.2, 0.5, 0.3], [0.15, 0.25, 0.35, 0.25], [0.1, 0.35, 0.15, 0.25, 0.15]];
-function Attention() {
-  const [ref, s] = useStep(4, 1500, 3);
-  const q = s + 1; // query index 1..4
-  const X = (i) => 8 + i * 82;
+// Xpresso.ai: the MLOps lifecycle as a loop, with the DataOps layer (the part Gopi built) marked.
+// The highlight moves round the loop.
+const LIFE = [['data', 'sources', 2, 14], ['DataOps', 'versioning', 158, 14], ['experiments', 'MLflow, DVC', 314, 14], ['serving', 'ONNX, FastAPI', 314, 132], ['deploy', 'Kubernetes', 158, 132]];
+function Mlops() {
+  const [ref, s] = useStep(5, 1100, 1);
   return (
-    <svg ref={ref} viewBox="0 0 420 240">
-      <T x="8" y="14" sm dim>{`query "${WORDS[q]}" looks at the words before it`}</T>
-      {WORDS.map((w, i) => (
-        <g key={`q${i}`}>
-          <rect x={X(i)} y="26" width="72" height="30" rx="6" className={i === q ? 'mt-box-hi' : undefined} />
-          <T x={X(i) + 36} y="46" anchor="middle" hi={i === q}>{w}</T>
-        </g>
-      ))}
-      {WEIGHTS[q].map((wt, j) => (
-        <path key={`a${q}-${j}`} d={`M${X(q) + 36} 56 C ${X(q) + 36} 120, ${X(j) + 36} 130, ${X(j) + 36} 186`}
-          className="mt-arc" style={{ strokeWidth: 1 + wt * 12, opacity: 0.3 + wt * 1.4 }} />
-      ))}
-      {WORDS.map((w, i) => (
-        <g key={`k${i}`} className={i > q ? 'mt-masked' : undefined}>
-          <rect x={X(i)} y="186" width="72" height="30" rx="6" />
-          <T x={X(i) + 36} y="206" anchor="middle">{w}</T>
-        </g>
-      ))}
-      <T x="8" y="236" sm dim>line width = attention weight; later words are masked</T>
+    <svg ref={ref} viewBox="0 0 440 190">
+      {LIFE.map(([t, sub, x, y], i) => <Box key={t} x={x} y={y} w={124} h={46} title={t} sub={sub} hi={i === s} box={i === 1} />)}
+      <rect x="176" y="68" width="88" height="20" rx="10" className="mt-chip" /><T x="220" y="82" anchor="middle" sm hi>my layer</T>
+      <path d="M126 37 H158 M282 37 H314 M376 60 V132 M314 155 H282 M158 155 H64 V60" />
+      <Head x={158} y={37} /><Head x={314} y={37} /><Head x={376} y={132} dir="d" /><Head x={282} y={155} dir="l" /><Head x={64} y={60} dir="u" />
+      <T x="72" y="100" sm dim>new data,</T><T x="72" y="116" sm dim>new version</T>
     </svg>
   );
 }
 
-// Convolution: a 3x3 edge-detecting kernel slides over a small image; each position gives one value
-// in the feature map, which is bright where the image has an edge.
-const IMG = Array.from({ length: 7 }, (_, r) => Array.from({ length: 7 }, (_, c) => (c >= 3 ? 1 : 0) * (r >= 1 && r <= 5 ? 1 : 0.4)));
-const KER = [[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]];
-const OUT = Array.from({ length: 5 }, (_, r) => Array.from({ length: 5 }, (_, c) => {
-  let v = 0;
-  for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) v += IMG[r + i][c + j] * KER[i][j];
-  return Math.max(0, Math.min(1, v / 3));
-}));
-function Convolution() {
-  const [ref, s] = useStep(25, 450, 12);
-  const r = Math.floor(s / 5), c = s % 5, px = 22;
+// The DataOps layer: connectors pull from SQL, NoSQL and cloud storage; every new batch becomes a
+// new version of the dataset (Pachyderm, with MinIO as the store); Airflow pipelines take it on.
+function DataOps() {
+  const [ref, s] = useStep(4, 1300, 3);
+  const SRC = ['SQL', 'NoSQL', 'cloud storage'];
   return (
     <svg ref={ref} viewBox="0 0 440 200">
-      <T x="0" y="12" sm dim>input image</T>
-      {IMG.map((row, i) => row.map((v, j) => (
-        <rect key={`i${i}${j}`} x={j * px} y={22 + i * px} width={px - 2} height={px - 2} rx="2" className="mt-pixel" style={{ fillOpacity: 0.08 + v * 0.55 }} />
-      )))}
-      <rect x={c * px - 2} y={20 + r * px} width={px * 3 + 2} height={px * 3 + 2} rx="3" className="mt-frame" />
-      <T x="186" y="58" sm dim>kernel</T>
-      {KER.map((row, i) => row.map((v, j) => (
-        <g key={`k${i}${j}`}><rect x={180 + j * 24} y={66 + i * 24} width="22" height="22" rx="3" className="mt-box" /><T x={191 + j * 24} y={81 + i * 24} anchor="middle" sm>{v}</T></g>
-      )))}
-      <path d="M164 100 H176 M258 100 H284 l-6 -5 M284 100 l-6 5" />
-      <T x="300" y="12" sm dim>feature map</T>
-      {OUT.map((row, i) => row.map((v, j) => (
-        <rect key={`o${i}${j}`} x={300 + j * 27} y={22 + i * 27} width="25" height="25" rx="3"
-          className={i === r && j === c ? 'mt-frame mt-cellhi' : 'mt-out'} style={{ fillOpacity: 0.06 + v * 0.7 }} />
-      )))}
-      <T x="300" y="170" sm dim>bright = an edge was found</T>
+      {SRC.map((t, i) => (
+        <g key={t}>
+          <rect x="2" y={14 + i * 44} width="100" height="30" rx="6" className={i === s % 3 ? 'mt-box-hi' : undefined} />
+          <T x="52" y={33 + i * 44} anchor="middle" sm hi={i === s % 3}>{t}</T>
+          <path d={`M102 ${29 + i * 44} C118 ${29 + i * 44} 116 74 130 74`} className={i === s % 3 ? 'mt-line-hi' : undefined} />
+        </g>
+      ))}
+      <Box x={130} y={50} w={92} h={48} title="connectors" center />
+      <path d="M222 74 H250" /><Head x={250} y={74} />
+      <rect x="250" y="8" width="188" height="132" rx="8" className="mt-box" />
+      <T x="262" y="30">versioned data</T>
+      <T x="262" y="48" sm dim>Pachyderm on MinIO</T>
+      <path d="M268 96 H424" className="mt-faint" />
+      {[0, 1, 2, 3].map((k) => (
+        <g key={k} className={k <= s ? '' : 'mt-gone'}>
+          <circle cx={282 + k * 42} cy="96" r="7" className={k === s ? 'mt-dot' : undefined} />
+          <T x={282 + k * 42} y="122" anchor="middle" sm dim={k !== s} hi={k === s}>{`v${k + 1}`}</T>
+        </g>
+      ))}
+      <path d="M344 140 V158" /><Head x={344} y={158} dir="d" />
+      <Box x={250} y={158} w={188} h={34} title="Airflow pipelines" center />
+      <T x="2" y="166" sm dim>each new batch of</T><T x="2" y="182" sm dim>data is a new version</T>
+    </svg>
+  );
+}
+
+// RISC-V: one load instruction moving through the five steps every core performs. Accurate for
+// any RISC-V core, pipelined or not.
+const RV = [
+  ['fetch', 'read the instruction at the PC'],
+  ['decode', 'read x2, build the immediate 8'],
+  ['execute', 'ALU adds x2 + 8: the address'],
+  ['memory', 'load the word at that address'],
+  ['write back', 'write the word into x5'],
+];
+function Riscv() {
+  const [ref, s] = useStep(5, 1300, 4);
+  return (
+    <svg ref={ref} viewBox="0 0 440 200">
+      <T x="2" y="18">lw x5, 8(x2)</T>
+      <T x="438" y="18" anchor="end" sm hi>{`${s + 1}. ${RV[s][0]}`}</T>
+      <rect x="2" y="60" width="40" height="64" rx="6" className={s === 0 ? 'mt-box-hi' : undefined} /><T x="22" y="97" anchor="middle" sm hi={s === 0}>PC</T>
+      <rect x="62" y="60" width="84" height="64" rx="6" className={s === 0 ? 'mt-box-hi' : undefined} />
+      <T x="104" y="89" anchor="middle" sm hi={s === 0}>instruction</T><T x="104" y="105" anchor="middle" sm hi={s === 0}>memory</T>
+      <rect x="166" y="60" width="76" height="64" rx="6" className={s === 1 || s === 4 ? 'mt-box-hi' : undefined} />
+      <T x="204" y="97" anchor="middle" sm hi={s === 1 || s === 4}>registers</T>
+      <path d="M262 60 L310 78 V106 L262 124 V100 L270 92 L262 84 Z" className={s === 2 ? 'mt-box-hi' : undefined} />
+      <T x="291" y="97" anchor="middle" sm hi={s === 2}>ALU</T>
+      <rect x="330" y="60" width="84" height="64" rx="6" className={s === 3 ? 'mt-box-hi' : undefined} />
+      <T x="372" y="89" anchor="middle" sm hi={s === 3}>data</T><T x="372" y="105" anchor="middle" sm hi={s === 3}>memory</T>
+      <path d="M42 92 H62 M146 92 H166 M242 92 H262 M310 92 H330" />
+      <Head x={62} y={92} /><Head x={166} y={92} /><Head x={262} y={92} /><Head x={330} y={92} />
+      <path d="M414 92 H430 V156 H232 V124" className={s === 4 ? 'mt-line-hi' : 'mt-faint'} /><Head x={232} y={124} dir="u" hi={s === 4} />
+      {[['fetch', 74], ['decode', 204], ['execute', 286], ['memory', 372]].map(([t, x], i) => (
+        <T key={t} x={x} y="142" anchor="middle" sm hi={s === i} dim={s !== i}>{t}</T>
+      ))}
+      <T x="331" y="174" anchor="middle" sm hi={s === 4} dim={s !== 4}>write back</T>
+      <T x="2" y="194" sm dim>{RV[s][1]}</T>
+    </svg>
+  );
+}
+
+// A vision-language model: the image is cut into patches, a vision encoder embeds them, an adapter
+// maps them into the language model's space, and they arrive as tokens next to the text prompt.
+function Vlm() {
+  const [ref, s] = useStep(4, 1300, 3); // 0 patches, 1 encoder, 2 adapter, 3 language model
+  const grid = 'M30 14 V126 M58 14 V126 M86 14 V126 M2 42 H114 M2 70 H114 M2 98 H114';
+  return (
+    <svg ref={ref} viewBox="0 0 440 200">
+      <rect x="2" y="14" width="112" height="112" rx="4" />
+      <circle cx="84" cy="40" r="11" className="mt-faint" />
+      <path d="M2 112 Q30 70 58 92 T114 80" className="mt-faint" />
+      <path d={grid} className={s === 0 ? 'mt-line-hi' : 'mt-faint'} style={{ strokeWidth: s === 0 ? 1.4 : undefined }} />
+      <T x="2" y="146" sm hi={s === 0} dim={s !== 0}>16 patches</T>
+      <path d="M114 70 H138" /><Head x={138} y={70} />
+      <Box x={138} y={38} w={92} h={64} title="vision" sub="encoder" center hi={s === 1} />
+      <path d="M230 70 H250" /><Head x={250} y={70} />
+      <Box x={250} y={48} w={70} h={44} title="adapter" center hi={s === 2} />
+      <path d="M320 70 H340" /><Head x={340} y={70} />
+      <Box x={340} y={24} w={98} h={92} title="language" sub="model" center hi={s === 3} />
+      <T x="140" y="146" sm dim>what the language model reads</T>
+      {[0, 1, 2, 3].map((k) => (
+        <rect key={k} x={140 + k * 24} y="156" width="20" height="22" rx="4" className={s >= 2 ? 'mt-chip' : 'mt-faint mt-dash'} />
+      ))}
+      {[['what', 240, 44], ['is', 288, 26], ['this?', 318, 50]].map(([t, x, w]) => (
+        <g key={t}><rect x={x} y="156" width={w} height="22" rx="4" /><T x={x + w / 2} y="171" anchor="middle" sm>{t}</T></g>
+      ))}
+      <T x="140" y="194" sm dim>image tokens, then the prompt</T>
+    </svg>
+  );
+}
+
+// The pull loop of the GPU CI design: ask, hand out, run in a fresh VM, report and destroy.
+const LOOP = [['runner', 'asks for a job', 2, 8], ['job service', 'hands one out', 262, 8], ['fresh VM', 'runs the job', 262, 136], ['result reported', 'VM destroyed', 2, 136]];
+function PullLoop() {
+  const [ref, s] = useStep(4, 1200, 1);
+  return (
+    <svg ref={ref} viewBox="0 0 440 190">
+      {LOOP.map(([t, sub, x, y], i) => <Box key={t} x={x} y={y} w={176} h={46} title={t} sub={sub} hi={i === s} />)}
+      <path d="M178 31 H262 M350 54 V136 M262 159 H178 M90 136 V54" />
+      <Head x={262} y={31} /><Head x={350} y={136} dir="d" /><Head x={178} y={159} dir="l" /><Head x={90} y={54} dir="u" />
+      <T x="220" y="92" anchor="middle" sm dim>once per job;</T>
+      <T x="220" y="108" anchor="middle" sm dim>no VM is reused</T>
+    </svg>
+  );
+}
+
+// Push versus pull. Push needs a way into the worker's network; pull only needs the worker to reach out.
+function PushPull() {
+  const [ref, s] = useStep(4, 1200, 3); // 0 push sends, 1 push arrives, 2 pull asks, 3 job comes back
+  return (
+    <svg ref={ref} viewBox="0 0 440 220">
+      <T x="6" y="16" sm dim>push</T>
+      <Box x={30} y={28} w={150} h={40} title="controller" center />
+      <path d="M6 112 H95 M115 112 H204" className="mt-wall" />
+      <T x="122" y="106" sm hi>open port</T>
+      <path d="M105 68 V150" /><Head x={105} y={150} dir="d" />
+      <Box x={30} y={150} w={150} h={40} title="worker" center hi={s === 1} />
+      <T x="105" y="212" anchor="middle" sm dim>needs a way in</T>
+      <g className={`mt-move ${s <= 1 ? '' : 'mt-gone'}`} style={{ transform: `translate(105px, ${s === 1 ? 140 : 78}px)` }}><circle r="5" className="mt-dot" /></g>
+
+      <T x="236" y="16" sm dim>pull</T>
+      <Box x={260} y={28} w={150} h={40} title="job service" center hi={s === 2} />
+      <path d="M236 112 H434" className="mt-wall" />
+      <path d="M335 150 V68" /><Head x={335} y={68} dir="u" />
+      <T x="342" y="100" sm hi>outbound</T>
+      <Box x={260} y={150} w={150} h={40} title="worker" center hi={s === 3} />
+      <T x="335" y="212" anchor="middle" sm dim>nothing reaches in</T>
+      <g className={`mt-move ${s >= 2 ? '' : 'mt-gone'}`} style={{ transform: `translate(327px, ${s === 2 ? 78 : 140}px)` }}><circle r="5" className="mt-dot" /></g>
+    </svg>
+  );
+}
+
+// STRIDE on a CI cluster: each letter sits on the part of the system it applies to most.
+const STRIDE = [
+  ['S', 'spoofing', 'forged webhook', 124, 50],
+  ['T', 'tampering', 'altered images', 284, 132],
+  ['R', 'repudiation', 'who ran this?', 268, 96],
+  ['I', 'info disclosure', 'leaked secrets', 428, 150],
+  ['D', 'denial of service', 'GPU hogged', 300, 28],
+  ['E', 'elevation', 'VM escape', 428, 28],
+];
+function Stride() {
+  const [ref, s] = useStep(7, 1400, 6); // 0-5 one letter each, 6 all
+  const cur = STRIDE[s];
+  return (
+    <svg ref={ref} viewBox="0 0 440 210">
+      <rect x="130" y="4" width="308" height="202" rx="10" className="mt-faint" strokeDasharray="5 5" />
+      <T x="142" y="20" sm dim>CI cluster</T>
+      <Box x={2} y={28} w={100} h={44} title="source host" center />
+      <path d="M102 50 H146" /><Head x={146} y={50} />
+      <Box x={146} y={28} w={122} h={44} title="job service" center />
+      <Box x={146} y={96} w={122} h={34} title="audit log" center />
+      <Box x={146} y={156} w={122} h={34} title="base images" center />
+      <rect x="300" y="28" width="128" height="82" rx="7" className="mt-box" />
+      <T x="312" y="54">runner VM</T>
+      <T x="312" y="74" sm dim>untrusted code</T>
+      <Box x={300} y={150} w={128} h={40} title="secrets, logs" center />
+      <path d="M268 50 H300 M207 72 V96 M268 173 H284 V90 H300 M364 110 V150" />
+      <Head x={300} y={50} /><Head x={207} y={96} dir="d" /><Head x={300} y={90} />
+      {STRIDE.map(([l, , , x, y], i) => (
+        <g key={l}>
+          <circle cx={x} cy={y} r="10" className={i === s ? 'mt-box-hi' : 'mt-chipsolid'} />
+          <T x={x} y={y + 4} anchor="middle" sm hi={i === s}>{l}</T>
+        </g>
+      ))}
+      {cur ? (
+        <g>
+          <T x="2" y="124" hi>{cur[0]}</T>
+          <T x="2" y="144" sm>{cur[1]}</T>
+          <T x="2" y="162" sm dim>{cur[2]}</T>
+        </g>
+      ) : (
+        <g><T x="2" y="144" sm>six questions,</T><T x="2" y="162" sm dim>every part</T></g>
+      )}
     </svg>
   );
 }
@@ -242,63 +394,6 @@ function Mesh() {
   );
 }
 
-// Fine-tuning: training and validation loss over epochs, with the best checkpoint marked where
-// validation loss is lowest.
-function Loss() {
-  const r = (i) => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); };
-  const N = 46, X0 = 40, W = 330, H = 150, Y0 = 172;
-  const train = Array.from({ length: N }, (_, i) => 130 * Math.exp(-i / 11) + 14 + (r(i) - 0.5) * 6);
-  const val = Array.from({ length: N }, (_, i) => 130 * Math.exp(-i / 13) + 26 + Math.max(0, i - 28) * 0.9 + (r(i + 50) - 0.5) * 5);
-  const best = val.indexOf(Math.min(...val));
-  const xp = (i) => X0 + (i / (N - 1)) * W;
-  const path = (arr) => arr.map((v, i) => `${i ? 'L' : 'M'}${xp(i).toFixed(1)} ${(Y0 - (v / 150) * H).toFixed(1)}`).join(' ');
-  return (
-    <svg viewBox="0 0 400 210">
-      <path d={`M${X0} 12 V${Y0} H${X0 + W + 10}`} />
-      {[0, 10, 20, 30, 40].map((e) => <g key={e}><path d={`M${xp(e)} ${Y0} v5`} /><T x={xp(e)} y={Y0 + 18} anchor="middle" sm dim>{e}</T></g>)}
-      <T x={X0 + W} y="206" anchor="end" sm dim>epochs</T>
-      <T x="0" y="16" sm dim>loss</T>
-      <path d={path(val)} className="mt-dashline" />
-      <path d={path(train)} pathLength="1" className="mt-line-hi mt-draw" />
-      <path d={`M${xp(best)} 20 V${Y0}`} className="mt-faint" strokeDasharray="3 4" />
-      <circle cx={xp(best)} cy={Y0 - (val[best] / 150) * H} r="5" className="mt-dot" />
-      <T x={xp(best) + 8} y="30" sm hi>best checkpoint</T>
-      <g transform={`translate(${X0 + W - 92} 52)`}>
-        <path d="M0 0 h18" className="mt-line-hi" /><T x="24" y="4" sm>train</T>
-        <path d="M0 18 h18" className="mt-dashline" /><T x="24" y="22" sm>validation</T>
-      </g>
-    </svg>
-  );
-}
-
-// Transformer: tokens are embedded, pass through N blocks of attention and feed-forward layers with
-// residual connections, and come out as next-token probabilities. The active layer moves upward.
-function Transformer() {
-  const [ref, s] = useStep(6, 800, 5);
-  const layers = [['embedding', 236], ['multi-head attention', 188], ['add & norm', 150], ['feed-forward', 112], ['add & norm', 74]];
-  const active = s < 5 ? 4 - s : -1;
-  const probs = [6, 10, 26, 8, 14, 5];
-  return (
-    <svg ref={ref} viewBox="0 0 250 300">
-      {['The', 'cat', 'sat'].map((w, i) => <g key={w}><rect x={46 + i * 56} y="274" width="48" height="22" rx="4" /><T x={70 + i * 56} y="289" anchor="middle" sm>{w}</T></g>)}
-      <path d="M125 274 V262" />
-      {layers.map(([name, y], i) => (
-        <g key={y}>
-          <rect x="30" y={y} width="190" height="28" rx="6" className={4 - i === active ? 'mt-box-hi' : undefined} />
-          <T x="125" y={y + 18} anchor="middle" sm hi={4 - i === active}>{name}</T>
-          {i > 0 && <path d={`M125 ${y + 28} V${y + 38}`} />}
-        </g>
-      ))}
-      <path d="M226 230 H238 V162 H226 M226 160 H238 V88 H226" className="mt-faint" />
-      <rect x="22" y="64" width="206" height="160" rx="10" className="mt-faint" strokeDasharray="4 5" />
-      <T x="236" y="150" sm dim anchor="end">× N</T>
-      <path d="M125 74 V58" />
-      <T x="125" y="16" anchor="middle" sm dim>next-token probabilities</T>
-      {probs.map((p, i) => <rect key={i} x={74 + i * 18} y={52 - p} width="12" height={p} rx="2" className={i === 2 ? 'mt-fill-hi' : 'mt-fill'} />)}
-    </svg>
-  );
-}
-
 // The NVIDIA CI: GitHub asks for a Windows GPU run; the job waits in my job query service; a runner
 // inside the cluster pulls it over an outbound connection (nothing outside can reach in); a fresh
 // Windows VM with a passed-through GPU runs it; the result goes back to GitHub.
@@ -317,7 +412,7 @@ function JobQuery() {
         <rect key={k} x="172" y={66 + k * 24} width="116" height="18" rx="4"
           className={k === 0 && s <= 1 ? 'mt-box-hi' : k === 0 ? 'mt-faint mt-dash' : undefined} />
       ))}
-      <T x="180" y="79" sm hi={s <= 1}>{s <= 1 ? 'job: win-gpu-test' : ''}</T>
+      <T x="180" y="79" sm hi={s <= 1}>{s <= 1 ? 'job: win-gpu' : ''}</T>
       <T x="180" y="103" sm dim>job: queued</T>
       <T x="180" y="127" sm dim>job: queued</T>
       <rect x="160" y="160" width="140" height="34" rx="6" />
@@ -331,7 +426,7 @@ function JobQuery() {
       <T x="348" y="92" sm dim>polls for work</T>
       <path d="M336 78 H300" className="mt-line-hi" />
       <path d="M306 73 l-6 5 l6 5" className="mt-line-hi" />
-      <T x="304" y="70" sm hi anchor="end">pull</T>
+      <T x="318" y="70" sm hi anchor="middle">pull</T>
       <circle cx={s === 1 ? 312 : 326} cy="78" r="4.5" className={`mt-dot ${s === 1 ? '' : 'mt-gone'}`} />
       <circle cx={s === 2 ? 326 : 312} cy="88" r="4.5" className={`mt-dot ${s === 2 ? '' : 'mt-gone'}`} />
       <path d="M395 100 V128" />
@@ -344,7 +439,7 @@ function JobQuery() {
   );
 }
 
-const MOTIFS = { jobquery: JobQuery,  api: Api, pipeline: Pipeline, cluster: Cluster, attention: Attention, conv: Convolution, mesh: Mesh, loss: Loss, transformer: Transformer };
+const MOTIFS = { api: Api, pipeline: Pipeline, gpuvm: GpuVm, mlops: Mlops, dataops: DataOps, jobquery: JobQuery, mesh: Mesh, riscv: Riscv, vlm: Vlm, pullloop: PullLoop, pushpull: PushPull, stride: Stride };
 
 // A diagram in the layout. `tone` sets its highlight color. On the page it is wrapped in an Island
 // (see Diagram below) so its animation runs in the browser.

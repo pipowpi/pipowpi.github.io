@@ -48,7 +48,7 @@ export const CAREER_STEPS = [
 // The areas I work in, colored by topic (see TOPIC_TONE in site.js).
 export const PILLARS = [
   { icon: 'code', motif: 'api', tools: ['Python', 'FastAPI', 'SQL', 'WebSockets'], tone: 'pink', title: 'Backend and APIs', sub: 'Python APIs, file handling and data services, and the databases behind them', href: 'work/#xpresso' },
-  { icon: 'server', motif: 'cluster', tools: ['Kubernetes', 'Terraform', 'Ansible', 'KubeVirt'], tone: 'lime', title: 'Infrastructure and DevOps', sub: 'Infrastructure as code, machine setup, Kubernetes and GPU virtualization', href: 'work/#pytorch-ci' },
+  { icon: 'server', motif: 'gpuvm', tools: ['Kubernetes', 'Terraform', 'Ansible', 'KubeVirt'], tone: 'lime', title: 'Infrastructure and DevOps', sub: 'Infrastructure as code, machine setup, Kubernetes and GPU virtualization', href: 'work/#pytorch-ci' },
   { icon: 'branch', motif: 'pipeline', tools: ['GitHub Actions', 'Jenkins', 'Prometheus', 'Grafana'], tone: 'teal', title: 'CI/CD and monitoring', sub: 'Pipelines from build to deploy, Windows GPU CI, Prometheus and Grafana', href: 'work/#pytorch-ci' },
-  { icon: 'layers', motif: 'conv', tools: ['PyTorch', 'MLflow', 'ONNX Runtime', 'VLMs'], tone: 'coral', title: 'ML platforms and vision', sub: 'MLOps platforms, and now 3D faces and vision-language models', href: 'projects/' },
+  { icon: 'layers', motif: 'mlops', tools: ['PyTorch', 'MLflow', 'ONNX Runtime', 'VLMs'], tone: 'coral', title: 'ML platforms and vision', sub: 'MLOps platforms, and now 3D faces and vision-language models', href: 'projects/' },
 ];

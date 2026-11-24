@@ -3,6 +3,7 @@ import { Layout } from '../components/Layout.jsx';
 import { Chip, Sheet, Wrap, tone } from '../components/ui.jsx';
 import { topicTone } from '../data/site.js';
 import { fmtMonth, nb } from '../components/PostList.jsx';
+import { Diagram } from '../components/Diagram.jsx';
 
 export default function Post({ slug }) {
   const i = posts.findIndex((p) => p.slug === slug);
@@ -26,6 +27,12 @@ export default function Post({ slug }) {
           </p>
           {p.draft && (
             <p className="mt-5 rounded-md border border-dashed border-run px-4 py-3 text-small text-ink">Draft. This post is still being written and reviewed.</p>
+          )}
+          {p.diagram && (
+            <figure className="mt-8 rounded-md border border-rule bg-paper p-4 md:p-5">
+              <Diagram name={p.diagram} tone={topicTone(p.tags[0])} className="mx-auto aspect-[2/1] w-full max-w-[560px]" />
+              {p.caption && <figcaption className="mt-3 text-caption text-lead">{p.caption}</figcaption>}
+            </figure>
           )}
           <div className="prose-post mt-8 border-t border-rule" dangerouslySetInnerHTML={{ __html: p.html }} />
           {(newer || older) && (

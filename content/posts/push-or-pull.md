@@ -5,6 +5,8 @@ date: 2026-10-20
 read: 5 min
 tags: CI/CD, Security
 draft: true
+diagram: pushpull
+caption: Push needs a way into the worker’s network. Pull only needs the worker to reach out.
 ---
 Every CI system has to answer a simple question: how does a job get from the place that decides it should run to the machine that runs it? There are two basic answers, and the choice shapes your security posture more than most people expect.
 

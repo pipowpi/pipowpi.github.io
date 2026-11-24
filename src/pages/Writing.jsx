@@ -1,7 +1,6 @@
 import posts from '../generated/posts.json';
 import { Layout } from '../components/Layout.jsx';
 import { Island, PageHead, Section, Wrap, tone } from '../components/ui.jsx';
-import { Diagram } from '../components/Diagram.jsx';
 import PostFilter from '../islands/PostFilter.jsx';
 
 function WhyIWrite() {
@@ -24,13 +23,13 @@ function WhyIWrite() {
 }
 
 // Post metadata for the list (the island gets this, never the post bodies).
-const LIST = posts.map(({ slug, title, summary, date, read, tags, draft }) => ({ slug, title, summary, date, read, tags, draft }));
+const LIST = posts.map(({ slug, title, summary, date, read, tags, draft, diagram }) => ({ slug, title, summary, date, read, tags, draft, diagram }));
 
 export default function Writing() {
   return (
     <Layout active="writing">
       <Wrap>
-        <PageHead title="Notes and explainers" art={<Diagram name="attention" tone="accent" className="ml-auto block aspect-[420/240] w-full max-w-[420px]" />}>
+        <PageHead title="Notes and explainers">
           Notes on things I’ve worked with or studied, written in plain language.
         </PageHead>
         <Section id="why" label="Why this page" note="A way of learning"><WhyIWrite /></Section>

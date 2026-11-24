@@ -1,5 +1,6 @@
 import { Chip, cn, tone, useHref } from './ui.jsx';
 import { topicTone } from '../data/site.js';
+import { Motif } from './Diagrams.jsx';
 
 const MONTH = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 // "2026-10-14" -> "Oct 2026". UTC so the server render and the browser always agree.
@@ -18,7 +19,13 @@ export function PostList({ posts, detail = false, compact = false, className = '
     <ul className={cn('border-b border-rule', className)}>
       {posts.map((p) => (
         <li key={p.slug} className="border-t border-rule" style={tone(topicTone(p.tags[0]))}>
-          <a href={href(`writing/${p.slug}/`)} className={cn('group grid grid-cols-1 gap-x-8 gap-y-1.5', compact ? 'py-4' : 'py-5 md:grid-cols-[minmax(0,1fr)_auto]')}>
+          <a href={href(`writing/${p.slug}/`)} className={cn('group grid grid-cols-1 gap-x-8 gap-y-1.5', compact ? 'py-4' : 'py-5 md:grid-cols-[minmax(0,1fr)_auto]',
+            detail && p.diagram && 'md:grid-cols-[200px_minmax(0,1fr)_auto] md:gap-x-6')}>
+            {detail && p.diagram && (
+              <span className="hidden h-[112px] items-center justify-center rounded-md border border-rule bg-paper p-2.5 transition-colors group-hover:border-accent md:flex">
+                <Motif name={p.diagram} tone={topicTone(p.tags[0])} className="h-full w-full" />
+              </span>
+            )}
             <span className="min-w-0">
               <span className={cn('flex items-center gap-2.5 font-display font-semibold text-ink group-hover:text-accent', detail ? 'text-h4' : 'text-title', 'leading-snug')}><i aria-hidden="true" className="inline-block size-2.5 shrink-0 rounded-sm bg-accent" />{p.title}</span>
               <span className="mt-1 block max-w-[62ch] text-body leading-relaxed text-lead">{p.summary}</span>

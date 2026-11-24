@@ -270,7 +270,25 @@ A 14px label with a dot. The dot's shape and motion also carry the state, so col
 
 ### Diagrams (`src/components/Diagrams.jsx`)
 
-- Labelled SVG drawings of the real thing: `api`, `cluster`, `pipeline`, `jobquery`, `conv`, `attention`, `mesh`, `loss`, `transformer`. Lines in ink, one highlight in the page or case study color.
+- **Rule: a diagram appears only where it shows work Gopi did, or exactly what its section covers. Otherwise the section has no image.** Page headers have none. No made-up numbers inside drawings (no fake times, counts or charts).
+- The set and where each one lives:
+
+| Diagram | Shows | Used on |
+|---|---|---|
+| `api` | Client, API service, database and file storage | Home, Backend and APIs |
+| `gpuvm` | GPU bound to vfio-pci, device plugin, Windows VM in a KubeVirt pod | Home, Infrastructure; GPU passthrough post |
+| `pipeline` | Build, Linux and Windows GPU tests, ship; Prometheus and Grafana | Home, CI/CD and monitoring |
+| `mlops` | The Xpresso lifecycle, with the DataOps layer marked | Home, ML platforms |
+| `jobquery` | The job query service and the pull into the GPU cluster | Home, selected work; Work, NVIDIA case study |
+| `dataops` | Connectors, versioned data on Pachyderm and MinIO, Airflow | Home, selected work (Xpresso) |
+| `mesh` | One photo in, a 3D head mesh out | Projects, 3D head reconstruction |
+| `riscv` | One load instruction through fetch, decode, execute, memory, write back | Projects, RISC-V CPU |
+| `vlm` | Patches, vision encoder, adapter, language model tokens | Projects, VLM project; VLM post |
+| `pullloop` | Ask, hand out, fresh VM, report and destroy | Projects, open GPU CI design |
+| `pushpull` | Push needs a way in; pull only reaches out | Push or pull post |
+| `stride` | STRIDE letters on the parts of a CI cluster | STRIDE post |
+
+- Lines in ink, one highlight in the section's color. Every drawing has a caption or text next to it that says what it shows. Posts name theirs in front matter (`diagram:` and `caption:`).
 - `jobquery` (the Windows GPU CI flow) replaced the old 3D canvas on the Work page. It is wider than a phone, so below 520px it scrolls sideways with a "Swipe" hint rather than shrinking the labels.
 - Each one steps through its states with `useStep` only while it is on screen. The server renders the resting state, so the drawing is complete before any JavaScript runs.
 

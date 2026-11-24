@@ -118,6 +118,8 @@ function loadPosts() {
       words,
       tags: (meta.tags || '').split(',').map((t) => t.trim()).filter(Boolean),
       draft: (meta.draft || 'false').toLowerCase() === 'true',
+      diagram: meta.diagram || null,
+      caption: smart(meta.caption || ''),
       html: markdown(m[2]),
     };
   });

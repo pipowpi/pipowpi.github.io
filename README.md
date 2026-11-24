@@ -69,6 +69,8 @@ First paragraph.
 More text, with `inline code`.
 ```
 
+Two optional lines add a drawing: `diagram:` names one from `src/components/Diagrams.jsx` (for example `pushpull`), and `caption:` says what it shows. It appears at the top of the post and as a thumbnail on the Writing page. Only add one if it shows what the post is about.
+
 Fenced code blocks with three backticks work too. The file name becomes the URL: `writing/my-post/`. Straight quotes and `...` are turned into curly quotes and `…` automatically (except inside code).
 
 **The four posts included now are drafts written for you to review.** They are marked `draft: true` and show a "Draft" label. Rewrite them in your own words and set `draft: false`, or delete them. To hide every draft, build with `SHOW_DRAFTS=false npm run build`, or set `SHOW_DRAFTS` in `scripts/build.mjs`.

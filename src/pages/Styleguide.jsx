@@ -6,7 +6,7 @@ import { Button, Chip, Collapsible, Mark, PageHead, Section, Sheet, Stat, Status
 // themes before they ship. Not linked from the site and kept out of search results.
 const COLORS = ['paper', 'sheet', 'ink', 'lead', 'rule', 'rule-strong', 'accent', 'wash', 'pass', 'run', 'queue', 'pink', 'teal', 'coral', 'lime'];
 const SIZES = [['display', 40], ['h1', 34], ['h2', 28], ['h3', 23], ['h4', 20], ['title', 18], ['large', 16], ['body', 15], ['small', 14], ['caption', 13]];
-const DIAGRAMS = [['api', 'pink'], ['cluster', 'lime'], ['pipeline', 'teal'], ['conv', 'coral'], ['jobquery', 'lime'], ['attention', 'accent'], ['mesh', 'pink'], ['loss', 'coral'], ['transformer', 'teal']];
+const DIAGRAMS = [['api', 'pink'], ['gpuvm', 'lime'], ['pipeline', 'teal'], ['mlops', 'coral'], ['jobquery', 'lime'], ['dataops', 'coral'], ['mesh', 'pink'], ['riscv', 'teal'], ['vlm', 'coral'], ['pullloop', 'lime'], ['pushpull', 'teal'], ['stride', 'pink']];
 
 export default function Styleguide() {
   return (

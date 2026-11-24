@@ -5,6 +5,8 @@ date: 2026-10-02
 read: 6 min
 tags: VLMs, Deep learning
 draft: true
+diagram: vlm
+caption: Patches go through the vision encoder and an adapter, and reach the language model as tokens next to the text prompt.
 ---
 A language model reads tokens. A picture is not made of tokens, so a vision-language model needs a bridge. Most designs follow the same three-step recipe.
 

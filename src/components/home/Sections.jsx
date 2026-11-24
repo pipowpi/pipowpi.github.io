@@ -33,12 +33,12 @@ export function Focus() {
 // Two short cards. The diagrams and detail stay on the Work page.
 const CASES = [
   {
-    to: 'work/#pytorch-ci', icon: 'gpu', tone: 'lime', title: PYTORCH_CI.title, org: PYTORCH_CI.org, dates: '2025 - 2026',
+    to: 'work/#pytorch-ci', icon: 'gpu', tone: 'lime', diagram: 'jobquery', aspect: 'aspect-[470/240]', title: PYTORCH_CI.title, org: PYTORCH_CI.org, dates: '2025 - 2026',
     text: 'PyTorch had no CI that tested Windows with a GPU. I designed and built a harness that runs GPU-backed Windows VMs inside Kubernetes. Runners pull their jobs from a job query service I built as an alternative to GitHub’s ARC.',
     tags: ['KubeVirt', 'VFIO', 'GitHub Actions', 'STRIDE'],
   },
   {
-    to: 'work/#xpresso', icon: 'layers', tone: 'coral', title: XPRESSO.title, org: XPRESSO.org, dates: XPRESSO.dates,
+    to: 'work/#xpresso', icon: 'layers', tone: 'coral', diagram: 'dataops', aspect: 'aspect-[440/200]', title: XPRESSO.title, org: XPRESSO.org, dates: XPRESSO.dates,
     text: 'An MLOps platform for data, training, serving and deployment. I grew from engineer to core architect and lead, and built its DataOps layer.',
     tags: ['Pachyderm', 'MinIO', 'Kubernetes', 'FastAPI'],
   },
@@ -48,7 +48,10 @@ export function SelectedWork() {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       {CASES.map((c) => (
-        <Sheet key={c.to} as="a" interactive href={href(c.to)} style={tone(c.tone)} className="group flex flex-col border-t-[3px] border-t-accent p-5 md:p-6">
+        <Sheet key={c.to} as="a" interactive href={href(c.to)} style={tone(c.tone)} className="group flex flex-col overflow-hidden border-t-[3px] border-t-accent p-5 md:p-6">
+          <div className="-mx-5 -mt-5 mb-5 flex h-[200px] items-center justify-center border-b border-rule bg-paper px-5 py-4 md:-mx-6 md:-mt-6 md:h-[220px] md:px-6">
+            <Diagram name={c.diagram} tone={c.tone} className={`h-full max-w-full ${c.aspect}`} />
+          </div>
           <Mark name={c.icon} size="sm" />
           <h3 className="mt-4 font-display text-h4 font-semibold leading-tight">{c.title}</h3>
           <p className="t-meta mt-1.5 text-lead"><span className="font-medium text-ink">{c.org}</span>, {c.dates}</p>

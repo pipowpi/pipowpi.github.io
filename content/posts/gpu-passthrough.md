@@ -5,6 +5,8 @@ date: 2026-10-14
 read: 6 min
 tags: Virtualization, GPUs
 draft: true
+diagram: gpuvm
+caption: The GPU is unbound from the host driver and bound to vfio-pci, the device plugin advertises it, and the VM running in a pod gets the real hardware.
 ---
 Sometimes a VM needs a real GPU, not an emulated one: CUDA testing, graphics drivers, anything that talks to the hardware directly. PCI passthrough gives one VM exclusive, near-native access to a physical device. Three pieces make it work.
 

@@ -51,7 +51,8 @@ export const COURSE = [
     status: 'live',
     title: 'RISC-V CPU',
     text: 'Designing and building a RISC-V processor for the graduate computer architecture course. Details and results to follow.',
-    diagramTitle: 'What every RISC-V core has to do with an instruction',
+    diagram: 'riscv',
+    diagramTitle: 'One load instruction going through the five steps every RISC-V core performs.',
     stages: [
       ['Fetch', 'Read the instruction at the PC'],
       ['Decode', 'Read registers, build the immediate'],
@@ -68,7 +69,8 @@ export const COURSE = [
     status: 'live',
     title: 'VLM course project',
     text: 'An applied project for the graduate vision-language models course. Code and write-up after the semester.',
-    diagramTitle: 'The pipeline the project builds on',
+    diagram: 'vlm',
+    diagramTitle: 'The pipeline the project builds on: patches, a vision encoder, an adapter, then the language model.',
     stages: [
       ['Image', 'Cut into patches'],
       ['Vision encoder', 'One embedding per patch'],
@@ -88,6 +90,8 @@ export const PERSONAL = [
     status: 'planned',
     title: 'Open version of the GPU CI design',
     text: 'A from-scratch, public version of the pull-based GPU CI I designed and built at NVIDIA, built with open tools and no proprietary code, with a full write-up.',
+    diagram: 'pullloop',
+    diagramTitle: 'The pull loop: every job gets a fresh VM, and nothing outside the cluster reaches in.',
     loop: ['Runner asks for a job', 'Job service hands one out', 'Fresh VM runs it', 'Result reported, VM destroyed'],
     link: ['See the original case study', 'work/#pytorch-ci'],
   },

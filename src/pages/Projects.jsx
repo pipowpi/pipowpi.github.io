@@ -65,7 +65,13 @@ function HeadProject() {
           <p className="t-meta mt-2 text-lead">{p.context}</p>
         </div>
       </div>
-      <Glance className="mt-6" items={p.glance} />
+      <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,400px)] xl:items-center">
+        <Glance items={p.glance} className="xl:grid-cols-2" />
+        <figure className="rounded-md border border-rule bg-paper p-4">
+          <Diagram name="mesh" tone="pink" className="mx-auto aspect-[2/1] w-full max-w-[400px]" />
+          <figcaption className="mt-2 text-caption text-lead">One face photo in, a 3D head mesh with expression out.</figcaption>
+        </figure>
+      </div>
       <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
         <div className="h-2.5 w-full max-w-[360px] overflow-hidden rounded-sm bg-rule" role="progressbar" aria-valuemin={0} aria-valuemax={p.milestones.total} aria-valuenow={p.milestones.done} aria-label="Milestones done">
           <div className="grow-x h-full rounded-sm bg-accent" style={{ width: `${pct}%` }} />
@@ -106,7 +112,8 @@ function SmallProject({ p }) {
   const href = useHref();
   const hasDiagram = p.stages || p.loop;
   return (
-    <Sheet as="article" id={p.id} style={tone(p.tone)} className={cn('grid grid-cols-1 gap-y-6 border-t-[3px] border-t-accent p-5 md:p-6', hasDiagram && 'md:gap-y-7')}>
+    <Sheet as="article" id={p.id} style={tone(p.tone)} className={cn('grid grid-cols-1 gap-y-6 border-t-[3px] border-t-accent p-5 md:p-6', hasDiagram && 'md:gap-y-7',
+      p.diagram && 'lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)] lg:gap-x-8')}>
       <div className="flex flex-col">
         <div className="flex items-start justify-between gap-3">
           <Mark name={p.icon} />
@@ -117,13 +124,21 @@ function SmallProject({ p }) {
         <p className="mt-2 max-w-[72ch] text-body leading-relaxed text-lead">{p.text}</p>
         {p.link && <p className="mt-auto pt-5"><TextLink href={href(p.link[1])}>{p.link[0]}</TextLink></p>}
       </div>
-      {p.stages && (
+      {p.diagram && (
+        <figure className="rounded-md border border-rule bg-paper p-4">
+          <Diagram name={p.diagram} tone={p.tone} className="mx-auto aspect-[440/200] w-full max-w-[440px]" />
+          <figcaption className="mt-2 text-caption text-lead">{p.diagramTitle}</figcaption>
+          {/* The drawing is decorative; the same steps as text for screen readers. */}
+          <ol className="sr-only">{(p.stages || p.loop.map((x) => [x, ''])).map(([a, b]) => <li key={a}>{a}{b && `: ${b}`}</li>)}</ol>
+        </figure>
+      )}
+      {p.stages && !p.diagram && (
         <div>
           <p className="text-small font-medium text-ink">{p.diagramTitle || 'How it works'}</p>
           <Stages stages={p.stages} label={p.diagramTitle || `${p.title}: how it works`} />
         </div>
       )}
-      {p.loop && (
+      {p.loop && !p.diagram && (
         <div>
           <p className="text-small font-medium text-ink">The pull loop</p>
           <ol className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2" aria-label="The pull loop">
@@ -143,7 +158,7 @@ export default function Projects() {
   return (
     <Layout active="projects">
       <Wrap>
-        <PageHead title="Things I’m building" art={<Diagram name="mesh" tone="pink" className="ml-auto block aspect-[400/200] w-full max-w-[420px]" />}
+        <PageHead title="Things I’m building"
           aside={(
             <ul className="flex gap-3" aria-label="Legend">
               <li><StatusPill status="running" /></li>

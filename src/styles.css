@@ -263,6 +263,8 @@
   .mt-scan { stroke: var(--hi); stroke-width: 2; animation: mtScan 4s ease-in-out infinite alternate; }
   .mt-outline { stroke: color-mix(in srgb, var(--ink) 75%, transparent); stroke-width: 1.8; }
   .mt-draw { stroke-dasharray: 1; animation: bdDraw 7s ease-out infinite; }
+  .mt-wall { stroke: color-mix(in srgb, var(--ink) 62%, transparent); stroke-width: 3.5; }
+  .mt-chipsolid { fill: var(--paper); stroke: color-mix(in srgb, var(--ink) 55%, transparent); }
   /* Stage color helpers for SVG: set --sc on a group, then fill or stroke with it. */
   .sc-fill { fill: var(--sc, var(--accent)); }
   .sc-stroke { stroke: var(--sc, var(--accent)); }

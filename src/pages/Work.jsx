@@ -168,7 +168,7 @@ export default function Work() {
   return (
     <Layout active="work">
       <Wrap>
-        <PageHead title="8 years in software" art={<Diagram name="cluster" tone="lime" className="ml-auto block aspect-[430/260] w-full max-w-[420px]" />}>
+        <PageHead title="8 years in software">
           I started out on product work and spent the next six years on platforms. At Abzooba that meant DataOps and reliability, and later leading an MLOps platform. At NVIDIA it meant bringing GPU CI to PyTorch on Windows.
           My course and personal projects are on the <TextLink href={href('projects/')}>Projects</TextLink> page.
         </PageHead>
