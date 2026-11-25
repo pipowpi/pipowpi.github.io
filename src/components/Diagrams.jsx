@@ -1,38 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
-
 // Diagrams: small labelled drawings of the systems this site is about, drawn literally so each one
 // reads as the real thing. Every one shows work Gopi did or exactly what its section covers:
 // an API service, a CI pipeline with a Windows GPU lane, a VM with a passed-through GPU on Kubernetes,
 // the Xpresso MLOps lifecycle and its DataOps layer, the job query service, a photo turned into a 3D
 // head mesh, a RISC-V instruction moving through a core, a VLM reading an image, the pull loop, push
 // versus pull, and STRIDE on a CI cluster. Each has one slow animation that shows how it works.
-// Decorative: aria-hidden, with the meaning in a caption next to it. Motion stops under reduced
-// motion, with the motion toggle, and while the drawing is off screen.
-
-// Steps through 0..n-1 every `ms` while the drawing is visible and motion is allowed.
-// The server render and the still state show `rest`.
-function useStep(n, ms, rest = n - 1) {
-  const ref = useRef(null);
-  const [step, setStep] = useState(rest);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
-    let timer = null;
-    let i = 0;
-    const tick = () => {
-      if (document.documentElement.getAttribute('data-motion') === 'off') { setStep(rest); return; }
-      i = (i + 1) % n;
-      setStep(i);
-    };
-    const io = new IntersectionObserver(([e]) => {
-      clearInterval(timer);
-      if (e.isIntersecting) timer = setInterval(tick, ms);
-    });
-    io.observe(el);
-    return () => { io.disconnect(); clearInterval(timer); };
-  }, [n, ms, rest]);
-  return [ref, step];
-}
+// Decorative: aria-hidden, with the meaning in a caption next to it.
+//
+// No React in the browser: each drawing is a function of its step `s`, and Motif prerenders one SVG
+// per step, stacked. entry-client.jsx shows them in turn (data-step) while the drawing is on screen
+// and motion is allowed; otherwise the resting step stays up. Each STEPS entry is
+// [number of steps, ms per step, resting step].
 
 const T = ({ x, y, children, sm, anchor, hi, dim }) => (
   <text x={x} y={y} textAnchor={anchor} className={`mt-text${sm ? ' mt-sm' : ''}${hi ? ' mt-hi' : ''}${dim ? ' mt-dim' : ''}`}>{children}</text>
@@ -61,10 +38,9 @@ const Box = ({ x, y, w, h, title, sub, hi, center, box }) => (
 );
 
 // Backend: a client calls an API service, which writes to a database and to file storage.
-function Api() {
-  const [ref, s] = useStep(4, 900, 3);
+function Api({ s }) {
   return (
-    <svg ref={ref} viewBox="0 0 420 190">
+    <svg viewBox="0 0 420 190">
       <rect x="2" y="70" width="78" height="44" rx="6" /><T x="41" y="97" anchor="middle">client</T>
       <rect x="130" y="40" width="140" height="104" rx="8" className="mt-box" />
       <T x="144" y="62">API service</T>
@@ -88,8 +64,7 @@ function Api() {
 
 // CI/CD: a push triggers build, two test jobs (one on a Windows GPU runner) and ship. Below, the
 // monitoring side: Prometheus scrapes metrics from the runners and Grafana shows them.
-function Pipeline() {
-  const [ref, s] = useStep(5, 1100, 4); // 0 build running, 1 tests running, 2 ship running, 3-4 all passed
+function Pipeline({ s }) { // 0 build running, 1 tests running, 2 ship running, 3-4 all passed
   const st = (stage) => (s > stage ? 'pass' : s === stage ? 'run' : 'wait');
   const Job = ({ x, y, w = 112, name, stage }) => {
     const k = st(stage);
@@ -102,7 +77,7 @@ function Pipeline() {
     );
   };
   return (
-    <svg ref={ref} viewBox="0 0 430 190">
+    <svg viewBox="0 0 430 190">
       <rect x="2" y="44" width="70" height="30" rx="15" /><T x="37" y="63" anchor="middle" sm>push</T>
       <Job x={88} y={42} w={104} name="build" stage={0} />
       <Job x={212} y={6} w={146} name="linux tests" stage={1} />
@@ -122,10 +97,9 @@ function Pipeline() {
 // GPU passthrough on Kubernetes (KubeVirt + VFIO): the GPU is taken from the host driver and bound
 // to vfio-pci, with the IOMMU keeping its memory access in bounds; the device plugin advertises it;
 // the VM's pod asks for it; and the Windows VM gets the real GPU.
-function GpuVm() {
-  const [ref, s] = useStep(4, 1500, 3); // 0 host driver owns it, 1 bound to vfio-pci, 2 pod asks for gpu1, 3 passed into the VM
+function GpuVm({ s }) { // 0 host driver owns it, 1 bound to vfio-pci, 2 pod asks for gpu1, 3 passed into the VM
   return (
-    <svg ref={ref} viewBox="0 0 440 220">
+    <svg viewBox="0 0 440 220">
       <rect x="2" y="2" width="436" height="216" rx="10" className="mt-faint" strokeDasharray="5 5" />
       <T x="14" y="22" sm dim>Kubernetes node</T>
       <rect x="14" y="32" width="252" height="124" rx="8" className={s === 2 ? 'mt-box-hi' : 'mt-box'} />
@@ -153,10 +127,9 @@ function GpuVm() {
 // Xpresso.ai: the MLOps lifecycle as a loop, with the DataOps layer (the part Gopi built) marked.
 // The highlight moves round the loop.
 const LIFE = [['data', 'sources', 2, 14], ['DataOps', 'versioning', 158, 14], ['experiments', 'MLflow, DVC', 314, 14], ['serving', 'ONNX, FastAPI', 314, 132], ['deploy', 'Kubernetes', 158, 132]];
-function Mlops() {
-  const [ref, s] = useStep(5, 1100, 1);
+function Mlops({ s }) {
   return (
-    <svg ref={ref} viewBox="0 0 440 190">
+    <svg viewBox="0 0 440 190">
       {LIFE.map(([t, sub, x, y], i) => <Box key={t} x={x} y={y} w={124} h={46} title={t} sub={sub} hi={i === s} box={i === 1} />)}
       <rect x="176" y="68" width="88" height="20" rx="10" className="mt-chip" /><T x="220" y="82" anchor="middle" sm hi>my layer</T>
       <path d="M126 37 H158 M282 37 H314 M376 60 V132 M314 155 H282 M158 155 H64 V60" />
@@ -168,11 +141,10 @@ function Mlops() {
 
 // The DataOps layer: connectors pull from SQL, NoSQL and cloud storage; every new batch becomes a
 // new version of the dataset (Pachyderm, with MinIO as the store); Airflow pipelines take it on.
-function DataOps() {
-  const [ref, s] = useStep(4, 1300, 3);
+function DataOps({ s }) {
   const SRC = ['SQL', 'NoSQL', 'cloud storage'];
   return (
-    <svg ref={ref} viewBox="0 0 440 200">
+    <svg viewBox="0 0 440 200">
       {SRC.map((t, i) => (
         <g key={t}>
           <rect x="2" y={14 + i * 44} width="100" height="30" rx="6" className={i === s % 3 ? 'mt-box-hi' : undefined} />
@@ -208,10 +180,9 @@ const RV = [
   ['memory', 'load the word at that address'],
   ['write back', 'write the word into x5'],
 ];
-function Riscv() {
-  const [ref, s] = useStep(5, 1300, 4);
+function Riscv({ s }) {
   return (
-    <svg ref={ref} viewBox="0 0 440 200">
+    <svg viewBox="0 0 440 200">
       <T x="2" y="18">lw x5, 8(x2)</T>
       <T x="438" y="18" anchor="end" sm hi>{`${s + 1}. ${RV[s][0]}`}</T>
       <rect x="2" y="60" width="40" height="64" rx="6" className={s === 0 ? 'mt-box-hi' : undefined} /><T x="22" y="97" anchor="middle" sm hi={s === 0}>PC</T>
@@ -237,11 +208,10 @@ function Riscv() {
 
 // A vision-language model: the image is cut into patches, a vision encoder embeds them, an adapter
 // maps them into the language model's space, and they arrive as tokens next to the text prompt.
-function Vlm() {
-  const [ref, s] = useStep(4, 1300, 3); // 0 patches, 1 encoder, 2 adapter, 3 language model
+function Vlm({ s }) { // 0 patches, 1 encoder, 2 adapter, 3 language model
   const grid = 'M30 14 V126 M58 14 V126 M86 14 V126 M2 42 H114 M2 70 H114 M2 98 H114';
   return (
-    <svg ref={ref} viewBox="0 0 440 200">
+    <svg viewBox="0 0 440 200">
       <rect x="2" y="14" width="112" height="112" rx="4" />
       <circle cx="84" cy="40" r="11" className="mt-faint" />
       <path d="M2 112 Q30 70 58 92 T114 80" className="mt-faint" />
@@ -267,10 +237,9 @@ function Vlm() {
 
 // The pull loop of the GPU CI design: ask, hand out, run in a fresh VM, report and destroy.
 const LOOP = [['runner', 'asks for a job', 2, 8], ['job service', 'hands one out', 262, 8], ['fresh VM', 'runs the job', 262, 136], ['result reported', 'VM destroyed', 2, 136]];
-function PullLoop() {
-  const [ref, s] = useStep(4, 1200, 1);
+function PullLoop({ s }) {
   return (
-    <svg ref={ref} viewBox="0 0 440 190">
+    <svg viewBox="0 0 440 190">
       {LOOP.map(([t, sub, x, y], i) => <Box key={t} x={x} y={y} w={176} h={46} title={t} sub={sub} hi={i === s} />)}
       <path d="M178 31 H262 M350 54 V136 M262 159 H178 M90 136 V54" />
       <Head x={262} y={31} /><Head x={350} y={136} dir="d" /><Head x={178} y={159} dir="l" /><Head x={90} y={54} dir="u" />
@@ -281,10 +250,9 @@ function PullLoop() {
 }
 
 // Push versus pull. Push needs a way into the worker's network; pull only needs the worker to reach out.
-function PushPull() {
-  const [ref, s] = useStep(4, 1200, 3); // 0 push sends, 1 push arrives, 2 pull asks, 3 job comes back
+function PushPull({ s }) { // 0 push sends, 1 push arrives, 2 pull asks, 3 job comes back
   return (
-    <svg ref={ref} viewBox="0 0 440 220">
+    <svg viewBox="0 0 440 220">
       <T x="6" y="16" sm dim>push</T>
       <Box x={30} y={28} w={150} h={40} title="controller" center />
       <path d="M6 112 H95 M115 112 H204" className="mt-wall" />
@@ -315,11 +283,10 @@ const STRIDE = [
   ['D', 'denial of service', 'GPU hogged', 300, 28],
   ['E', 'elevation', 'VM escape', 428, 28],
 ];
-function Stride() {
-  const [ref, s] = useStep(7, 1400, 6); // 0-5 one letter each, 6 all
+function Stride({ s }) { // 0-5 one letter each, 6 all
   const cur = STRIDE[s];
   return (
-    <svg ref={ref} viewBox="0 0 440 210">
+    <svg viewBox="0 0 440 210">
       <rect x="130" y="4" width="308" height="202" rx="10" className="mt-faint" strokeDasharray="5 5" />
       <T x="142" y="20" sm dim>CI cluster</T>
       <Box x={2} y={28} w={100} h={44} title="source host" center />
@@ -397,10 +364,9 @@ function Mesh() {
 // The NVIDIA CI: GitHub asks for a Windows GPU run; the job waits in my job query service; a runner
 // inside the cluster pulls it over an outbound connection (nothing outside can reach in); a fresh
 // Windows VM with a passed-through GPU runs it; the result goes back to GitHub.
-function JobQuery() {
-  const [ref, s] = useStep(5, 1300, 4); // 0 queued, 1 runner asks, 2 job handed out, 3 VM runs, 4 passed
+function JobQuery({ s }) { // 0 queued, 1 runner asks, 2 job handed out, 3 VM runs, 4 passed
   return (
-    <svg ref={ref} viewBox="0 0 470 240">
+    <svg viewBox="0 0 470 240">
       <rect x="2" y="30" width="118" height="54" rx="7" />
       <T x="14" y="52">GitHub</T>
       <T x="14" y="70" sm dim>workflow run</T>
@@ -440,10 +406,17 @@ function JobQuery() {
 }
 
 const MOTIFS = { api: Api, pipeline: Pipeline, gpuvm: GpuVm, mlops: Mlops, dataops: DataOps, jobquery: JobQuery, mesh: Mesh, riscv: Riscv, vlm: Vlm, pullloop: PullLoop, pushpull: PushPull, stride: Stride };
+const STEPS = { api: [4, 900, 3], pipeline: [5, 1100, 4], gpuvm: [4, 1500, 3], mlops: [5, 1100, 1], dataops: [4, 1300, 3], jobquery: [5, 1300, 4], riscv: [5, 1300, 4], vlm: [4, 1300, 3], pullloop: [4, 1200, 1], pushpull: [4, 1200, 3], stride: [7, 1400, 6] };
 
-// A diagram in the layout. `tone` sets its highlight color. On the page it is wrapped in an Island
-// (see Diagram below) so its animation runs in the browser.
+// A diagram in the layout. `tone` sets its highlight color. Drawings with steps render one frame per
+// step; the one matching data-step is shown (styles.css, .mt-f).
 export function Motif({ name, tone = 'accent', className = '' }) {
   const M = MOTIFS[name];
-  return <div className={`motif ${className}`} style={{ '--hi': `var(--${tone})` }} aria-hidden="true"><M /></div>;
+  const [n, ms, rest] = STEPS[name] || [1, 0, 0];
+  return (
+    <div className={`motif ${className}`} style={{ '--hi': `var(--${tone})` }} aria-hidden="true"
+      data-steps={n > 1 ? n : undefined} data-ms={n > 1 ? ms : undefined} data-rest={n > 1 ? rest : undefined} data-step={n > 1 ? rest : undefined}>
+      {Array.from({ length: n }, (_, k) => <div key={k} className="mt-f" data-k={k}><M s={k} /></div>)}
+    </div>
+  );
 }

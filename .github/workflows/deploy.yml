@@ -1,22 +1,21 @@
-# Builds the site with React, Tailwind and esbuild, then deploys it to GitHub Pages.
-# Runs on every push to main, and can be started by hand from the Actions tab.
+# Builds and tests the site on every pull request and every push to main. Only a push to main
+# (or a manual run on main from the Actions tab) deploys it to GitHub Pages.
 # One-time setup on GitHub: Settings > Pages > Build and deployment > Source: GitHub Actions.
-name: Deploy site
+name: Build, test and deploy
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
-# One deployment at a time; a newer push waits for the current one instead of cancelling it.
+# A newer push to the same pull request cancels its older check. Runs on main never cancel each other.
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -27,28 +26,34 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
-      # Uses the lockfile when it matches package.json (exact versions), otherwise installs from package.json.
+      # Exact versions from package-lock.json. If the lockfile is out of date with package.json this
+      # fails on purpose: run npm install locally and commit the updated lockfile.
       - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ]; then npm ci || npm install --no-audit --no-fund; else npm install --no-audit --no-fund; fi
+        run: npm ci
 
+      # The live site (published posts only), then a preview with drafts so post pages and the
+      # writing filters are tested too.
       - name: Build
-        run: npm run build
+        run: |
+          npm run build
+          npm run build:preview
 
-      # Layout and interaction checks on the built site (tests/webapp_test.py). A failure stops the
-      # deploy; the screenshots and report are kept as a run artifact either way.
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
+      # Layout and interaction checks (tests/webapp_test.py) on both builds. A failure stops the deploy.
       - name: Test
         run: |
           pip install playwright
           python -m playwright install --with-deps chromium
           python -m http.server 8000 -d dist >/dev/null 2>&1 &
+          python -m http.server 8001 -d .preview >/dev/null 2>&1 &
           sleep 1
-          python tests/webapp_test.py --base http://localhost:8000/ --out .screens
+          python tests/webapp_test.py --base http://localhost:8000/ --out .screens/live
+          python tests/webapp_test.py --base http://localhost:8001/ --out .screens/preview
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -57,15 +62,22 @@ jobs:
           path: .screens
           retention-days: 7
 
-      - uses: actions/configure-pages@v5
-
       - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           path: dist
 
   deploy:
     needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    # One deployment at a time; a newer one waits for the current one instead of cancelling it.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

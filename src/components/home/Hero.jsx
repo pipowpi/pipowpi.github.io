@@ -1,5 +1,5 @@
 import { SITE } from '../../data/site.js';
-import { HERO, FACTS, PHASE, NOW } from '../../data/home.js';
+import { HERO, LATEST, FACTS, PHASE, NOW } from '../../data/home.js';
 import { Button, Icon, Mark, Sheet, Stat, TextLink, Wrap, cn, tone, useHref } from '../ui.jsx';
 import { StepIcon, STATE_TEXT } from './StepIcons.jsx';
 
@@ -52,7 +52,16 @@ export function Hero() {
       <div>
         <p className="text-title font-medium text-lead">{HERO.hello}</p>
         <h1 className="mt-3 font-display text-h2 font-semibold leading-[1.1] md:text-display">{HERO.title}</h1>
-        {HERO.lede.map((para, i) => <p key={i} className={cn('max-w-[58ch] text-large leading-relaxed text-lead', i ? 'mt-3' : 'mt-6')}>{para}</p>)}
+        <a href={href(LATEST.href)} style={tone('lime')}
+          className="group mt-6 flex max-w-[58ch] items-start gap-3.5 rounded-md border border-[color-mix(in_srgb,var(--accent)_40%,transparent)] bg-wash p-4 transition-colors duration-(--duration-fast) hover:border-accent">
+          <Mark name="gpu" size="sm" />
+          <span className="min-w-0">
+            <span className="t-label block text-accent">{LATEST.label}</span>
+            <span className="mt-0.5 block text-large font-semibold leading-snug text-ink">{LATEST.text}</span>
+            <span className="mt-1.5 inline-flex items-center gap-1 text-small font-medium text-accent underline decoration-[color-mix(in_srgb,var(--accent)_40%,transparent)] underline-offset-4 group-hover:decoration-accent">{LATEST.link}<Icon name="arrow" className="size-4" /></span>
+          </span>
+        </a>
+        {HERO.lede.map((para, i) => <p key={i} className={cn('max-w-[58ch] text-large leading-relaxed text-lead', i ? 'mt-3' : 'mt-5')}>{para}</p>)}
         <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
           <Button primary href={href('work/')}>See my work</Button>
           <Button href={`mailto:${SITE.email}`}><Icon name="mail" className="size-[18px]" />Email me</Button>

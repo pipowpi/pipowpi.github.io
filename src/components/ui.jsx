@@ -53,6 +53,7 @@ const ICON_PATHS = {
   external: <path d="M7 17L17 7M9 7h8v8" />,
   pause: <><path d="M9 5v14M15 5v14" /></>,
   play: <><path d="M8 5.5v13l10.5-6.5z" /></>,
+  arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
   mail: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></>,
 };
 

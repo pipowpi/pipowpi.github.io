@@ -5,10 +5,13 @@ export const HERO = {
   hello: 'Hi, I’m Gopi.',
   title: 'I build the systems that help teams develop, test and ship software.',
   lede: [
-    'It might be a web app, an ML model or an LLM agent. Over eight years at Abzooba and NVIDIA, I’ve worked on most of the stack behind them. I’ve written Python APIs, set up and monitored machines, managed infrastructure as code and built CI/CD pipelines. Most recently, I designed and built Windows GPU CI for PyTorch at NVIDIA. When something breaks, I can find the cause at any layer, from the OS to the code to the database.',
+    'The software might be a web app, an ML model or an LLM agent. Over eight years at Abzooba and NVIDIA, I’ve worked on most of the stack behind it. I’ve written Python APIs, set up and monitored machines, managed infrastructure as code and built CI/CD pipelines. When something breaks, I can find the cause at any layer, from the OS to the code to the database.',
     'I’m now studying for an MS in Computer Science at Stony Brook, focusing on computer vision and vision-language models. I want to understand the models as well as I understand the infrastructure around them.',
   ],
 };
+
+// The strongest recent work, linked from the top of the home page.
+export const LATEST = { label: 'Most recent work', text: 'I designed and built Windows GPU CI for PyTorch at NVIDIA.', link: 'Read the case study', href: 'work/#pytorch-ci' };
 
 export const FACTS = [
   { n: '8+', label: 'years in software', tone: 'pink' },

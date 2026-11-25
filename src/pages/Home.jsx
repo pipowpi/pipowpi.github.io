@@ -9,11 +9,11 @@ export default function Home() {
     <Layout active="home">
       <Hero />
       <Wrap>
+        <Section id="selected" label="Selected work" note="2 case studies"><SelectedWork /></Section>
         <Section id="so-far" wide label="The pipeline so far" note="Eight years, one stage at a time">
           <Island name="CareerRun" component={CareerRun} />
         </Section>
         <Section id="focus" wide label="What I work on" tight><Focus /></Section>
-        <Section id="selected" label="Selected work" note="2 case studies"><SelectedWork /></Section>
         <Section id="lately" label="Lately" note="What I’m writing and building"><Lately /></Section>
       </Wrap>
     </Layout>

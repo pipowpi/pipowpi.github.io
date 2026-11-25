@@ -1,7 +1,7 @@
 import { PILLARS } from '../../data/home.js';
 import { PYTORCH_CI, XPRESSO } from '../../data/work.js';
 import { HEAD, COURSE } from '../../data/projects.js';
-import posts from '../../generated/posts.json';
+import { POSTS as posts } from '../../data/posts.js';
 import { PostList } from '../PostList.jsx';
 import { Diagram } from '../Diagram.jsx';
 import { Mark, Sheet, StatusPill, Tag, TextLink, tone, useHref } from '../ui.jsx';
@@ -79,7 +79,7 @@ export function Lately() {
         <h3 className="font-display text-title font-semibold">Writing</h3>
         {posts.length > 0
           ? <PostList posts={posts.slice(0, 3)} compact className="mt-3" />
-          : <p className="mt-3 border-t border-rule pt-4 text-body text-lead">The first posts are being written.</p>}
+          : <p className="mt-3 border-t border-rule pt-4 text-body text-lead">The first posts are being reviewed. You can see what’s coming on the Writing page.</p>}
         <TextLink href={href('writing/')} className="mt-4 inline-block">All posts</TextLink>
       </div>
       <div className="min-w-0">

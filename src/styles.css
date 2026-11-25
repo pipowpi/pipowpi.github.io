@@ -211,6 +211,8 @@
   .motion-off { display: none !important; }
   [data-motion=off] .motion-on { display: none !important; }
   [data-motion=off] .motion-off { display: inline-flex !important; }
+  /* Replay on the home career run means nothing while animations are paused. */
+  [data-motion=off] .replay { display: none; }
 
   .read-progress { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; height: 3px; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); z-index: 40; }
   .step-in { animation: stepIn .5s ease-out both; }
@@ -230,6 +232,19 @@
 
   /* Motifs (Backdrop.jsx): labelled diagrams placed in the layout. Lines in ink, one highlight in --hi. */
   .motif { color: color-mix(in srgb, var(--ink) 50%, transparent); }
+  /* Stepped diagrams: one prerendered frame per step, stacked; the frame matching data-step shows. */
+  /* !important: a display utility (block, flex) on a diagram would otherwise unstack its frames. */
+  .motif { display: grid !important; grid-template: minmax(0, 1fr) / minmax(0, 1fr); }
+  .mt-f { grid-area: 1 / 1; min-width: 0; min-height: 0; opacity: 0; visibility: hidden; transition: opacity .35s var(--ease-out), visibility 0s linear .35s; }
+  .motif:not([data-steps]) > .mt-f,
+  .motif[data-step="0"] > .mt-f[data-k="0"],
+  .motif[data-step="1"] > .mt-f[data-k="1"],
+  .motif[data-step="2"] > .mt-f[data-k="2"],
+  .motif[data-step="3"] > .mt-f[data-k="3"],
+  .motif[data-step="4"] > .mt-f[data-k="4"],
+  .motif[data-step="5"] > .mt-f[data-k="5"],
+  .motif[data-step="6"] > .mt-f[data-k="6"],
+  .motif[data-step="7"] > .mt-f[data-k="7"] { opacity: 1; visibility: visible; transition: opacity .35s var(--ease-out); }
   .motif svg { display: block; width: 100%; height: 100%; overflow: visible; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
   .mt-text { fill: color-mix(in srgb, var(--ink) 88%, transparent); stroke: none; font: 500 13px var(--font-mono); }
   .mt-sm { font-size: 11.5px; }

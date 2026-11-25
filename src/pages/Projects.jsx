@@ -2,6 +2,7 @@ import { HEAD, COURSE, PERSONAL } from '../data/projects.js';
 import { Layout } from '../components/Layout.jsx';
 import { Flow, Stages } from '../components/Flow.jsx';
 import { Diagram } from '../components/Diagram.jsx';
+import { isLive } from '../data/posts.js';
 import { Glance, Mark, PageHead, Section, Sheet, StatusPill, TextLink, Wrap, cn, tone, useHref } from '../components/ui.jsx';
 
 
@@ -122,7 +123,7 @@ function SmallProject({ p }) {
         <h3 className="mt-4 font-display text-h4 font-semibold leading-snug">{p.title}</h3>
         <p className="t-meta mt-1 text-lead">{p.context}</p>
         <p className="mt-2 max-w-[72ch] text-body leading-relaxed text-lead">{p.text}</p>
-        {p.link && <p className="mt-auto pt-5"><TextLink href={href(p.link[1])}>{p.link[0]}</TextLink></p>}
+        {p.link && isLive(p.link[1]) && <p className="mt-auto pt-5"><TextLink href={href(p.link[1])}>{p.link[0]}</TextLink></p>}
       </div>
       {p.diagram && (
         <figure className="rounded-md border border-rule bg-paper p-4">

@@ -2,6 +2,7 @@ import { ERAS, YEAR_TICKS, PYTORCH_CI, XPRESSO } from '../data/work.js';
 import { Layout } from '../components/Layout.jsx';
 import { Flow } from '../components/Flow.jsx';
 import { Diagram } from '../components/Diagram.jsx';
+import { isLive } from '../data/posts.js';
 import { Chip, Collapsible, Glance, Mark, PageHead, Section, Sheet, Tag, TextLink, Wrap, cn, enDash, tone, useHref } from '../components/ui.jsx';
 
 // Each era has its own stage color (the same as on the home page); the current one is dashed amber.
@@ -114,10 +115,14 @@ function PytorchCase() {
           <p className="mt-0.5 text-small text-lead">{c.also.text}</p>
         </div>
       </div>
-      <p className="t-label mt-6 text-lead">Related writing</p>
-      <ul className="mt-1 flex flex-wrap gap-x-6 gap-y-1">
-        {c.reading.map(([label, to]) => <li key={to}><TextLink href={href(to)}>{label}</TextLink></li>)}
-      </ul>
+      {c.reading.some(([, to]) => isLive(to)) && (
+        <>
+          <p className="t-label mt-6 text-lead">Related writing</p>
+          <ul className="mt-1 flex flex-wrap gap-x-6 gap-y-1">
+            {c.reading.filter(([, to]) => isLive(to)).map(([label, to]) => <li key={to}><TextLink href={href(to)}>{label}</TextLink></li>)}
+          </ul>
+        </>
+      )}
       </Collapsible>
     </Sheet>
   );

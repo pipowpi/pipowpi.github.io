@@ -6,8 +6,11 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
+    "build:preview": "SHOW_DRAFTS=true OUT_DIR=.preview node scripts/build.mjs",
     "dev": "node scripts/build.mjs --watch",
-    "preview": "python3 -m http.server 8000 -d dist"
+    "preview": "python3 -m http.server 8000 -d dist",
+    "preview:drafts": "python3 -m http.server 8001 -d .preview",
+    "test": "python3 tests/webapp_test.py"
   },
   "devDependencies": {
     "clsx": "^2.1.1",

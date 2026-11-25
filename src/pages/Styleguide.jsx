@@ -62,7 +62,7 @@ export default function Styleguide() {
         <Section id="diagrams" label="Diagrams" note="Animate while on screen">
           <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {DIAGRAMS.map(([n, t]) => (
-              <li key={n}><Sheet className="p-4"><Diagram name={n} tone={t} className="mx-auto block h-[200px] w-full" /><p className="mt-2 font-mono text-caption text-lead">{n}</p></Sheet></li>
+              <li key={n}><Sheet className="p-4"><Diagram name={n} tone={t} className="mx-auto h-[200px] w-full" /><p className="mt-2 font-mono text-caption text-lead">{n}</p></Sheet></li>
             ))}
           </ul>
         </Section>

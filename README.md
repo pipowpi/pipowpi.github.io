@@ -15,11 +15,12 @@ There is also a `/styleguide/` page (not linked, not indexed) that shows every c
 ## How it works
 
 - **Prerendering.** `scripts/build.mjs` renders each page with React on the server (`src/entry-server.jsx`) and writes plain HTML into `dist/`. Posts are Markdown, converted with `marked`.
-- **Islands.** Most of the page is static HTML. Only three parts run React in the browser: the career run on Home, the animated diagrams, and the post filter on Writing. Each is wrapped in `<Island>` (`src/components/ui.jsx`). `src/entry-client.jsx` is about 1 KB of plain JavaScript: it handles the theme and motion toggles and the phone panels, and loads React (`src/hydrate.jsx`) only when an island comes near the screen.
-- **Motion.** Animations play while they are on screen and pause when you scroll past them. The footer has a pause button that stops all of them, and `prefers-reduced-motion` is respected.
+- **Islands.** Most of the site is static HTML. Only two parts run React in the browser: the career run on Home and the post filter on Writing. Each is wrapped in `<Island>` (`src/components/ui.jsx`). `src/entry-client.jsx` is about 1 KB of plain JavaScript: it handles the theme and motion toggles, the phone panels and the diagrams, and loads React (`src/hydrate.jsx`) only when an island comes near the screen. Work, Projects, About and the posts load no React at all.
+- **Diagrams.** Each diagram is prerendered once per animation step, and `entry-client.jsx` shows the steps in turn by changing `data-step`. They animate without React.
+- **Motion.** Animations play while they are on screen and pause when you scroll past them. The footer has a pause button that stops all of them at once, including the career run part way through, and `prefers-reduced-motion` is respected.
 - **Phones.** Long detail (era work lists, case study phases) is folded behind a "Show ..." button below 768px. Without JavaScript it stays open.
 - **Assets.** CSS and JS file names carry a content hash, so browsers can cache them for a long time.
-- **SEO.** Each page gets a canonical URL, Open Graph and Twitter tags, and JSON-LD (Person on Home, BlogPosting on posts). The build also writes `sitemap.xml`, `robots.txt` and an RSS feed at `writing/feed.xml`. Drafts are left out of all three. The share image is `assets/img/og.png`; to change it, edit `scripts/og-card.html` and take a 1200x630 screenshot of it.
+- **SEO.** Each page gets a canonical URL, Open Graph and Twitter tags, and JSON-LD (Person on Home, BlogPosting on posts). The build also writes `sitemap.xml`, `robots.txt` and an RSS feed at `writing/feed.xml`. Drafts are never in any of them. The share image is `assets/img/og.png`; to change it, edit `scripts/og-card.html` and take a 1200x630 screenshot of it.
 
 ## Build and preview
 
@@ -27,11 +28,15 @@ You need Node.js 20 or newer.
 
 ```
 npm install
-npm run build              # builds the site into dist/
+npm run build              # the live site, published posts only, into dist/
 npm run preview            # serves dist/ at http://localhost:8000
+npm run build:preview      # the same plus draft posts, into .preview/
+npm run preview:drafts     # serves .preview/ at http://localhost:8001
 ```
 
-`npm run dev` rebuilds whenever something in `src/` or `content/` changes. `dist/` is ignored by git: you only commit source files, and GitHub Actions builds the site.
+`npm run dev` rebuilds (drafts included) whenever something in `src/` or `content/` changes. `dist/` and `.preview/` are ignored by git: you only commit source files, and GitHub Actions builds the site.
+
+The build deletes and rebuilds its output folder each time, so it refuses an `OUT_DIR` outside the project, inside a source folder, or holding files it didn't make.
 
 ## Edit content
 
@@ -73,7 +78,7 @@ Two optional lines add a drawing: `diagram:` names one from `src/components/Diag
 
 Fenced code blocks with three backticks work too. The file name becomes the URL: `writing/my-post/`. Straight quotes and `...` are turned into curly quotes and `…` automatically (except inside code).
 
-**The four posts included now are drafts written for you to review.** They are marked `draft: true` and show a "Draft" label. Rewrite them in your own words and set `draft: false`, or delete them. To hide every draft, build with `SHOW_DRAFTS=false npm run build`, or set `SHOW_DRAFTS` in `scripts/build.mjs`.
+**The four posts included now are drafts written for you to review.** They are marked `draft: true`. The live site leaves drafts out: the Writing page lists them as "In review" (title and summary, no link), and links to them elsewhere on the site are hidden until they are published. `npm run build:preview` and `npm run dev` show them in full with a "Draft" label. Rewrite them in your own words and set `draft: false` to publish, or delete them.
 
 ## Design system and reviews
 
@@ -91,24 +96,27 @@ Fenced code blocks with three backticks work too. The file name becomes the URL:
 The test needs Python with Playwright (`pip install playwright && playwright install chromium`).
 
 ```
-npm run build
-npm run preview &
-python3 tests/webapp_test.py --out .screens
+npm run build && npm run build:preview
+npm run preview & npm run preview:drafts &
+npm test -- --base http://localhost:8000/ --out .screens/live
+npm test -- --base http://localhost:8001/ --out .screens/preview
 ```
 
-It saves screenshots of every page at 390, 768, 1024 and 1440px in light and dark. It fails on any of these:
+It saves screenshots of every page at 390, 768, 1024 and 1440px in light and dark (the theme is saved before each page loads and then checked). It fails on any of these:
 
 - horizontal scroll or overflow;
 - overlapping or covered controls;
 - small tap targets;
 - console errors;
-- a broken toggle, phone panel, filter or link.
+- a broken toggle, phone panel or link, or a link to a page that doesn't exist;
+- a writing filter that shows anything other than exactly the posts with that topic;
+- a career run that keeps moving after you press pause.
 
-The same test runs in GitHub Actions after every build. If it fails, the site is not deployed, and the screenshots are saved with the run (Actions tab, "screens").
+GitHub Actions runs it on both builds for every pull request and every push to `main`. If it fails, the site is not deployed, and the screenshots are saved with the run (Actions tab, "screens").
 
 ## Publish on GitHub Pages
 
-The site deploys itself. `.github/workflows/deploy.yml` runs on every push to `main` (and by hand from the Actions tab): it installs the packages, runs `npm run build`, runs the test, and publishes `dist/` to GitHub Pages.
+The site deploys itself. `.github/workflows/deploy.yml` builds and tests every pull request and every push to `main`. Only a push to `main` (or a manual run on `main` from the Actions tab) publishes `dist/` to GitHub Pages. To try a change safely, push it to a branch and open a pull request: the checks run without touching the live site.
 
 One-time setup on GitHub: go to Settings > Pages > Build and deployment, and set Source to **GitHub Actions**.
 
@@ -116,4 +124,4 @@ To update the site: edit the content, commit and push. You can watch the run in 
 
 The repository is `pipowpi.github.io`, which serves the site at https://pipowpi.github.io. A repository with any other name also works, served at https://pipowpi.github.io/<name>/. Page links are relative, so they keep working; only the 404 page assumes the site sits at the domain root.
 
-For exact, repeatable builds, run `npm install` once and commit the `package-lock.json` it creates. The workflow then uses `npm ci` with those exact versions.
+The workflow installs with `npm ci`, the exact versions in `package-lock.json`. If you change `package.json`, run `npm install` and commit the updated lockfile, or the run fails on purpose.

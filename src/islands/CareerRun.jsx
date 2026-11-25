@@ -8,7 +8,8 @@ import { DeployIcon, PivotIcon, STATE_TEXT, StepIcon, SwitchIcon } from '../comp
 // left-to-right pipeline above. When the card scrolls into view the run replays: each stage runs and
 // passes, the switch to NVIDIA flips, and the run ends on the MS, which keeps running; the deploy job
 // (a full-time role) waits for review. The server render shows that final state. If the card is
-// already on screen when the page loads, it stays in that state (no reset flash); Replay runs it.
+// already on screen before the page is scrolled, it stays in that state (no reset flash); Replay runs it.
+// Pausing animations (the footer button) at any point cancels the run and shows that final state.
 const RUN_END = CAREER_STEPS.findIndex((s) => s.kind === 'deploy') - 1; // the MS
 const DUR = CAREER_STEPS.map((s) => (s.kind === 'switch' ? 1100 : s.kind === 'pivot' ? 1500 : 1400));
 
@@ -35,9 +36,15 @@ export default function CareerRun() {
   const [at, setAt] = useState(RUN_END); // index of the running step
   const [played, setPlayed] = useState(true);
 
+  const motionOff = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    || document.documentElement.getAttribute('data-motion') === 'off';
+  const cancel = () => { timers.current.forEach(clearTimeout); timers.current = []; };
+  // Stop wherever the run is and show the final state.
+  const settle = () => { cancel(); setAt(RUN_END); setPlayed(true); };
+
   const play = () => {
-    timers.current.forEach(clearTimeout);
-    timers.current = [];
+    cancel();
+    if (motionOff()) { settle(); return; }
     setPlayed(false);
     setAt(0);
     let t = 0;
@@ -48,19 +55,27 @@ export default function CareerRun() {
     timers.current.push(setTimeout(() => setPlayed(true), t + 300));
   };
 
+  // The footer pause button sets data-motion="off" on <html>: settle the moment it does.
+  useEffect(() => {
+    const mo = new MutationObserver(() => { if (motionOff()) settle(); });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-motion'] });
+    return () => { mo.disconnect(); cancel(); };
+  }, []);
+
   useEffect(() => {
     const el = ref.current;
-    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      || document.documentElement.getAttribute('data-motion') === 'off';
-    if (!el || still || !('IntersectionObserver' in window)) return undefined;
-    if (el.getBoundingClientRect().top < window.innerHeight) return undefined; // already visible: no flash
-    setAt(-1); // below the fold: queue everything until the card is on screen
+    if (!el || motionOff() || !('IntersectionObserver' in window)) return undefined;
+    // React loads as the card comes near the screen. If it is already in view on an unscrolled page
+    // (a very tall screen), keep the final state rather than flash back to the start.
+    const inView = el.getBoundingClientRect().top < window.innerHeight;
+    if (inView && window.scrollY === 0) return undefined;
+    setAt(-1); // queue everything, then run once the card is on screen
     setPlayed(false);
     const io = new IntersectionObserver((entries) => {
-      if (entries.some((e) => e.isIntersecting)) { io.disconnect(); setTimeout(play, 250); }
+      if (entries.some((e) => e.isIntersecting)) { io.disconnect(); timers.current.push(setTimeout(play, 250)); }
     }, { threshold: 0.35 });
     io.observe(el);
-    return () => { io.disconnect(); timers.current.forEach(clearTimeout); };
+    return () => io.disconnect();
   }, []);
 
   return (
@@ -72,7 +87,7 @@ export default function CareerRun() {
         </p>
         <div className="flex items-center gap-5">
           <button type="button" onClick={play} disabled={!played}
-            className="t-label inline-flex min-h-10 cursor-pointer items-center gap-1.5 text-lead transition-opacity duration-(--duration-base) hover:text-accent active:translate-y-px disabled:cursor-default disabled:opacity-0">
+            className="replay t-label inline-flex min-h-10 cursor-pointer items-center gap-1.5 text-lead transition-opacity duration-(--duration-base) hover:text-accent active:translate-y-px disabled:cursor-default disabled:opacity-0">
             <Icon name="play" className="size-3.5" />Replay
           </button>
           <TextLink href={href('work/#timeline')} className="inline-flex min-h-10 items-center text-small">See the full timeline</TextLink>
@@ -81,7 +96,7 @@ export default function CareerRun() {
       <div className="border-b border-rule bg-paper px-2 pt-3 md:px-6 md:pt-4">
         <CareerWalk at={at} className="mx-auto block h-auto w-full max-w-[680px]" />
       </div>
-      <ol className="grid grid-cols-1 p-5 md:p-6 xl:grid-cols-[repeat(3,minmax(0,1fr))_92px_minmax(0,1fr)_92px_repeat(2,minmax(0,1fr))]" aria-label="Career so far, as a build run">
+      <ol data-at={at} className="grid grid-cols-1 p-5 md:p-6 xl:grid-cols-[repeat(3,minmax(0,1fr))_92px_minmax(0,1fr)_92px_repeat(2,minmax(0,1fr))]" aria-label="Career so far, as a build run">
         {CAREER_STEPS.map((s, i) => {
           const st = stepState(i, at);
           const next = CAREER_STEPS[i + 1];

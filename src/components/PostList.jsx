@@ -18,7 +18,7 @@ export function PostList({ posts, detail = false, compact = false, className = '
   return (
     <ul className={cn('border-b border-rule', className)}>
       {posts.map((p) => (
-        <li key={p.slug} className="border-t border-rule" style={tone(topicTone(p.tags[0]))}>
+        <li key={p.slug} data-slug={p.slug} data-tags={p.tags.join('|')} className="border-t border-rule" style={tone(topicTone(p.tags[0]))}>
           <a href={href(`writing/${p.slug}/`)} className={cn('group grid grid-cols-1 gap-x-8 gap-y-1.5', compact ? 'py-4' : 'py-5 md:grid-cols-[minmax(0,1fr)_auto]',
             detail && p.diagram && 'md:grid-cols-[200px_minmax(0,1fr)_auto] md:gap-x-6')}>
             {detail && p.diagram && (

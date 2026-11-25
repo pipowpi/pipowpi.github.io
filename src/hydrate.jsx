@@ -4,7 +4,6 @@ import { RootContext } from './components/ui.jsx';
 // Island registry. Each island's code is its own chunk, loaded only when the page has one.
 const ISLANDS = {
   CareerRun: () => import('./islands/CareerRun.jsx'),
-  Diagram: () => import('./islands/Diagram.jsx'),
   PostFilter: () => import('./islands/PostFilter.jsx'),
 };
 

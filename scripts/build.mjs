@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// Build the portfolio: React pages are rendered to static HTML (one file per route)
-// and hydrated in the browser. Output goes to the repo root so GitHub Pages can serve
-// it as-is: index.html, work/, projects/, writing/, about/, 404.html, assets/app.*.
+// Build the portfolio: React pages are rendered to static HTML (one file per route) in dist/.
+// Only the interactive parts (islands) run React in the browser.
 //
-//   npm run build            (after npm install)
+//   npm run build            the live site: published posts only
+//   npm run build:preview    the same, plus posts marked draft: true (also what npm run dev shows)
 //
 // Needs: react, react-dom, esbuild, tailwindcss (v4). No other build tooling.
 
@@ -42,9 +42,28 @@ function writeOut(p, text) {
   fs.mkdirSync(path.dirname(full), { recursive: true });
   fs.writeFileSync(full, text);
 }
-// Start from an empty dist/ with the static files (fonts, favicon) copied in.
+// The output folder is deleted and rebuilt on every build, so refuse anything that is not clearly
+// a build folder: it must sit inside the project, must not be the project itself or one of its
+// source folders, and, if it already has files in it, must carry the marker an earlier build left.
+const MARKER = '.portfolio-build';
+const SOURCE_DIRS = new Set(['src', 'content', 'assets', 'scripts', 'tests', 'docs', 'design-system', 'node_modules', '.git', '.github']);
+function checkOut() {
+  const rel = path.relative(ROOT, OUT);
+  if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) throw new Error(`OUT_DIR must be a folder inside the project, not ${OUT}`);
+  if (SOURCE_DIRS.has(rel.split(path.sep)[0])) throw new Error(`OUT_DIR must not be inside a source folder: ${rel}`);
+  if (!fs.existsSync(OUT)) return;
+  const files = fs.readdirSync(OUT);
+  // dist/ from builds made before the marker existed is still accepted.
+  if (files.length && !files.includes(MARKER) && rel !== 'dist') {
+    throw new Error(`${rel}/ has files that this build did not make (no ${MARKER} marker). Empty or remove it first.`);
+  }
+}
+// Start from an empty output folder with the static files (fonts, favicon) copied in.
 function resetOut() {
+  checkOut();
   fs.rmSync(OUT, { recursive: true, force: true });
+  fs.mkdirSync(OUT, { recursive: true });
+  fs.writeFileSync(path.join(OUT, MARKER), 'Made by scripts/build.mjs. This folder is deleted and rebuilt on every build.\n');
   for (const dir of ['assets/fonts', 'assets/img']) {
     fs.cpSync(path.join(ROOT, dir), path.join(OUT, dir), { recursive: true });
   }
@@ -93,9 +112,9 @@ md.use({
 });
 const markdown = (src) => md.parse(src);
 
-// Drafts are listed with a "Draft" label. Set SHOW_DRAFTS to false (or run with SHOW_DRAFTS=false)
-// to leave every post marked `draft: true` out of the site.
-const SHOW_DRAFTS = process.env.SHOW_DRAFTS !== 'false';
+// Posts marked `draft: true` are left out of the live site. They are included, with a "Draft"
+// label, in preview builds (SHOW_DRAFTS=true, npm run build:preview) and in npm run dev.
+const SHOW_DRAFTS = process.env.SHOW_DRAFTS === 'true' || WATCH;
 
 function loadPosts() {
   const dir = path.join(ROOT, 'content', 'posts');
@@ -124,7 +143,7 @@ function loadPosts() {
     };
   });
   posts.sort((a, b) => (a.date < b.date ? 1 : -1));
-  return SHOW_DRAFTS ? posts : posts.filter((p) => !p.draft);
+  return posts;
 }
 
 // ------------------------------------------------------------------ tailwind
@@ -230,8 +249,12 @@ ${head}
 
 async function build() {
   const t0 = Date.now();
-  const posts = loadPosts();
+  const all = loadPosts();
+  const posts = SHOW_DRAFTS ? all : all.filter((p) => !p.draft);
   write('src/generated/posts.json', JSON.stringify(posts, null, 2) + '\n');
+  // Drafts left out of this build: only their titles are shown, as "in review", on the Writing page.
+  const upcoming = all.filter((p) => !posts.includes(p)).map(({ slug, title, summary, tags, diagram }) => ({ slug, title, summary, tags, diagram }));
+  write('src/generated/upcoming.json', JSON.stringify(upcoming, null, 2) + '\n');
 
   const [css, js, server] = await Promise.all([buildCss(), buildClient(), loadServer()]);
   const hash = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 10);

@@ -290,7 +290,8 @@ A 14px label with a dot. The dot's shape and motion also carry the state, so col
 
 - Lines in ink, one highlight in the section's color. Every drawing has a caption or text next to it that says what it shows. Posts name theirs in front matter (`diagram:` and `caption:`).
 - `jobquery` (the Windows GPU CI flow) replaced the old 3D canvas on the Work page. It is wider than a phone, so below 520px it scrolls sideways with a "Swipe" hint rather than shrinking the labels.
-- Each one steps through its states with `useStep` only while it is on screen. The server renders the resting state, so the drawing is complete before any JavaScript runs.
+- Each drawing is a function of its step. `Motif` prerenders one frame per step, stacked, and shows the one matching `data-step`. `entry-client.jsx` advances it while the drawing is on screen and motion is allowed. There is no React in the browser for diagrams. The resting frame is shown first, so the drawing is complete before any JavaScript runs.
+- Do not put a `display` utility (`block`, `flex`) on a diagram; the frames need the diagram's own grid.
 
 ### Motion
 

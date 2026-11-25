@@ -41,6 +41,7 @@ document.addEventListener('click', (e) => {
     if (off) html.setAttribute('data-motion', 'off'); else html.removeAttribute('data-motion');
     store('gkk-motion', off ? 'off' : 'on');
     syncMotionButtons();
+    restartDiagrams();
     return;
   }
   // ---- Phone panels (Collapsible): open and close.
@@ -71,6 +72,53 @@ if ('IntersectionObserver' in window) {
     kids.get(host).push(el);
   }));
 }
+
+// ---- Diagrams (components/Diagrams.jsx): each stepped drawing holds one prerendered frame per step.
+// While it is on screen and motion is allowed, advance data-step every data-ms; otherwise it shows
+// its resting frame (data-rest). No React involved.
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const still = () => reduceMotion.matches || html.getAttribute('data-motion') === 'off';
+const timers = new Map();
+function stopDiagram(el, rest) {
+  clearInterval(timers.get(el));
+  timers.delete(el);
+  if (rest) el.dataset.step = el.dataset.rest;
+}
+function startDiagram(el) {
+  if (timers.has(el) || still()) return;
+  const n = Number(el.dataset.steps);
+  timers.set(el, setInterval(() => {
+    if (!el.isConnected) { stopDiagram(el); dio.unobserve(el); return; } // removed by an island re-render
+    el.dataset.step = String((Number(el.dataset.step) + 1) % n);
+  }, Number(el.dataset.ms)));
+}
+const dio = 'IntersectionObserver' in window
+  ? new IntersectionObserver((entries) => entries.forEach((en) => (en.isIntersecting ? startDiagram(en.target) : stopDiagram(en.target))))
+  : null;
+const watched = new WeakSet();
+function watchDiagrams() {
+  if (!dio) return;
+  document.querySelectorAll('.motif[data-steps]').forEach((el) => {
+    if (!watched.has(el)) { watched.add(el); dio.observe(el); }
+  });
+}
+// Called when the pause button is pressed: stop everything at rest, or re-check what is on screen.
+function restartDiagrams() {
+  if (!dio) return;
+  document.querySelectorAll('.motif[data-steps]').forEach((el) => {
+    stopDiagram(el, still());
+    dio.unobserve(el);
+    dio.observe(el);
+  });
+}
+watchDiagrams();
+// Islands (the writing list) can add or replace diagrams after the page loads.
+let pending = false;
+new MutationObserver(() => {
+  if (pending) return;
+  pending = true;
+  requestAnimationFrame(() => { pending = false; watchDiagrams(); });
+}).observe(document.getElementById('root'), { childList: true, subtree: true });
 
 // ---- Islands: load React and hydrate only the interactive parts, each one as it comes near the
 // screen. Until then the server-rendered HTML is already complete, so nothing is missing.
