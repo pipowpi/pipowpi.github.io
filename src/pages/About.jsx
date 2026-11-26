@@ -8,7 +8,20 @@ export default function About() {
   return (
     <Layout active="about">
       <Wrap>
-        <PageHead title="Hi, I’m Gopi.">
+        <PageHead title="Hi, I’m Gopi." art={(
+          <>
+            {/* One portrait per theme, same drawing. Both are lazy, so a browser only downloads the one
+                that is shown. Colors: halo #F2B640; background #E8E5E0 light, #26282D dark
+                (scripts/recolor-portrait.py). */}
+            {['dark', 'light'].map((t) => (
+              <img key={t} src={href(`assets/img/gopi-${t}-640.webp`)}
+                srcSet={`${href(`assets/img/gopi-${t}-320.webp`)} 320w, ${href(`assets/img/gopi-${t}-640.webp`)} 640w`}
+                sizes="(min-width: 1024px) 320px, 200px" width="640" height="800" loading="lazy" decoding="async"
+                alt="Illustration of Gopi in glasses and a black hoodie, in front of an amber circle"
+                className={cn('h-auto w-[200px] rounded-lg border border-rule lg:ml-auto lg:w-full', t === 'dark' ? 'hidden dark:block' : 'hidden light:block')} />
+            ))}
+          </>
+        )}>
           {BIO.map((para, i) => <p key={i} className={cn(i > 0 && 'mt-4')}>{para}</p>)}
         </PageHead>
 

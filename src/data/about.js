@@ -1,5 +1,5 @@
 export const BIO = [
-  "I live in Stony Brook, NY, where I’m finishing an MS in Computer Science with a focus on computer vision and vision-language models. Before this I spent eight years in software. The first few were on product work, and the six after that were on platforms, first an MLOps platform at Abzooba and then a Windows GPU CI system for PyTorch at NVIDIA. I came back to school because I didn’t want to keep treating models and LLMs as a black box. I want to understand them well enough to build better infrastructure for them.",
+  "I live in Stony Brook, NY, where I’m finishing an MS in Computer Science with a focus on computer vision and vision-language models. Before this I spent eight years in software. The first few were on product work, and the six after that were on platforms, first an MLOps platform at Abzooba and then RTX CI for PyTorch on Windows at NVIDIA. I came back to school because I didn’t want to keep treating models and LLMs as a black box. I want to understand them well enough to build better infrastructure for them.",
   'The problems I enjoy most are the ones where the requirement is clear but the architecture isn’t. I also write a lot, mostly to make sure I really understand what I’m working on.',
 ];
 
@@ -15,7 +15,7 @@ export const PRINCIPLES = [
     icon: 'shield',
     tone: 'pink',
     title: 'Give the risky part the fewest doors',
-    text: 'On the GPU CI work, runners pulled jobs so nothing outside the cluster needed a way in. I start security from the data flow, not the checklist.',
+    text: 'On the RTX CI work, runners pulled jobs so nothing outside the cluster needed a way in. I start security from the data flow, not the checklist.',
   },
   {
     icon: 'gauge',

@@ -11,7 +11,7 @@ export const HERO = {
 };
 
 // The strongest recent work, linked from the top of the home page.
-export const LATEST = { label: 'Most recent work', text: 'I designed and built Windows GPU CI for PyTorch at NVIDIA.', link: 'Read the case study', href: 'work/#pytorch-ci' };
+export const LATEST = { label: 'Most recent work', text: 'At NVIDIA, I designed and built RTX CI for PyTorch on Windows.', link: 'Read the case study', href: 'work/#pytorch-ci' };
 
 export const FACTS = [
   { n: '8+', label: 'years in software', tone: 'pink' },
@@ -42,7 +42,7 @@ export const CAREER_STEPS = [
   { kind: 'stage', time: '2020 - 2022', name: 'Make it scale', tone: 'teal', org: 'Abzooba', role: 'Senior Software Engineer', sub: 'DataOps versioning on Pachyderm and MinIO, production Kubernetes' },
   { kind: 'stage', time: '2022 - 2024', name: 'Own the platform', tone: 'coral', org: 'Abzooba', role: 'Lead Product Engineer', sub: 'Core architect of the Xpresso.ai MLOps platform, mentored 4 engineers' },
   { kind: 'switch', time: 'Jan 2025', name: 'Switch', tone: 'ink', org: 'New role, new team', sub: 'From leading MLOps product engineering to system software at NVIDIA' },
-  { kind: 'stage', time: '2025 - 2026', name: 'Bring Windows GPUs to CI', tone: 'lime', org: 'NVIDIA', role: 'Senior System Software Engineer', sub: 'Designed and built Windows GPU CI for PyTorch on Kubernetes' },
+  { kind: 'stage', time: '2025 - 2026', name: 'Bring RTX GPUs to CI', tone: 'lime', org: 'NVIDIA', role: 'Senior System Software Engineer', sub: 'Designed and built RTX CI for PyTorch on Windows' },
   { kind: 'pivot', time: '2026', name: 'Pivot', tone: 'accent', org: 'Industry to an MS', sub: 'To stop treating models and LLMs as a black box, and understand them well enough to build better infrastructure for them' },
   { kind: 'stage', time: '2026 - 2027', name: 'Go deeper into vision and AI', tone: 'accent', org: 'Stony Brook', role: 'MS in Computer Science', why: 'Why: to understand the models I build infrastructure for', sub: 'Computer vision, VLMs and systems' },
   { kind: 'deploy', time: 'June 2027', name: 'Deploy: full-time role', tone: 'accent', org: 'Waiting for review', sub: 'Systems, infrastructure and applied AI' },
@@ -52,6 +52,6 @@ export const CAREER_STEPS = [
 export const PILLARS = [
   { icon: 'code', motif: 'api', tools: ['Python', 'FastAPI', 'SQL', 'WebSockets'], tone: 'pink', title: 'Backend and APIs', sub: 'Python APIs, file handling and data services, and the databases behind them', href: 'work/#xpresso' },
   { icon: 'server', motif: 'gpuvm', tools: ['Kubernetes', 'Terraform', 'Ansible', 'KubeVirt'], tone: 'lime', title: 'Infrastructure and DevOps', sub: 'Infrastructure as code, machine setup, Kubernetes and GPU virtualization', href: 'work/#pytorch-ci' },
-  { icon: 'branch', motif: 'pipeline', tools: ['GitHub Actions', 'Jenkins', 'Prometheus', 'Grafana'], tone: 'teal', title: 'CI/CD and monitoring', sub: 'Pipelines from build to deploy, Windows GPU CI, Prometheus and Grafana', href: 'work/#pytorch-ci' },
+  { icon: 'branch', motif: 'pipeline', tools: ['GitHub Actions', 'Jenkins', 'Prometheus', 'Grafana'], tone: 'teal', title: 'CI/CD and monitoring', sub: 'Pipelines from build to deploy, RTX CI for PyTorch, Prometheus and Grafana', href: 'work/#pytorch-ci' },
   { icon: 'layers', motif: 'mlops', tools: ['PyTorch', 'MLflow', 'ONNX Runtime', 'VLMs'], tone: 'coral', title: 'ML platforms and vision', sub: 'MLOps platforms, and now 3D faces and vision-language models', href: 'projects/' },
 ];

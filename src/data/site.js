@@ -29,7 +29,7 @@ export const PAGE_META = {
   projects: {
     title: 'Projects',
     description:
-      'Course and personal projects: 3D head reconstruction with GNM, a RISC-V CPU, a VLM project and an open GPU CI design.',
+      'Course and personal projects: 3D head reconstruction with GNM, a RISC-V CPU, a VLM project and an open version of the RTX CI design.',
   },
   writing: {
     title: 'Writing',

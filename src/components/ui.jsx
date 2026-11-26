@@ -192,17 +192,17 @@ export function Section({ id, label, note, wide = false, tight = false, classNam
   );
 }
 
-// `art` is a drawing shown on the right on wide screens (a Motif); `aside` sits under the text when
-// there is art, and on the right when there is not.
+// `art` is a picture beside the text: on the right from 1024px up, and above the title, small, on
+// narrower screens. `aside` sits under the text when there is art, and on the right when there is not.
 export function PageHead({ title, children, aside, art }) {
   return (
-    <header className={cn('grid grid-cols-1 gap-6 pt-10 pb-8 md:pt-12', art ? 'lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)] lg:items-center' : 'lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end')}>
+    <header className={cn('grid grid-cols-1 gap-6 pt-10 pb-8 md:pt-12', art ? 'lg:grid-cols-[minmax(0,1fr)_minmax(0,320px)] lg:items-center lg:gap-12' : 'lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end')}>
       <div>
         <h1 className="font-display text-h1 font-semibold leading-[1.08] md:text-display">{title}</h1>
         {children && <div className="mt-4 max-w-[66ch] text-large leading-relaxed text-lead">{children}</div>}
         {art && aside && <div className="mt-5">{aside}</div>}
       </div>
-      {art ? <div className="hidden lg:block">{art}</div> : aside}
+      {art ? <div className="order-first lg:order-none">{art}</div> : aside}
     </header>
   );
 }

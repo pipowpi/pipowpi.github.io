@@ -1,6 +1,6 @@
 // Diagrams: small labelled drawings of the systems this site is about, drawn literally so each one
 // reads as the real thing. Every one shows work Gopi did or exactly what its section covers:
-// an API service, a CI pipeline with a Windows GPU lane, a VM with a passed-through GPU on Kubernetes,
+// an API service, a CI pipeline with a Windows RTX lane, a VM with a passed-through GPU on Kubernetes,
 // the Xpresso MLOps lifecycle and its DataOps layer, the job query service, a photo turned into a 3D
 // head mesh, a RISC-V instruction moving through a core, a VLM reading an image, the pull loop, push
 // versus pull, and STRIDE on a CI cluster. Each has one slow animation that shows how it works.
@@ -62,7 +62,7 @@ function Api({ s }) {
   );
 }
 
-// CI/CD: a push triggers build, two test jobs (one on a Windows GPU runner) and ship. Below, the
+// CI/CD: a push triggers build, two test jobs (one on a Windows RTX runner) and ship. Below, the
 // monitoring side: Prometheus scrapes metrics from the runners and Grafana shows them.
 function Pipeline({ s }) { // 0 build running, 1 tests running, 2 ship running, 3-4 all passed
   const st = (stage) => (s > stage ? 'pass' : s === stage ? 'run' : 'wait');
@@ -81,7 +81,7 @@ function Pipeline({ s }) { // 0 build running, 1 tests running, 2 ship running, 
       <rect x="2" y="44" width="70" height="30" rx="15" /><T x="37" y="63" anchor="middle" sm>push</T>
       <Job x={88} y={42} w={104} name="build" stage={0} />
       <Job x={212} y={6} w={146} name="linux tests" stage={1} />
-      <Job x={212} y={78} w={146} name="windows gpu" stage={1} />
+      <Job x={212} y={78} w={146} name="windows rtx" stage={1} />
       <Job x={374} y={42} w={56} name="ship" stage={2} />
       <path d="M72 59 H88 M192 59 H202 V23 H212 M202 59 V95 H212 M358 23 H366 V59 H374 M358 95 H366 V59" />
       <path d="M285 112 V124 H77 V132" className="mt-faint mt-dash" />
@@ -235,7 +235,7 @@ function Vlm({ s }) { // 0 patches, 1 encoder, 2 adapter, 3 language model
   );
 }
 
-// The pull loop of the GPU CI design: ask, hand out, run in a fresh VM, report and destroy.
+// The pull loop of the RTX CI design: ask, hand out, run in a fresh VM, report and destroy.
 const LOOP = [['runner', 'asks for a job', 2, 8], ['job service', 'hands one out', 262, 8], ['fresh VM', 'runs the job', 262, 136], ['result reported', 'VM destroyed', 2, 136]];
 function PullLoop({ s }) {
   return (
@@ -361,7 +361,7 @@ function Mesh() {
   );
 }
 
-// The NVIDIA CI: GitHub asks for a Windows GPU run; the job waits in my job query service; a runner
+// RTX CI at NVIDIA: GitHub asks for a Windows RTX run; the job waits in my job query service; a runner
 // inside the cluster pulls it over an outbound connection (nothing outside can reach in); a fresh
 // Windows VM with a passed-through GPU runs it; the result goes back to GitHub.
 function JobQuery({ s }) { // 0 queued, 1 runner asks, 2 job handed out, 3 VM runs, 4 passed
@@ -385,7 +385,7 @@ function JobQuery({ s }) { // 0 queued, 1 runner asks, 2 job handed out, 3 VM ru
       <T x="230" y="181" anchor="middle" sm>pre-run gateway</T>
       <path d="M120 57 H160" /><path d="M154 52 l6 5 l-6 5" />
       <rect x="322" y="6" width="146" height="230" rx="10" className="mt-faint" strokeDasharray="5 5" />
-      <T x="334" y="26" sm dim>GPU cluster</T>
+      <T x="334" y="26" sm dim>RTX cluster</T>
       <T x="334" y="42" sm dim>no inbound access</T>
       <rect x="336" y="56" width="118" height="44" rx="6" className={s === 1 || s === 2 ? 'mt-box-hi' : undefined} />
       <T x="348" y="76">runner pod</T>
@@ -399,7 +399,7 @@ function JobQuery({ s }) { // 0 queued, 1 runner asks, 2 job handed out, 3 VM ru
       <rect x="336" y="128" width="118" height="92" rx="6" className={s === 3 ? 'mt-box-hi' : undefined} />
       <T x="348" y="150">Windows VM</T>
       <T x="348" y="167" sm dim>fresh per job</T>
-      <rect x="348" y="180" width="40" height="18" rx="4" className="mt-chip" /><T x="368" y="193" anchor="middle" sm hi>GPU</T>
+      <rect x="348" y="180" width="40" height="18" rx="4" className="mt-chip" /><T x="368" y="193" anchor="middle" sm hi>RTX</T>
       {s === 3 ? <Spin x={430} y={150} /> : s === 4 ? <Check x={430} y={150} /> : <Wait x={430} y={150} />}
     </svg>
   );

@@ -86,7 +86,7 @@ function PytorchCase() {
         <div className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0" tabIndex={0} role="region" aria-label="Job flow diagram (scrolls sideways on small screens)">
           <Diagram name="jobquery" tone="lime" className="mx-auto aspect-[470/240] w-full min-w-[500px] max-w-[640px]" />
         </div>
-        <figcaption className="mt-3 text-caption text-lead"><span className="t-label mb-1 block text-accent md:hidden" aria-hidden="true">Swipe to see the whole flow →</span>A Windows GPU test run: GitHub asks for it, the job waits in the job query service, a runner inside the cluster pulls it, and a fresh Windows VM with a GPU runs it.</figcaption>
+        <figcaption className="mt-3 text-caption text-lead"><span className="t-label mb-1 block text-accent md:hidden" aria-hidden="true">Swipe to see the whole flow →</span>An RTX test run: GitHub asks for it, the job waits in the job query service, a runner inside the cluster pulls it, and a fresh Windows VM with an RTX GPU runs it.</figcaption>
       </figure>
       <div className="mt-6 flex items-start gap-3.5 rounded-md border border-[color-mix(in_srgb,var(--accent)_40%,transparent)] bg-wash p-4 md:p-5">
         <Mark name="server" size="sm" />
@@ -174,7 +174,7 @@ export default function Work() {
     <Layout active="work">
       <Wrap>
         <PageHead title="8 years in software">
-          I started out on product work and spent the next six years on platforms. At Abzooba that meant DataOps and reliability, and later leading an MLOps platform. At NVIDIA it meant bringing GPU CI to PyTorch on Windows.
+          I started out on product work and spent the next six years on platforms. At Abzooba that meant DataOps and reliability, and later leading an MLOps platform. At NVIDIA it meant building RTX CI for PyTorch on Windows.
           My course and personal projects are on the <TextLink href={href('projects/')}>Projects</TextLink> page.
         </PageHead>
         <nav aria-label="On this page" className="sticky top-[65px] z-20 -mx-5 border-y border-rule bg-[var(--header)] px-5 backdrop-blur-md md:-mx-8 md:px-8">

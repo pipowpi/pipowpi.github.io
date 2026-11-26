@@ -5,7 +5,7 @@ const TONE = CAREER_STEPS.map((st) => `var(--${st.tone})`);
 
 // A small line-art character walks the career run, one stop per stage, and picks up a prop at each:
 // a speech bubble (Learn the craft), a hard hat (Make it scale), a lead's star (Own the platform),
-// a GPU chip (Bring Windows GPUs to CI) and a grad cap (the MS). Props from finished stages stay
+// a GPU chip (Bring RTX GPUs to CI) and a grad cap (the MS). Props from finished stages stay
 // above their stop. Between Abzooba and NVIDIA is a switch: a signpost where the path changes
 // direction, and the character hops across. Between NVIDIA and the MS is the pivot: a book on a post,
 // a lightbulb moment, and from there the path turns from green (work) to amber (learning).

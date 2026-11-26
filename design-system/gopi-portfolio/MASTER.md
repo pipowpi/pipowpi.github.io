@@ -49,8 +49,8 @@ All component code uses tokens (`bg-sheet`, `text-lead`), never raw hex.
 
 - **Amber (`--accent`)** is for actions and "now": buttons, links, focus, the running MS stage, the deploy step.
 - **Stage colors** tell career stages and projects apart. They never mean pass or fail.
-  - Career: Learn the craft = pink, Make it scale = teal, Own the platform = coral, Bring Windows GPUs to CI = lime, MS = amber. The switch is drawn in ink.
-  - Projects: 3D head reconstruction = pink, RISC-V CPU = teal, VLM project = coral, open GPU CI design = lime, this site = amber.
+  - Career: Learn the craft = pink, Make it scale = teal, Own the platform = coral, Bring RTX GPUs to CI = lime, MS = amber. The switch is drawn in ink.
+  - Projects: 3D head reconstruction = pink, RISC-V CPU = teal, VLM project = coral, open RTX CI design = lime, this site = amber.
   - Inside a project card or a Work case study, `--accent` is set to that item's color, so its icon, numbers, links and diagram highlight follow.
 - **Green (`--pass`)** stays for done checklist items.
 - **Topics** have one color each, everywhere (writing tags and filters, post pages, the About toolbox, the home focus areas): lime = infrastructure and GPUs, teal = CI/CD, coral = ML platforms and MLOps, pink = backend and security, amber = vision and AI, ink = languages. The map lives in `src/data/site.js` (`TOPIC_TONE`).
@@ -67,7 +67,7 @@ All component code uses tokens (`bg-sheet`, `text-lead`), never raw hex.
 |---|---|---|
 | Home card: Backend and APIs | client, API service (routes, auth, rate limits), database, file storage | a request travels to the API, then to the database and storage, then "201 Created" |
 | Home card: Infrastructure and DevOps; Work header | Kubernetes control plane (API server, scheduler) over three GPU worker nodes with pods | the scheduler places a new pod on a node |
-| Home card: CI/CD and monitoring | push, build, Linux and Windows GPU test jobs, ship; build-time bars and a p95 latency line | jobs run and pass stage by stage |
+| Home card: CI/CD and monitoring | push, build, Linux and Windows RTX test jobs, ship; Prometheus feeding Grafana | jobs run and pass stage by stage |
 | Home card: ML platforms and vision | input image, 3x3 edge kernel with its weights, feature map | the kernel slides; the matching output cell lights up |
 | Projects header | a photo, SMIRK + GNM, a triangulated 3D head mesh with eyes, nose and mouth | a scan line passes over the mesh |
 | Writing header | causal attention: a query word, the words before it, line width = weight, later words masked | the query moves along the sentence |
@@ -277,19 +277,19 @@ A 14px label with a dot. The dot's shape and motion also carry the state, so col
 |---|---|---|
 | `api` | Client, API service, database and file storage | Home, Backend and APIs |
 | `gpuvm` | GPU bound to vfio-pci, device plugin, Windows VM in a KubeVirt pod | Home, Infrastructure; GPU passthrough post |
-| `pipeline` | Build, Linux and Windows GPU tests, ship; Prometheus and Grafana | Home, CI/CD and monitoring |
+| `pipeline` | Build, Linux and Windows RTX tests, ship; Prometheus and Grafana | Home, CI/CD and monitoring |
 | `mlops` | The Xpresso lifecycle, with the DataOps layer marked | Home, ML platforms |
 | `jobquery` | The job query service and the pull into the GPU cluster | Home, selected work; Work, NVIDIA case study |
 | `dataops` | Connectors, versioned data on Pachyderm and MinIO, Airflow | Home, selected work (Xpresso) |
 | `mesh` | One photo in, a 3D head mesh out | Projects, 3D head reconstruction |
 | `riscv` | One load instruction through fetch, decode, execute, memory, write back | Projects, RISC-V CPU |
 | `vlm` | Patches, vision encoder, adapter, language model tokens | Projects, VLM project; VLM post |
-| `pullloop` | Ask, hand out, fresh VM, report and destroy | Projects, open GPU CI design |
+| `pullloop` | Ask, hand out, fresh VM, report and destroy | Projects, open RTX CI design |
 | `pushpull` | Push needs a way in; pull only reaches out | Push or pull post |
 | `stride` | STRIDE letters on the parts of a CI cluster | STRIDE post |
 
 - Lines in ink, one highlight in the section's color. Every drawing has a caption or text next to it that says what it shows. Posts name theirs in front matter (`diagram:` and `caption:`).
-- `jobquery` (the Windows GPU CI flow) replaced the old 3D canvas on the Work page. It is wider than a phone, so below 520px it scrolls sideways with a "Swipe" hint rather than shrinking the labels.
+- `jobquery` (the RTX CI flow) replaced the old 3D canvas on the Work page. It is wider than a phone, so below 520px it scrolls sideways with a "Swipe" hint rather than shrinking the labels.
 - Each drawing is a function of its step. `Motif` prerenders one frame per step, stacked, and shows the one matching `data-step`. `entry-client.jsx` advances it while the drawing is on screen and motion is allowed. There is no React in the browser for diagrams. The resting frame is shown first, so the drawing is complete before any JavaScript runs.
 - Do not put a `display` utility (`block`, `flex`) on a diagram; the frames need the diagram's own grid.
 

@@ -34,7 +34,7 @@ export function Focus() {
 const CASES = [
   {
     to: 'work/#pytorch-ci', icon: 'gpu', tone: 'lime', diagram: 'jobquery', aspect: 'aspect-[470/240]', title: PYTORCH_CI.title, org: PYTORCH_CI.org, dates: '2025 - 2026',
-    text: 'PyTorch had no CI that tested Windows with a GPU. I designed and built a harness that runs GPU-backed Windows VMs inside Kubernetes. Runners pull their jobs from a job query service I built as an alternative to GitHub’s ARC.',
+    text: 'PyTorch had no CI that tested Windows on RTX GPUs. I designed and built RTX CI, which runs Windows VMs with real RTX GPUs on bare-metal Kubernetes. Runners pull their jobs from a job query service I built as an alternative to GitHub’s ARC.',
     tags: ['KubeVirt', 'VFIO', 'GitHub Actions', 'STRIDE'],
   },
   {
